@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
 #include "../EventBus/EventBus.h"
 #include <imgui/imgui.h>
 
