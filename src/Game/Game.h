@@ -1,10 +1,8 @@
 #pragma once
 
-#include <SDL.h>
-#include <sol/sol.hpp>
 #include <memory>
-#include "../ECS/ECS.h"
-#include "../AssetManager/AssetManager.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 #include "../EventBus/EventBus.h"
 #include <imgui/imgui.h>
 
@@ -13,12 +11,9 @@ const int MILLISECS_PER_FRAME = 1000 / FPS;
 
 class Game {
     private:
-    sol::state lua;
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Rect camera;
-    std::unique_ptr<Registry> registry;
-    std::unique_ptr<AssetManager> assetManager;
     std::unique_ptr<EventBus> eventBus;
 
     bool isRunning;
