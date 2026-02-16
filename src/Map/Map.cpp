@@ -3,6 +3,9 @@
 #include <Utils/Singleton.h>
 #include <Entities/ETiles.h>
 #include <Entities/EPlayer.h>
+#include <Entities/EColliders.h>
+#include <Entities/EPit.h>
+#include <Entities/EBox.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
 #include <fstream>
 #include <sstream>
@@ -51,6 +54,45 @@ public:
             player->LoadData("player"_nnTex, playerX, playerY, 64, 64);
             // TODO: Set player position (may need to add SetPosition method to EMovable)
         }
+
+        // Load colliders from JSON
+        World::EColliders* colliders = entitiesManager.SpawnEntity<World::EColliders>();
+        if (jsonData.contains("colliders") && jsonData["colliders"].is_array()) {
+            std::vector<World::EColliders::Collider> collidersData;
+            for (const auto& colliderJson : jsonData["colliders"]) {
+                World::EColliders::Collider collider;
+                collider.x = colliderJson["x"].get<float>();
+                collider.y = colliderJson["y"].get<float>();
+                collider.width = colliderJson["width"].get<float>();
+                collider.height = colliderJson["height"].get<float>();
+                collidersData.push_back(collider);
+            }
+            colliders->LoadColliders(collidersData);
+            colliders->EnableRender();
+        }
+        
+        // Load pits from JSON
+        if (jsonData.contains("pits") && jsonData["pits"].is_array()) {
+            for (const auto& pitJson : jsonData["pits"]) {
+                World::EPit* pit = entitiesManager.SpawnEntity<World::EPit>();
+                const float x = pitJson["x"].get<float>();
+                const float y = pitJson["y"].get<float>();
+
+                pit->SetPosition(x, y);
+            }
+        }
+        
+        // Load boxes from JSON
+        if (jsonData.contains("boxes") && jsonData["boxes"].is_array()) {
+            for (const auto& boxJson : jsonData["boxes"]) {
+                World::EBox* box = entitiesManager.SpawnEntity<World::EBox>();
+                const float x = boxJson["x"].get<float>();
+                const float y = boxJson["y"].get<float>();
+
+                box->SetPosition(x, y);
+            }
+        }
+
         return true;
     }
 
