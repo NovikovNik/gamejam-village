@@ -24,10 +24,10 @@
 
 // Remove SDL.h from here; forward declare in Game.h if needed.
 
-//int Game::windowHeight;
-//int Game::windowWidth;
-//int Game::windowLogicHeight;
-//int Game::windowLogicWidth;
+int Game::windowHeight = 600;
+int Game::windowWidth = 800;
+// int Game::windowLogicHeight;
+// int Game::windowLogicWidth;
 
 Game::Game() {
     eventBus = std::make_unique<EventBus>();
@@ -40,7 +40,7 @@ Game::~Game() {
 
 void Game::Initialize() {
 
-    Renderer::Initialize(800, 600);
+    Renderer::Initialize(windowWidth, windowHeight);
     Renderer::LoadAllTextures("assets/textures/");
     bool isLoaded = MapManager::LoadMap("assets/maps/world-1.json");
     if (!isLoaded) {

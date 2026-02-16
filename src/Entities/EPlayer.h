@@ -1,6 +1,8 @@
 #pragma once
 
 #include "EMovable.h"
+#include "ext/vector_float2.hpp"
+#include <glm/glm.hpp>
 
 namespace World {
     class EPlayer : public EMovable {
@@ -10,6 +12,8 @@ namespace World {
 
     private:
         // Pixels per frame
-        float basicSpeed = 50.0f;
+
+        glm::vec2 direction; // for normalization kinda
+        float basicSpeed = 100.0f;
     };
 }

@@ -3,9 +3,12 @@
 #include <Utils/Singleton.h>
 #include <Entities/ETiles.h>
 #include <Entities/EPlayer.h>
+#include "../Renderer/Camera.h"
+#include "Logger/Logger.h"
 #include <libs/json/single_include/nlohmann/json.hpp>
 #include <fstream>
 #include <sstream>
+#include <string>
 
 class Map : public Singleton<Map> {
 
@@ -49,6 +52,7 @@ public:
             float playerX = jsonData["player"]["x"].get<float>();
             float playerY = jsonData["player"]["y"].get<float>();
             player->LoadData("player"_nnTex, playerX, playerY, 64, 64);
+            World::Camera::instance().Follow(player);
             // TODO: Set player position (may need to add SetPosition method to EMovable)
         }
         return true;
@@ -56,6 +60,7 @@ public:
 
     void Update(float deltaTime) {
         entitiesManager.Update(deltaTime);
+        World::Camera::instance().Update(deltaTime);
     }
 
     void Render(float deltaTime) {
@@ -64,6 +69,7 @@ public:
 
 private:
     World::EntitiesManager entitiesManager;
+    World::EPlayer* player = nullptr;
 };
 
 

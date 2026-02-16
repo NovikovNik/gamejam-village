@@ -27,6 +27,10 @@ void World::EMovable::SetPosition(float x, float y) {
     positionY = y;
 }
 
+glm::vec2 World::EMovable::GetPosition() const {
+    return glm::vec2(positionX, positionY);
+}
+
 void World::EMovable::LoadData(Renderer::TextureId texture, float x, float y, float width, float height) {
     this->texture = texture;
     this->positionX = x;

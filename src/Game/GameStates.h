@@ -13,10 +13,6 @@ class GameStates : public Singleton<GameStates>
 	}
 
 	public:
-	    void Initialize();
-		void Destroy();
-
-	public:
 	bool w;
 	bool a;
 	bool s;

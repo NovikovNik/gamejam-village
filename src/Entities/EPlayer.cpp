@@ -1,26 +1,35 @@
 #include "EPlayer.h"
 #include "../Game/GameStates.h"
+#include "ext/vector_float2.hpp"
 
 bool World::EPlayer::Update(float deltaTime) {
     if (!EMovable::Update(deltaTime)) {
         return false;
     }
 
-    if (GameStates::instance().w) {
-        AddImpulse(0, -basicSpeed);
-    }
-    if (GameStates::instance().s) {
-        AddImpulse(0, basicSpeed);
-    }
-    if (GameStates::instance().a) {
-        AddImpulse(-basicSpeed, 0);
-    }
-    if (GameStates::instance().d) {
-        AddImpulse(basicSpeed, 0);
-    }
+    glm::vec2 direction(0.0f);
 
-    return true;
-}
+     if (GameStates::instance().w) {
+         direction.y -= 1.0f;
+     }
+     if (GameStates::instance().s) {
+         direction.y += 1.0f;
+     }
+     if (GameStates::instance().a) {
+         direction.x -= 1.0f;
+     }
+     if (GameStates::instance().d) {
+         direction.x += 1.0f;
+     }
+
+     if (glm::length(direction) > 0.0f) {
+         direction = glm::normalize(direction);
+         AddImpulse(direction.x * basicSpeed,
+                    direction.y * basicSpeed);
+     }
+
+     return true;
+ }
 
 void World::EPlayer::Render(float deltaTime) {
     EMovable::Render(deltaTime);

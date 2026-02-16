@@ -20,6 +20,7 @@ namespace World {
             }
 
             [[nodiscard]] size_t GetEntityCount() const { return entities.size(); }
+            [[nodiscard]] const std::vector<std::unique_ptr<Entity>>& GetEntities() const { return entities; }
 
         private:
             std::vector<std::unique_ptr<Entity>> entities;

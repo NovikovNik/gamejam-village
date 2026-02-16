@@ -1,6 +1,10 @@
 #include "Renderer.h"
 #include <Utils/Singleton.h>
 #include "../Logger/Logger.h"
+#include "Renderer/Camera.h"
+#include "../Game/Game.h"
+#include <glm/glm.hpp>
+#include "ext/vector_float2.hpp"
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -64,8 +68,11 @@ public:
             return;
         }
         SDL_FRect rect;
-        rect.x = x - width / 2;
-        rect.y = y - height / 2;
+        glm::vec2 cameraPos = World::Camera::instance().GetPosition();
+        bool isCameraFollow = x == cameraPos.x && y == cameraPos.y;
+
+        rect.x = x - cameraPos.x - width / 2 + (isCameraFollow ? 0.5 * Game::windowWidth : 0);
+        rect.y = y - cameraPos.y - height / 2 + (isCameraFollow ? 0.5 * Game::windowHeight : 0);
         rect.w = width;
         rect.h = height;
         SDL_RenderTexture(renderer, texture, NULL, &rect);
@@ -93,6 +100,7 @@ private:
     SDL_Renderer* renderer {};
     SDL_Window* window {};
     std::map<Renderer::TextureId, SDL_Texture*> textures;
+
 };
 
 void Renderer::Initialize(int32_t windowWidth, int32_t windowHeight) {
