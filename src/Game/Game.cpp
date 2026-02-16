@@ -2,10 +2,13 @@
 
 #include <Map/Map.h>
 #include <Renderer/Renderer.h>
+#include <FileSystem/FileSystem.h>
 
 #include "Game/GameStates.h"
 #include "GameFeatures.h"
 #include "../Events/WindowResizedEvent.h"
+#include "../Events/WindowFocusedEvent.h"
+#include "../Events/WindowUnfocusedEvent.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keycode.h"
 #include "SDL3/SDL_oldnames.h"
@@ -50,55 +53,6 @@ void Game::Initialize() {
     } else {
         isRunning = true;
     }
-
-//    isRunning = false;
-//    if (!SDL_Init(SDL_INIT_VIDEO)) {
-//        Logger::Err("SDL_Init failed: " + std::string(SDL_GetError()));
-//        return;
-//    }
-//
-//    if (!TTF_Init()) {
-//        Logger::Err("TTF_Init failed: " + std::string(SDL_GetError()));
-//        return;
-//    }
-//
-//    windowWidth = 800;          //displayMode.w;
-//    windowHeight = 600;         //displayMode.h;
-//    windowLogicWidth = 800;     // Render will be in this resolution despite the window size
-//    windowLogicHeight = 600;    // Render will be in this resolution despite the window size
-//
-//    if (!SDL_CreateWindowAndRenderer("test", windowWidth, windowHeight, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
-//        SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
-//        return;
-//    }
-//    SDL_SetRenderLogicalPresentation(renderer, windowLogicWidth, windowLogicHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
-//    // Fullscreen settings
-//    if (GameFeatures::isFullscreen) {
-//        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-//    } else {
-//        Logger::Debug("Fullscreen was disabled in GameFeatures.h");
-//    }
-//
-//    // Init the Camera with entire screen area
-//    camera.x = 0;
-//    camera.y = 0;
-//    camera.w = windowWidth;
-//    camera.h = windowHeight;
-//
-//    // IMGUI_CHECKVERSION(); Need to update to SDL3
-//    // ImGui::CreateContext();
-//    // ImGuiIO& io = ImGui::GetIO(); (void)io;
-//    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-//    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-//
-//    // // Setup Dear ImGui style
-//    // ImGui::StyleColorsDark();
-//
-//    // // Init ImGui rendere
-//    // ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-//    // ImGui_ImplSDLRenderer2_Init(renderer);
-//
-//    isRunning = true;
 }
 
 void Game::Setup() {
@@ -121,9 +75,6 @@ void Game::Destroy() {
     // ImGui::DestroyContext();
 
     Renderer::Destroy();
-//    SDL_DestroyRenderer(renderer);
-//    SDL_DestroyWindow(window);
-//    SDL_Quit();
 }
 
 void Game::ProcessInput() {
@@ -149,6 +100,14 @@ void Game::ProcessInput() {
                 Logger::Debug("Window resized");
                 eventBus->EmitEvent<WindowResizedEvent>();
                 break;
+            case SDL_EVENT_WINDOW_FOCUS_GAINED:
+                Logger::Debug("Window focus gained");
+                eventBus->EmitEvent<WindowFocusedEvent>();
+                break;
+            case SDL_EVENT_WINDOW_FOCUS_LOST:
+                Logger::Debug("Window focus lost");
+                eventBus->EmitEvent<WindowUnfocusedEvent>();
+                break;
             case SDL_EVENT_KEY_DOWN:
                 if(event.key.key == SDLK_ESCAPE) {
                     if (GameFeatures::isDebug) {
@@ -161,6 +120,9 @@ void Game::ProcessInput() {
                 if(event.key.key == SDLK_TAB) {
                     GameFeatures::isDebug = !GameFeatures::isDebug;
                     Logger::Debug("Debug state changed to: " + std::to_string(GameFeatures::isDebug));
+
+                    // FOR TEST!
+                    FileSystemManager::OpenSystemExplorer("test");
                     break;
                 }
                 if (event.key.key == SDLK_W ||event.key.key == SDLK_UP) {
