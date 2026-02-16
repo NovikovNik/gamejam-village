@@ -33,6 +33,8 @@ class Game {
     public:
         static int windowWidth;
         static int windowHeight;
+        static int windowLogicWidth;
+        static int windowLogicHeight;
         static int mapWidth;
         static int mapHeight;
 };

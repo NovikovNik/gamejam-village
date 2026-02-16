@@ -18,6 +18,8 @@
 
 int Game::windowHeight;
 int Game::windowWidth;
+int Game::windowLogicHeight;
+int Game::windowLogicWidth;
 
 Game::Game() {
     eventBus = std::make_unique<EventBus>();
@@ -40,15 +42,22 @@ void Game::Initialize() {
         return;
     }
 
-    windowWidth = 800; //displayMode.w;
-    windowHeight = 600; //displayMode.h;
+    windowWidth = 800;          //displayMode.w;
+    windowHeight = 600;         //displayMode.h;
+    windowLogicWidth = 800;     // Render will be in this resolution despite the window size
+    windowLogicHeight = 600;    // Render will be in this resolution despite the window size
 
     if (!SDL_CreateWindowAndRenderer("test", windowWidth, windowHeight, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
         SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
         return;
     }
-    SDL_SetRenderLogicalPresentation(renderer, 800, 600, SDL_LOGICAL_PRESENTATION_DISABLED);
-    // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+    SDL_SetRenderLogicalPresentation(renderer, windowLogicWidth, windowLogicHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
+    // Fullscreen settings
+    if (GameFeatures::isFullscreen) {
+        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+    } else {
+        Logger::Debug("Fullscreen was disabled in GameFeatures.h");
+    }
 
     // Init the Camera with entire screen area
     camera.x = 0;
@@ -120,8 +129,9 @@ void Game::ProcessInput() {
                     }
                     isRunning = false;
                 }
-                if(event.key.key == SDLK_D) {
+                if(event.key.key == SDLK_TAB) {
                     GameFeatures::isDebug = !GameFeatures::isDebug;
+                    Logger::Debug("Debug state changed to: " + std::to_string(GameFeatures::isDebug));
                 }
                 break;
             default:
