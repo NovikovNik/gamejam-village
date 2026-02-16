@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(GameProject CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -17,6 +17,7 @@ add_subdirectory(libs/SDL EXCLUDE_FROM_ALL)
 
 set(SDLTTF_USE_SYSTEM_FREETYPE OFF CACHE BOOL "" FORCE)
 add_subdirectory(libs/SDL_ttf EXCLUDE_FROM_ALL)
+set(SDLIMAGE_AVIF OFF CACHE BOOL "Support loading AVIF images" FORCE)
 add_subdirectory(libs/SDL_image EXCLUDE_FROM_ALL)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
