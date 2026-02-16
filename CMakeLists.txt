@@ -31,3 +31,6 @@ target_include_directories(game_engine PRIVATE
 )
 
 target_link_libraries(game_engine PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3 SDL3_image::SDL3_image)
+
+# Include tests
+add_subdirectory(tests)

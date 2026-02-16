@@ -7,3 +7,6 @@
 [submodule "libs/SDL"]
 	path = libs/SDL
 	url = git@github.com:libsdl-org/SDL.git
+[submodule "libs/googletest"]
+	path = libs/googletest
+	url = https://github.com/google/googletest.git
