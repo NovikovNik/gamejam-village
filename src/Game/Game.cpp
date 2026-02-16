@@ -42,7 +42,7 @@ void Game::Initialize() {
 
     Renderer::Initialize(800, 600);
     Renderer::LoadAllTextures("assets/textures/");
-    bool isLoaded = MapManager::LoadMap("assets/maps/test.json");
+    bool isLoaded = MapManager::LoadMap("assets/maps/world-1.json");
     if (!isLoaded) {
         Logger::Err("Failed to load map");
         return;
