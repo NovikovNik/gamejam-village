@@ -35,15 +35,17 @@ Game::~Game() {
 }
 
 void Game::Initialize() {
-    
+
     Renderer::Initialize(800, 600);
     Renderer::LoadAllTextures("assets/textures/");
     bool isLoaded = MapManager::LoadMap("assets/maps/test.json");
     if (!isLoaded) {
         Logger::Err("Failed to load map");
         return;
+    } else {
+        isRunning = true;
     }
-    
+
 //    isRunning = false;
 //    if (!SDL_Init(SDL_INIT_VIDEO)) {
 //        Logger::Err("SDL_Init failed: " + std::string(SDL_GetError()));
