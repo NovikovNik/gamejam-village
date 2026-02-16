@@ -67,7 +67,7 @@ jobs:
           cmake-version: "3.16.x"
 
       - name: Configure CMake Project
-        run: cmake -B ${{runner.workspace}} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        run: cmake -B ${{runner.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build Project
         run: cmake --build ${{runner.workspace}}/build
