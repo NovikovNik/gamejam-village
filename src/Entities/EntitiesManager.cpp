@@ -1,4 +1,5 @@
 #include "EntitiesManager.h"
+#include <algorithm>
 
 void World::EntitiesManager::Update(float deltaTime) {
     for (auto& entity : entities) {
