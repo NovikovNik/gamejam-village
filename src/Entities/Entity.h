@@ -8,8 +8,8 @@ namespace World
         public:
             [[nodiscard]] virtual bool Update(float deltaTime);
             virtual void Render(float deltaTime) = 0;
-            virtual void OnDestroy() = 0;
-            virtual void OnSpawn() = 0;
+            virtual void OnDestroy() {};
+            virtual void OnSpawn() {};
 
             void Destroy() { isValid = false; }
 

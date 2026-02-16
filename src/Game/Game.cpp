@@ -1,25 +1,29 @@
 #include "Game.h"
+
+#include <Map/Map.h>
+#include <Renderer/Renderer.h>
+
 #include "GameFeatures.h"
-#include "../Logger/Logger.h"
-#include <SDL3/SDL_keycode.h>
-#include <SDL3/SDL_mouse.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_video.h>
-#include <SDL3_image/SDL_image.h>
+//#include "../Logger/Logger.h"
+//#include <SDL3/SDL_keycode.h>
+//#include <SDL3/SDL_mouse.h>
+//#include <SDL3/SDL_render.h>
+//#include <SDL3/SDL_video.h>
+//#include <SDL3_image/SDL_image.h>
+//#include <glm/glm.hpp>
+//#include <SDL3/SDL_timer.h>
+//#include <SDL3_ttf/SDL_ttf.h>
 #include <cstddef>
-#include <glm/glm.hpp>
-#include <SDL3/SDL_timer.h>
-#include <SDL3_ttf/SDL_ttf.h>
 // #include <imgui/imgui.h> need to adapt
 // #include <imgui/imgui_impl_sdl2.h>
 // #include <imgui/imgui_impl_sdlrenderer2.h>
 
 // Remove SDL.h from here; forward declare in Game.h if needed.
 
-int Game::windowHeight;
-int Game::windowWidth;
-int Game::windowLogicHeight;
-int Game::windowLogicWidth;
+//int Game::windowHeight;
+//int Game::windowWidth;
+//int Game::windowLogicHeight;
+//int Game::windowLogicWidth;
 
 Game::Game() {
     eventBus = std::make_unique<EventBus>();
@@ -31,54 +35,63 @@ Game::~Game() {
 }
 
 void Game::Initialize() {
-    isRunning = false;
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        Logger::Err("SDL_Init failed: " + std::string(SDL_GetError()));
+    
+    Renderer::Initialize(800, 600);
+    Renderer::LoadAllTextures("assets/textures/");
+    bool isLoaded = MapManager::LoadMap("assets/maps/test.json");
+    if (!isLoaded) {
+        Logger::Err("Failed to load map");
         return;
     }
-
-    if (!TTF_Init()) {
-        Logger::Err("TTF_Init failed: " + std::string(SDL_GetError()));
-        return;
-    }
-
-    windowWidth = 800;          //displayMode.w;
-    windowHeight = 600;         //displayMode.h;
-    windowLogicWidth = 800;     // Render will be in this resolution despite the window size
-    windowLogicHeight = 600;    // Render will be in this resolution despite the window size
-
-    if (!SDL_CreateWindowAndRenderer("test", windowWidth, windowHeight, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
-        SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
-        return;
-    }
-    SDL_SetRenderLogicalPresentation(renderer, windowLogicWidth, windowLogicHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
-    // Fullscreen settings
-    if (GameFeatures::isFullscreen) {
-        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-    } else {
-        Logger::Debug("Fullscreen was disabled in GameFeatures.h");
-    }
-
-    // Init the Camera with entire screen area
-    camera.x = 0;
-    camera.y = 0;
-    camera.w = windowWidth;
-    camera.h = windowHeight;
-
-    // IMGUI_CHECKVERSION(); Need to update to SDL3
-    // ImGui::CreateContext();
-    // ImGuiIO& io = ImGui::GetIO(); (void)io;
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // // Setup Dear ImGui style
-    // ImGui::StyleColorsDark();
-
-    // // Init ImGui rendere
-    // ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-    // ImGui_ImplSDLRenderer2_Init(renderer);
-
-    isRunning = true;
+    
+//    isRunning = false;
+//    if (!SDL_Init(SDL_INIT_VIDEO)) {
+//        Logger::Err("SDL_Init failed: " + std::string(SDL_GetError()));
+//        return;
+//    }
+//
+//    if (!TTF_Init()) {
+//        Logger::Err("TTF_Init failed: " + std::string(SDL_GetError()));
+//        return;
+//    }
+//
+//    windowWidth = 800;          //displayMode.w;
+//    windowHeight = 600;         //displayMode.h;
+//    windowLogicWidth = 800;     // Render will be in this resolution despite the window size
+//    windowLogicHeight = 600;    // Render will be in this resolution despite the window size
+//
+//    if (!SDL_CreateWindowAndRenderer("test", windowWidth, windowHeight, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+//        SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
+//        return;
+//    }
+//    SDL_SetRenderLogicalPresentation(renderer, windowLogicWidth, windowLogicHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
+//    // Fullscreen settings
+//    if (GameFeatures::isFullscreen) {
+//        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+//    } else {
+//        Logger::Debug("Fullscreen was disabled in GameFeatures.h");
+//    }
+//
+//    // Init the Camera with entire screen area
+//    camera.x = 0;
+//    camera.y = 0;
+//    camera.w = windowWidth;
+//    camera.h = windowHeight;
+//
+//    // IMGUI_CHECKVERSION(); Need to update to SDL3
+//    // ImGui::CreateContext();
+//    // ImGuiIO& io = ImGui::GetIO(); (void)io;
+//    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+//    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+//
+//    // // Setup Dear ImGui style
+//    // ImGui::StyleColorsDark();
+//
+//    // // Init ImGui rendere
+//    // ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
+//    // ImGui_ImplSDLRenderer2_Init(renderer);
+//
+//    isRunning = true;
 }
 
 void Game::Setup() {
@@ -100,9 +113,10 @@ void Game::Destroy() {
     // ImGui_ImplSDL2_Shutdown();
     // ImGui::DestroyContext();
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    Renderer::Destroy();
+//    SDL_DestroyRenderer(renderer);
+//    SDL_DestroyWindow(window);
+//    SDL_Quit();
 }
 
 void Game::ProcessInput() {
@@ -149,36 +163,43 @@ void Game::Update() {
     deltaTime = (SDL_GetTicks() - millisecPreviousFrame) / 1000.0;
     millisecPreviousFrame = SDL_GetTicks();
 
+    MapManager::Update(deltaTime);
     // Reset all event handlers
     eventBus->Reset();
 }
 
 void Game::Render() {
-    SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
-    SDL_RenderClear(renderer);
 
-    if (GameFeatures::isDebug) {
-        // Usually we should render here some debug infos
-    }
+    Renderer::BeginRender();
+    MapManager::Render(deltaTime);
+    Renderer::EndRender();
 
-    // THIS BLOCK SHOULD BE DELETED. ONLY AS EXAMPLE!!
-    SDL_Texture* texture = IMG_LoadTexture(renderer, "assets/test.png");
-    if (!texture) {
-        SDL_Log("Texture creation failed: %s", SDL_GetError());
-    }
 
-    // Получаем размеры текстуры в SDL3
-    float texW, texH;
-    SDL_GetTextureSize(texture, &texW, &texH);
-
-    SDL_FRect destRect;
-    destRect.w = texW;
-    destRect.h = texH;
-    destRect.x = (windowWidth - destRect.w) / 2.0f;
-    destRect.y = (windowHeight - destRect.h) / 2.0f;
-
-    SDL_RenderTexture(renderer, texture, NULL, &destRect);
-    // THIS BLOCK SHOULD BE DELETED. ONLY AS EXAMPLE!!
-
-    SDL_RenderPresent(renderer);
+//    SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
+//    SDL_RenderClear(renderer);
+//
+//    if (GameFeatures::isDebug) {
+//        // Usually we should render here some debug infos
+//    }
+//
+//    // THIS BLOCK SHOULD BE DELETED. ONLY AS EXAMPLE!!
+//    SDL_Texture* texture = IMG_LoadTexture(renderer, "assets/test.png");
+//    if (!texture) {
+//        SDL_Log("Texture creation failed: %s", SDL_GetError());
+//    }
+//
+//    // Получаем размеры текстуры в SDL3
+//    float texW, texH;
+//    SDL_GetTextureSize(texture, &texW, &texH);
+//
+//    SDL_FRect destRect;
+//    destRect.w = texW;
+//    destRect.h = texH;
+//    destRect.x = (windowWidth - destRect.w) / 2.0f;
+//    destRect.y = (windowHeight - destRect.h) / 2.0f;
+//
+//    SDL_RenderTexture(renderer, texture, NULL, &destRect);
+//    // THIS BLOCK SHOULD BE DELETED. ONLY AS EXAMPLE!!
+//
+//    SDL_RenderPresent(renderer);
 }

@@ -25,6 +25,8 @@ file(GLOB_RECURSE SOURCES src/*.cpp)
 add_executable(game_engine ${SOURCES})
 
 target_include_directories(game_engine PRIVATE
+    "${CMAKE_SOURCE_DIR}"
+    "${CMAKE_SOURCE_DIR}/src"
     "libs"
     "libs/glm"
     "libs/termcolor"

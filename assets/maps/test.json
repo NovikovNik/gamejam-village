@@ -1,0 +1,18 @@
+{
+    "tiles": [
+        {
+            "x": 0,
+            "y": 0,
+            "width": 256,
+            "height": 256,
+            "texture": "test-texture"
+        },
+        {
+            "x": 256,
+            "y": 0,
+            "width": 256,
+            "height": 256,
+            "texture": "test-texture"
+        }
+    ]
+}

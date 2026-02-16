@@ -10,3 +10,9 @@
 [submodule "libs/googletest"]
 	path = libs/googletest
 	url = https://github.com/google/googletest.git
+[submodule "libs/json"]
+	path = libs/json
+	url = https://github.com/nlohmann/json.git
+[submodule "libs/CPPNanoString"]
+	path = libs/CPPNanoString
+	url = git@github.com:RuslanZhuch/CPPNanoString.git
