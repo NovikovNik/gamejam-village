@@ -13,6 +13,13 @@
             "width": 256.0,
             "height": 256.0,
             "texture": "test-texture"
+        },
+        {
+            "x": 192.0000457763672,
+            "y": 455.58905029296875,
+            "width": 256.0,
+            "height": 256.0,
+            "texture": "test-ground"
         }
     ],
     "player": {
