@@ -4,7 +4,6 @@
 #include "Renderer/Camera.h"
 #include "../Game/Game.h"
 #include <glm/glm.hpp>
-#include "ext/vector_float2.hpp"
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>

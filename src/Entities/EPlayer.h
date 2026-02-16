@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EMovable.h"
-#include "ext/vector_float2.hpp"
 #include <glm/glm.hpp>
 
 namespace World {

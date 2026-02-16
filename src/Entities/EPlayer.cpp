@@ -1,6 +1,5 @@
 #include "EPlayer.h"
 #include "../Game/GameStates.h"
-#include "ext/vector_float2.hpp"
 
 bool World::EPlayer::Update(float deltaTime) {
     if (!EMovable::Update(deltaTime)) {

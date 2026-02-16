@@ -8,6 +8,7 @@ namespace World {
     class Camera: public Singleton<Camera> {
         public:
             void Follow(const EMovable* target);
+            void Unfollow();
             void Update(float dt);
 
             glm::vec2 GetPosition() const;
