@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.h"
+#include <glm/glm.hpp>
 #include <Renderer/Renderer.h>
 
 namespace World {
@@ -13,6 +14,7 @@ namespace World {
 
         void AddImpulse(float x, float y);
         void SetPosition(float x, float y);
+        glm::vec2 GetPosition() const;
 
     private:
         float velocityX = 0.0f;

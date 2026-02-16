@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace World 
+namespace World
 {
     class Entity {
         public:
