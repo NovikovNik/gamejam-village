@@ -3,7 +3,11 @@
 #include <Map/Map.h>
 #include <Renderer/Renderer.h>
 
+#include "Game/GameStates.h"
 #include "GameFeatures.h"
+#include "SDL3/SDL_events.h"
+#include "SDL3/SDL_keycode.h"
+#include "SDL3/SDL_oldnames.h"
 //#include "../Logger/Logger.h"
 //#include <SDL3/SDL_keycode.h>
 //#include <SDL3/SDL_mouse.h>
@@ -144,12 +148,47 @@ void Game::ProcessInput() {
                         break;
                     }
                     isRunning = false;
+                    break;
                 }
                 if(event.key.key == SDLK_TAB) {
                     GameFeatures::isDebug = !GameFeatures::isDebug;
                     Logger::Debug("Debug state changed to: " + std::to_string(GameFeatures::isDebug));
+                    break;
+                }
+                if (event.key.key == SDLK_W ||event.key.key == SDLK_UP) {
+                    GameStates::instance().w = true;
+                    break;
+                }
+                if (event.key.key == SDLK_S ||event.key.key == SDLK_DOWN) {
+                    GameStates::instance().s = true;
+                    break;
+                }
+                if (event.key.key == SDLK_D ||event.key.key == SDLK_RIGHT) {
+                    GameStates::instance().d = true;
+                    break;
+                }
+                if (event.key.key == SDLK_A ||event.key.key == SDLK_LEFT) {
+                    GameStates::instance().a = true;
+                    break;
                 }
                 break;
+            case SDL_EVENT_KEY_UP:
+                if (event.key.key == SDLK_W ||event.key.key == SDLK_UP) {
+                    GameStates::instance().w = false;
+                    break;
+                }
+                if (event.key.key == SDLK_S ||event.key.key == SDLK_DOWN) {
+                    GameStates::instance().s = false;
+                    break;
+                }
+                if (event.key.key == SDLK_D ||event.key.key == SDLK_RIGHT) {
+                    GameStates::instance().d = false;
+                    break;
+                }
+                if (event.key.key == SDLK_A ||event.key.key == SDLK_LEFT) {
+                    GameStates::instance().a = false;
+                    break;
+                }
             default:
                 break;
         }

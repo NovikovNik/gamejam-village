@@ -7,5 +7,9 @@ namespace World {
     public:
         bool Update(float deltaTime) override;
         void Render(float deltaTime) override;
+
+    private:
+        // Pixels per frame
+        float basicSpeed = 50.0f;
     };
 }

@@ -20,7 +20,7 @@ public:
             Logger::Err("SDL_Init failed: " + std::string(SDL_GetError()));
             return;
         }
-    
+
         if (!TTF_Init()) {
             Logger::Err("TTF_Init failed: " + std::string(SDL_GetError()));
             return;
@@ -63,7 +63,6 @@ public:
         if (texture == nullptr) {
             return;
         }
-     
         SDL_FRect rect;
         rect.x = x;
         rect.y = y;
