@@ -49,16 +49,6 @@ public:
             tiles->LoadTiles(tilesData);
         }
 
-        // Load player from JSON
-        if (jsonData.contains("player")) {
-            World::EPlayer* player = entitiesManager.SpawnEntity<World::EPlayer>();
-            float playerX = jsonData["player"]["x"].get<float>();
-            float playerY = jsonData["player"]["y"].get<float>();
-            player->LoadData("player"_nnTex, playerX, playerY, 64, 64);
-            World::Camera::instance().Follow(player);
-            // TODO: Set player position (may need to add SetPosition method to EMovable)
-        }
-
         // Load colliders from JSON
         World::EColliders* colliders = entitiesManager.SpawnEntity<World::EColliders>();
         if (jsonData.contains("colliders") && jsonData["colliders"].is_array()) {
@@ -97,6 +87,16 @@ public:
 
                 box->SetPosition(x, y);
             }
+        }
+
+        // Load player from JSON
+        if (jsonData.contains("player")) {
+            World::EPlayer* player = entitiesManager.SpawnEntity<World::EPlayer>();
+            float playerX = jsonData["player"]["x"].get<float>();
+            float playerY = jsonData["player"]["y"].get<float>();
+            player->LoadData("player"_nnTex, playerX, playerY, 64, 64);
+            World::Camera::instance().Follow(player);
+            // TODO: Set player position (may need to add SetPosition method to EMovable)
         }
 
         return true;

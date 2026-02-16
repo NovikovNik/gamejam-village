@@ -9,6 +9,8 @@ namespace World {
         bool Update(float deltaTime) override;
         void Render(float deltaTime) override;
 
+        void OnMoved();
+
     private:
         // Pixels per frame
 

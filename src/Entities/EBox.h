@@ -10,6 +10,8 @@ namespace World {
         bool Update(float deltaTime) override;
         void Render(float deltaTime) override;
 
+        void Move(float dirX, float dirY, float speed);
+
         [[nodiscard]] BoxName GetBoxName() const { return boxName; }
     private:
         BoxName boxName;
