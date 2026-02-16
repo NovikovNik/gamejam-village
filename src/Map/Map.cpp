@@ -2,6 +2,7 @@
 #include <Entities/EntitiesManager.h>
 #include <Utils/Singleton.h>
 #include <Entities/ETiles.h>
+#include <Entities/EPlayer.h>
 
 class Map : public Singleton<Map> {
 
@@ -17,6 +18,10 @@ public:
         tilesData.push_back({ 0, 256, 256, 256, "test-texture"_nnTex });
 
         tiles->LoadTiles(tilesData);
+
+
+        World::EPlayer* player = entitiesManager.SpawnEntity<World::EPlayer>();
+        player->LoadData("player"_nnTex, 64, 64);
         return true;
     }
 
