@@ -104,6 +104,10 @@ public:
         entitiesManager.Render(deltaTime);
     }
 
+    [[nodiscard]] const World::EntitiesContainer& GetEntitiesContainer() {
+        return entitiesManager.GetEntitiesContainer();
+    }
+
 private:
     World::EntitiesManager entitiesManager;
 };
@@ -120,5 +124,9 @@ namespace MapManager {
 
     void Render(float deltaTime) {
         Map::instance().Render(deltaTime);
+    }
+
+    [[nodiscard]] const World::EntitiesContainer& GetEntitiesContainer() {
+        return Map::instance().GetEntitiesContainer();
     }
 };
