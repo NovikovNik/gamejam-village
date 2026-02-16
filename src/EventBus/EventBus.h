@@ -5,6 +5,7 @@
 #include <typeindex>
 #include <map>
 #include <list>
+#include <functional>
 
 class IEventCallback {
     private:
@@ -30,7 +31,7 @@ class EventCallback: public IEventCallback {
 
     public:
         EventCallback(
-            TOwner* ownerInstance, 
+            TOwner* ownerInstance,
             CallbackFunction callbackFunction):
             ownerInstance(ownerInstance),
             callbackFunction(callbackFunction){};
