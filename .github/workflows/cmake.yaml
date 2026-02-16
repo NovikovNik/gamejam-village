@@ -67,10 +67,21 @@ jobs:
           cmake-version: "3.16.x"
 
       - name: Configure CMake Project
+        if: ${{ runner.os == 'Linux' }}
         run: cmake -B ${{runner.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
+      - name: Configure CMake Project (MSVC Win)
+        if: ${{ runner.os == 'Windows' }}
+        run: cmake -B ${{runner.workspace}}/build -G "Visual Studio 17 2022" -A x64
+
       - name: Build Project
+        if: ${{ runner.os == 'Linux' }}
         run: cmake --build ${{runner.workspace}}/build
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        run: cmake --build ${{ runner.workspace }}/build \
+          --config ${{ env.BUILD_TYPE }}
 
 env:
   BUILD_TYPE: Release
