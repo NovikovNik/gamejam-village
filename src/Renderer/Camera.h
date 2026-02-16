@@ -17,5 +17,6 @@ namespace World {
             const EMovable* followTarget = nullptr;
             float positionX;
             float positionY;
+            float smoothSpeed = 6.0f;
     };
 }

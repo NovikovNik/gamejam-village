@@ -12,6 +12,8 @@ namespace Renderer {
     void Destroy();
     void DrawSprite(TextureId textureId, float x, float y, float width, float height);
     void DrawSprite(TextureId textureId, float x, float y, float width, float height, double angle);
+    // Debug render
+    void DrawRectangle(float x, float y, float w, float h, float angle);
     void SetCameraPosition(float x, float y);
     void LoadAllTextures(const std::string& directory);
 

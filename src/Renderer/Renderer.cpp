@@ -2,7 +2,8 @@
 #include <Utils/Singleton.h>
 #include "../Logger/Logger.h"
 #include "Renderer/Camera.h"
-#include "../Game/Game.h"
+#include "SDL3/SDL_oldnames.h"
+#include "SDL3/SDL_rect.h"
 #include <glm/glm.hpp>
 
 #include <SDL3/SDL.h>
@@ -68,13 +69,16 @@ public:
         }
         SDL_FRect rect;
         glm::vec2 cameraPos = World::Camera::instance().GetPosition();
-        bool isCameraFollow = x == cameraPos.x && y == cameraPos.y;
 
-        rect.x = x - cameraPos.x - width / 2 + (isCameraFollow ? 0.5 * Game::windowWidth : 0);
-        rect.y = y - cameraPos.y - height / 2 + (isCameraFollow ? 0.5 * Game::windowHeight : 0);
+        // TODO: Обновлять это дело только при апдейте размера окна
+        int winW, winH;
+        SDL_GetCurrentRenderOutputSize(renderer, &winW, &winH);
+
+        rect.x = winW * 0.5f + (x - cameraPos.x) - width * 0.5f;
+        rect.y = winH * 0.5f + (y - cameraPos.y) - height * 0.5f;
         rect.w = width;
         rect.h = height;
-        
+
         SDL_RenderTexture(renderer, texture, NULL, &rect);
     }
 
@@ -83,15 +87,60 @@ public:
         if (texture == nullptr) {
             return;
         }
-     
+
+        int winW, winH;
+        SDL_GetCurrentRenderOutputSize(renderer, &winW, &winH);
+
         SDL_FRect rect;
-        rect.x = x - width / 2;
-        rect.y = y - height / 2;
+        glm::vec2 cameraPos = World::Camera::instance().GetPosition();
+
+        rect.x = winW * 0.5f + (x - cameraPos.x) - width * 0.5f;
+        rect.y = winH * 0.5f + (y - cameraPos.y) - height * 0.5f;
         rect.w = width;
         rect.h = height;
-    
+
         SDL_FPoint center = { width / 2.0f, height / 2.0f };
         SDL_RenderTextureRotated(renderer, texture, NULL, &rect, angle, &center, SDL_FLIP_NONE);
+    }
+
+    void DrawRectangle(float x, float y, float w, float h, float angle) {
+        glm::vec2 cam = World::Camera::instance().GetPosition();
+        int winW, winH;
+        SDL_GetCurrentRenderOutputSize(renderer, &winW, &winH);
+
+        glm::vec2 center(
+            winW * 0.5f + (x - cam.x),
+            winH * 0.5f + (y - cam.y)
+        );
+
+        float rad = glm::radians(angle);
+        float c = cos(rad);
+        float s = sin(rad);
+
+        glm::vec2 corners[4] = {
+            {-w * 0.5f, -h * 0.5f},
+            {  w * 0.5f, -h * 0.5f},
+            {  w * 0.5f,  h * 0.5f},
+            { -w * 0.5f,  h * 0.5f}
+        };
+
+        SDL_FPoint pts[5];
+
+        for (int i = 0; i < 4; ++i) {
+            glm::vec2 p(
+                corners[i].x * c - corners[i].y * s,
+                corners[i].x * s + corners[i].y * c
+            );
+
+            p += center;
+
+            pts[i] = { p.x, p.y };
+        }
+
+        pts[4] = pts[0];
+
+        SDL_SetRenderDrawColor(renderer, 244, 0, 180, 255);
+        SDL_RenderLines(renderer, pts, 5);
     }
 
     void BeginRender() {
@@ -133,6 +182,10 @@ void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float
 
 void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, double angle) {
     RenderManager::instance().DrawSprite(textureId, x, y, width, height, angle);
+}
+
+void Renderer::DrawRectangle(float x, float y, float w, float h, float angle = 0.0) {
+    RenderManager::instance().DrawRectangle(x, y, w, h, angle);
 }
 
 void Renderer::SetCameraPosition(float x, float y) {

@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "../Entities/EMovable.h"
+#include "../Entities/EntitiesContainer.h"
 #include "Logger/Logger.h"
 
 void World::Camera::Follow(const World::EMovable* target) {
@@ -19,15 +20,15 @@ void World::Camera::Unfollow() {
 }
 
 void World::Camera::Update(float dt) {
-    if (!followTarget) return;
-
-    if (!followTarget->IsValid()) {
+    if (!followTarget || !followTarget->IsValid()) {
         Unfollow();
         return;
     }
 
-    positionX = followTarget->GetPosition().x;
-    positionY = followTarget->GetPosition().y;
+    glm::vec2 target = followTarget->GetPosition();
+    float t = 1.0f - std::exp(-smoothSpeed * dt);
+    positionX += (target.x - positionX) * t;
+    positionY += (target.y - positionY) * t;
 }
 
 glm::vec2 World::Camera::GetPosition() const {

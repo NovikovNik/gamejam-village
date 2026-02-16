@@ -12,7 +12,8 @@ void World::EColliders::Render(float deltaTime) {
     }
     const auto textureId = Renderer::TextureId("collider"_nnTex);
     for (const auto& collider : colliders) {
-        Renderer::DrawSprite(textureId, collider.x, collider.y, collider.width, collider.height);
+        Renderer::DrawRectangle(collider.x, collider.y, collider.width, collider.height, 0.0);
+        // Renderer::DrawSprite(textureId, collider.x, collider.y, collider.width, collider.height);
     }
 }
 
