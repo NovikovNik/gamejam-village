@@ -22,8 +22,15 @@ void World::EMovable::AddImpulse(float x, float y) {
     velocityY += y;
 }
 
-void World::EMovable::LoadData(Renderer::TextureId texture, float width, float height) {
+void World::EMovable::SetPosition(float x, float y) {
+    positionX = x;
+    positionY = y;
+}
+
+void World::EMovable::LoadData(Renderer::TextureId texture, float x, float y, float width, float height) {
     this->texture = texture;
+    this->positionX = x;
+    this->positionY = y;
     this->width = width;
     this->height = height;
 }

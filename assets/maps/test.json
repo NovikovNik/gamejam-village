@@ -13,6 +13,29 @@
             "width": 256,
             "height": 256,
             "texture": "test-texture"
+        },
+        {
+            "x": 0,
+            "y": 256,
+            "width": 256,
+            "height": 256,
+            "texture": "test-texture"
+        }
+    ],
+    "player": {
+        "x": 100,
+        "y": 200
+    },
+    "player-spawners": [
+        {
+            "x": 100,
+            "y": 100,
+            "tag": "ps-1"
+        },
+        {
+            "x": 200,
+            "y": 200,
+            "tag": "ps-2"
         }
     ]
 }

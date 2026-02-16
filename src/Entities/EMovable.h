@@ -9,9 +9,10 @@ namespace World {
         bool Update(float deltaTime) override;
         void Render(float deltaTime) override;
 
-        void LoadData(Renderer::TextureId texture, float width, float height);
+        void LoadData(Renderer::TextureId texture, float x, float y, float width, float height);
 
         void AddImpulse(float x, float y);
+        void SetPosition(float x, float y);
 
     private:
         float velocityX = 0.0f;
