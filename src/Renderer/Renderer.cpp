@@ -65,8 +65,8 @@ public:
         }
      
         SDL_FRect rect;
-        rect.x = x;
-        rect.y = y;
+        rect.x = x - width / 2;
+        rect.y = y - height / 2;
         rect.w = width;
         rect.h = height;
         SDL_RenderTexture(renderer, texture, NULL, &rect);
