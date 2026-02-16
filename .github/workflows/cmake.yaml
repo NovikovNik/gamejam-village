@@ -64,7 +64,7 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: "3.16.x"
+          cmake-version: "3.29.3"
 
       - name: Configure CMake Project
         if: ${{ runner.os == 'Linux' }}
@@ -72,7 +72,7 @@ jobs:
 
       - name: Configure CMake Project (MSVC Win)
         if: ${{ runner.os == 'Windows' }}
-        run: cmake -B ${{runner.workspace}}/build -G "Visual Studio 16 2019" -A x64
+        run: cmake -B ${{runner.workspace}}/build -G "Visual Studio 17 2022" -A x64
 
       - name: Build Project
         if: ${{ runner.os == 'Linux' }}
