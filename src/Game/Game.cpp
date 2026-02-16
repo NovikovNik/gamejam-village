@@ -5,6 +5,7 @@
 
 #include "Game/GameStates.h"
 #include "GameFeatures.h"
+#include "../Events/WindowResizedEvent.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keycode.h"
 #include "SDL3/SDL_oldnames.h"
@@ -126,6 +127,9 @@ void Game::Destroy() {
 }
 
 void Game::ProcessInput() {
+    // Некрасиво, но нужно подписать Renderer на события до старта событий собственно
+    Renderer::SubscribeToEvents(eventBus);
+
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
         // ImGui_ImplSDL2_ProcessEvent(&event);
@@ -140,6 +144,10 @@ void Game::ProcessInput() {
         switch(event.type) {
             case SDL_EVENT_QUIT:
                 isRunning = false;
+                break;
+            case SDL_EVENT_WINDOW_RESIZED:
+                Logger::Debug("Window resized");
+                eventBus->EmitEvent<WindowResizedEvent>();
                 break;
             case SDL_EVENT_KEY_DOWN:
                 if(event.key.key == SDLK_ESCAPE) {
@@ -205,6 +213,7 @@ void Game::Update() {
     millisecPreviousFrame = SDL_GetTicks();
 
     MapManager::Update(deltaTime);
+
     // Reset all event handlers
     eventBus->Reset();
 }

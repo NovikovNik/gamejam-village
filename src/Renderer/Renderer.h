@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "../EventBus/EventBus.h"
 
 #include <libs/CPPNanoString/includes/CPPNanoString.h>
 
@@ -10,6 +11,7 @@ namespace Renderer {
 
     void Initialize(int32_t windowWidth, int32_t windowHeight);
     void Destroy();
+    void SubscribeToEvents(std::unique_ptr<EventBus>& eventBus);
     void DrawSprite(TextureId textureId, float x, float y, float width, float height);
     void DrawSprite(TextureId textureId, float x, float y, float width, float height, double angle);
     // Debug render

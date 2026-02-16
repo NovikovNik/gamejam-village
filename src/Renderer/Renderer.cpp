@@ -6,6 +6,8 @@
 #include "SDL3/SDL_rect.h"
 #include <glm/glm.hpp>
 
+#include "../Events/WindowResizedEvent.h"
+
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -35,6 +37,20 @@ public:
             return;
         }
         SDL_SetRenderLogicalPresentation(renderer, windowWidth, windowHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
+        UpdateWindowOutputSize();
+    }
+
+    void SubscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
+        eventBus->SubscribeToEvent<WindowResizedEvent>(this, &RenderManager::OnWindowSizeChanged);
+    }
+
+    void OnWindowSizeChanged(WindowResizedEvent&) {
+        UpdateWindowOutputSize();
+    }
+
+    void UpdateWindowOutputSize() {
+        SDL_GetCurrentRenderOutputSize(renderer, &renderOutputSizeW, &renderOutputSizeH);
+        Logger::Log(std::to_string(renderOutputSizeW) + " | " + std::to_string(renderOutputSizeH));
     }
 
     void LoadTexture(const std::filesystem::path& texturePath) {
@@ -70,12 +86,8 @@ public:
         SDL_FRect rect;
         glm::vec2 cameraPos = World::Camera::instance().GetPosition();
 
-        // TODO: Обновлять это дело только при апдейте размера окна
-        int winW, winH;
-        SDL_GetCurrentRenderOutputSize(renderer, &winW, &winH);
-
-        rect.x = winW * 0.5f + (x - cameraPos.x) - width * 0.5f;
-        rect.y = winH * 0.5f + (y - cameraPos.y) - height * 0.5f;
+        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x) - width * 0.5f;
+        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y) - height * 0.5f;
         rect.w = width;
         rect.h = height;
 
@@ -88,14 +100,11 @@ public:
             return;
         }
 
-        int winW, winH;
-        SDL_GetCurrentRenderOutputSize(renderer, &winW, &winH);
-
         SDL_FRect rect;
         glm::vec2 cameraPos = World::Camera::instance().GetPosition();
 
-        rect.x = winW * 0.5f + (x - cameraPos.x) - width * 0.5f;
-        rect.y = winH * 0.5f + (y - cameraPos.y) - height * 0.5f;
+        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x) - width * 0.5f;
+        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y) - height * 0.5f;
         rect.w = width;
         rect.h = height;
 
@@ -105,12 +114,10 @@ public:
 
     void DrawRectangle(float x, float y, float w, float h, float angle) {
         glm::vec2 cam = World::Camera::instance().GetPosition();
-        int winW, winH;
-        SDL_GetCurrentRenderOutputSize(renderer, &winW, &winH);
 
         glm::vec2 center(
-            winW * 0.5f + (x - cam.x),
-            winH * 0.5f + (y - cam.y)
+            renderOutputSizeW * 0.5f + (x - cam.x),
+            renderOutputSizeH * 0.5f + (y - cam.y)
         );
 
         float rad = glm::radians(angle);
@@ -166,6 +173,8 @@ private:
     SDL_Window* window {};
     std::map<Renderer::TextureId, SDL_Texture*> textures;
 
+    int renderOutputSizeW, renderOutputSizeH;
+
 };
 
 void Renderer::Initialize(int32_t windowWidth, int32_t windowHeight) {
@@ -174,6 +183,10 @@ void Renderer::Initialize(int32_t windowWidth, int32_t windowHeight) {
 
 void Renderer::Destroy() {
     RenderManager::instance().Destroy();
+}
+
+void Renderer::SubscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
+    RenderManager::instance().SubscribeToEvents(eventBus);
 }
 
 void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height) {
