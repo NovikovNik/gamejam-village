@@ -1,0 +1,86 @@
+name: CMake Build (Linux & Windows)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install SDL dependencies
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            git \
+            make \
+            pkg-config \
+            cmake \
+            ninja-build \
+            gnome-desktop-testing \
+            libasound2-dev \
+            libpulse-dev \
+            libaudio-dev \
+            libfribidi-dev \
+            libjack-dev \
+            libsndio-dev \
+            libx11-dev \
+            libxext-dev \
+            libxrandr-dev \
+            libxcursor-dev \
+            libxfixes-dev \
+            libxi-dev \
+            libxss-dev \
+            libxtst-dev \
+            libxkbcommon-dev \
+            libdrm-dev \
+            libgbm-dev \
+            libgl1-mesa-dev \
+            libgles2-mesa-dev \
+            libegl1-mesa-dev \
+            libdbus-1-dev \
+            libibus-1.0-dev \
+            libudev-dev \
+            libthai-dev \
+            libpipewire-0.3-dev \
+            libwayland-dev \
+            libdecor-0-dev \
+            liburing-dev
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "3.29.3"
+
+      - name: Configure CMake Project
+        if: ${{ runner.os == 'Linux' }}
+        run: cmake -B ${{runner.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Configure CMake Project (MSVC Win)
+        if: ${{ runner.os == 'Windows' }}
+        run: cmake -B ${{runner.workspace}}/build -G "Visual Studio 17 2022" -A x64
+
+      - name: Build Project
+        if: ${{ runner.os == 'Linux' }}
+        run: cmake --build ${{runner.workspace}}/build
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        run: cmake --build ${{ runner.workspace }}/build --config ${{ env.BUILD_TYPE }}
+
+env:
+  BUILD_TYPE: Release
