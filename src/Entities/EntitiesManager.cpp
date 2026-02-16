@@ -2,21 +2,18 @@
 #include <algorithm>
 
 void World::EntitiesManager::Update(float deltaTime) {
-    for (auto& entity : entities) {
+    entities.ForEachEntity([&](Entity* entity) {
         if (!entity->Update(deltaTime)) {
             entity->OnDestroy();
         }
-    }
-
-    entities.erase(std::remove_if(entities.begin(), entities.end(), [](const std::unique_ptr<Entity>& entity) {
-        return !entity->IsValid();
-    }), entities.end());
+    });
+    entities.RemoveInvalidEntities();
 }
 
 void World::EntitiesManager::Render(float deltaTime) {
-    for (auto& entity : entities) {
+    entities.ForEachEntity([&](Entity* entity) {
         if (entity->IsValid()) {
             entity->Render(deltaTime);
         }
-    }
+    });
 }
