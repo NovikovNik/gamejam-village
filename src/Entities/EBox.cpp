@@ -12,7 +12,13 @@ bool World::EBox::Update(float deltaTime) {
         return false;
     }
 
-    const auto pit = MapManager::GetEntitiesContainer().FindEntity<World::EPit>();
+    std::vector<World::EPit*> pits;
+    MapManager::GetEntitiesContainer().FindEntities(pits);
+    for (const auto& pit : pits) {
+        if (pit->IsBoxNameMatch(boxName)) {
+            return true;
+        }
+    }
     
     return true;
 }

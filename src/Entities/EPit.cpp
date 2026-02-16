@@ -15,3 +15,7 @@ bool World::EPit::Update(float deltaTime) {
 void World::EPit::Render(float deltaTime) {
     EMovable::Render(deltaTime);
 }
+
+bool World::EPit::IsBoxNameMatch(BoxName boxName) const {
+    return matchBoxName == boxName;
+}

@@ -78,7 +78,8 @@ public:
         // Load pits from JSON
         if (jsonData.contains("pits") && jsonData["pits"].is_array()) {
             for (const auto& pitJson : jsonData["pits"]) {
-                World::EPit* pit = entitiesManager.SpawnEntity<World::EPit>();
+                const std::string matchBoxName = pitJson["matchBoxName"].get<std::string>();
+                World::EPit* pit = entitiesManager.SpawnEntity<World::EPit>(make_nnBoxName(matchBoxName) );
                 const float x = pitJson["x"].get<float>();
                 const float y = pitJson["y"].get<float>();
 
@@ -89,7 +90,8 @@ public:
         // Load boxes from JSON
         if (jsonData.contains("boxes") && jsonData["boxes"].is_array()) {
             for (const auto& boxJson : jsonData["boxes"]) {
-                World::EBox* box = entitiesManager.SpawnEntity<World::EBox>();
+                const std::string boxName = boxJson["name"].get<std::string>();
+                World::EBox* box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(boxName));
                 const float x = boxJson["x"].get<float>();
                 const float y = boxJson["y"].get<float>();
 

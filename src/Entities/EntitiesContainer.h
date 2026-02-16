@@ -9,28 +9,16 @@
 namespace World {
     class EntitiesContainer {
     public:
-        void AddEntity(std::unique_ptr<Entity>&& entity) {
-            entities.push_back(std::move(entity));
-        }
+        void AddEntity(std::unique_ptr<Entity>&& entity);
+        void RemoveInvalidEntities();
+        void Clear();
 
-        void RemoveInvalidEntities() {
-            entities.erase(std::remove_if(entities.begin(), entities.end(), [](const std::unique_ptr<Entity>& e) {
-                return !e->IsValid();
-            }), entities.end());
-        }
-
-        void Clear() {
-            entities.clear();
-        }
+        [[nodiscard]] size_t GetEntityCount() const;
 
         void ForEachEntity(auto&& callback) const {
             for (auto& entity : entities) {
                 callback(entity.get());
             }
-        }
-
-        [[nodiscard]] size_t GetEntityCount() const {
-            return entities.size();
         }
 
         template <typename T>
@@ -48,6 +36,23 @@ namespace World {
                 }
             }
             return nullptr;
+        }
+        
+
+        template <typename T>
+        void FindEntities(std::vector<T*>& entitiesFound) const {
+            for (auto& entity : entities) {
+                if (!entity) {
+                    continue;
+                }
+                if (!entity->IsValid()) {
+                    continue;
+                }
+                auto entityPtr = dynamic_cast<T*>(entity.get());
+                if (entityPtr != nullptr) {
+                    entitiesFound.push_back(entityPtr);
+                }
+            }
         }
 
     private:

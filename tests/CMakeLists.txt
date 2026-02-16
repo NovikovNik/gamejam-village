@@ -14,6 +14,7 @@ file(GLOB_RECURSE TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(TEST_ENGINE_SOURCES
     ${CMAKE_SOURCE_DIR}/src/Entities/Entity.cpp
     ${CMAKE_SOURCE_DIR}/src/Entities/EntitiesManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/Entities/EntitiesContainer.cpp
 )
 
 add_executable(game_engine_tests ${TEST_SOURCES} ${TEST_ENGINE_SOURCES})
