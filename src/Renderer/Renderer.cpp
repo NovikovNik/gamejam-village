@@ -74,7 +74,24 @@ public:
         rect.y = y - cameraPos.y - height / 2 + (isCameraFollow ? 0.5 * Game::windowHeight : 0);
         rect.w = width;
         rect.h = height;
+        
         SDL_RenderTexture(renderer, texture, NULL, &rect);
+    }
+
+    void DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, double angle) {
+        SDL_Texture* texture = textures[textureId];
+        if (texture == nullptr) {
+            return;
+        }
+     
+        SDL_FRect rect;
+        rect.x = x - width / 2;
+        rect.y = y - height / 2;
+        rect.w = width;
+        rect.h = height;
+    
+        SDL_FPoint center = { width / 2.0f, height / 2.0f };
+        SDL_RenderTextureRotated(renderer, texture, NULL, &rect, angle, &center, SDL_FLIP_NONE);
     }
 
     void BeginRender() {
@@ -112,6 +129,10 @@ void Renderer::Destroy() {
 
 void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height) {
     RenderManager::instance().DrawSprite(textureId, x, y, width, height);
+}
+
+void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, double angle) {
+    RenderManager::instance().DrawSprite(textureId, x, y, width, height, angle);
 }
 
 void Renderer::SetCameraPosition(float x, float y) {

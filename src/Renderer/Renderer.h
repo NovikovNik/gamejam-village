@@ -11,6 +11,7 @@ namespace Renderer {
     void Initialize(int32_t windowWidth, int32_t windowHeight);
     void Destroy();
     void DrawSprite(TextureId textureId, float x, float y, float width, float height);
+    void DrawSprite(TextureId textureId, float x, float y, float width, float height, double angle);
     void SetCameraPosition(float x, float y);
     void LoadAllTextures(const std::string& directory);
 
