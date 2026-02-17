@@ -6,6 +6,10 @@
 #include <Entities/EBox.h>
 #include <Entities/EInteractable.h>
 
+World::EPlayer::EPlayer(const std::string& name, float x, float y) : name(name) {
+    LoadData("player"_nnTex, x, y, 64, 64);
+}
+
 bool World::EPlayer::Update(float deltaTime) {
     if (!EMovable::Update(deltaTime)) {
         return false;

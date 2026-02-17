@@ -114,16 +114,16 @@ public:
             }
         }
 
-        // Load player from JSON
-        if (jsonData.contains("player")) {
-            World::EPlayer* player = entitiesManager.SpawnEntity<World::EPlayer>();
-            float playerX = jsonData["player"]["x"].get<float>();
-            float playerY = jsonData["player"]["y"].get<float>();
-            player->LoadData("player"_nnTex, playerX, playerY, 64, 64);
-            World::Camera::instance().Follow(player);
-            // TODO: Set player position (may need to add SetPosition method to EMovable)
+        // Load players from JSON
+        if (jsonData.contains("players") && jsonData["players"].is_array()) {
+            for (const auto& playerJson : jsonData["players"]) {
+                const std::string playerName = playerJson["name"].get<std::string>();
+                const float x = playerJson["x"].get<float>();
+                const float y = playerJson["y"].get<float>();
+                World::EPlayer* player = entitiesManager.SpawnEntity<World::EPlayer>(playerName, x, y);
+                World::Camera::instance().Follow(player);
+            }
         }
-
         return true;
     }
 
