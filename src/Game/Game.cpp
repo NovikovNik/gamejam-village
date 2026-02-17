@@ -37,6 +37,7 @@ void Game::Initialize() {
 
     Renderer::Initialize(windowWidth, windowHeight);
     Renderer::LoadAllTextures("assets/textures/");
+    Renderer::LoadAllFonts("assets/fonts/");
     bool isLoaded = MapManager::LoadMap("assets/maps/world-1.json");
     if (!isLoaded) {
         Logger::Err("Failed to load map");
@@ -227,7 +228,9 @@ void Game::Render() {
     
     // Render game content
     MapManager::Render(deltaTime);
-    
+    std::string testText = "It's a dangerous business, Frodo, going out your door. You step onto the road, and if you don't keep your feet, there's no knowing where you might be swept off to.";
+    Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), testText, 20, 500, 18, nullptr, 790);
+
 #if ENABLE_CHEATS
     Cheats::UpdateAndRender();
 #endif

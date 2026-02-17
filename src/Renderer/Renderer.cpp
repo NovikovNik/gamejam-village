@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <set>
 #include <filesystem>
+#include <utility>
 
 class RenderManager : public Singleton<RenderManager> {
 public:
@@ -88,6 +89,43 @@ public:
                LoadTexture(entry.path());
             }
         }
+    }
+
+    void LoadFont(const std::filesystem::path& fontPath) {
+        std::string path = fontPath.string();
+        std::string id = fontPath.filename().stem().string();
+        fontPaths.insert({ make_nnTex(id), path });
+    }
+
+    void UnloadFonts() {
+        for (const auto& [key, font] : fontCache) {
+            TTF_CloseFont(font);
+        }
+        fontCache.clear();
+        fontPaths.clear();
+    }
+
+    void LoadAllFonts(const std::string& directory) {
+        UnloadFonts();
+        for (const auto& entry : std::filesystem::directory_iterator(directory)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".ttf") {
+                LoadFont(entry.path());
+            }
+        }
+    }
+
+    TTF_Font* GetOrCreateFont(Renderer::TextId fontId, int ptsize) {
+        auto it = fontPaths.find(fontId);
+        if (it == fontPaths.end()) return nullptr;
+
+        auto key = std::make_pair(it->second, ptsize);
+        auto cached = fontCache.find(key);
+        if (cached != fontCache.end()) return cached->second;
+
+        TTF_Font* font = TTF_OpenFont(it->second.c_str(), static_cast<float>(ptsize));
+        if (!font) return nullptr;
+        fontCache[key] = font;
+        return font;
     }
 
     void DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height) {
@@ -160,6 +198,57 @@ public:
 
         SDL_SetRenderDrawColor(renderer, 244, 0, 180, 255);
         SDL_RenderLines(renderer, pts, 5);
+    }
+
+    void DrawText(Renderer::TextId fontId, const std::string& text, float x, float y, int fontSize, const SDL_Color* color, int maxLineWidth) {
+        TTF_Font* font = GetOrCreateFont(fontId, fontSize);
+        if (!font || text.empty()) return;
+
+        SDL_Color fg = color ? *color : SDL_Color{255, 255, 255, 255};
+        SDL_Surface* surface = maxLineWidth > 0
+            ? TTF_RenderText_Blended_Wrapped(font, text.c_str(), 0, fg, maxLineWidth)
+            : TTF_RenderText_Blended(font, text.c_str(), 0, fg);
+        if (!surface) return;
+
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+        int w = surface->w, h = surface->h;
+        SDL_DestroySurface(surface);
+        if (!texture) return;
+
+        glm::vec2 cameraPos = World::Camera::instance().GetPosition();
+        SDL_FRect rect;
+        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x);
+        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y);
+        rect.w = static_cast<float>(w);
+        rect.h = static_cast<float>(h);
+
+        SDL_RenderTexture(renderer, texture, NULL, &rect);
+        SDL_DestroyTexture(texture);
+    }
+
+    void DrawTextScreen(Renderer::TextId fontId, const std::string& text, float screenX, float screenY, int fontSize, const SDL_Color* color, int maxLineWidth) {
+        TTF_Font* font = GetOrCreateFont(fontId, fontSize);
+        if (!font || text.empty()) return;
+
+        SDL_Color fg = color ? *color : SDL_Color{255, 255, 255, 255};
+        SDL_Surface* surface = maxLineWidth > 0
+            ? TTF_RenderText_Blended_Wrapped(font, text.c_str(), 0, fg, maxLineWidth)
+            : TTF_RenderText_Blended(font, text.c_str(), 0, fg);
+        if (!surface) return;
+
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+        int w = surface->w, h = surface->h;
+        SDL_DestroySurface(surface);
+        if (!texture) return;
+
+        SDL_FRect rect;
+        rect.x = screenX;
+        rect.y = screenY;
+        rect.w = static_cast<float>(w);
+        rect.h = static_cast<float>(h);
+
+        SDL_RenderTexture(renderer, texture, NULL, &rect);
+        SDL_DestroyTexture(texture);
     }
 
     void BeginRender() {
@@ -242,6 +331,8 @@ private:
     SDL_Renderer* renderer {};
     SDL_Window* window {};
     std::map<Renderer::TextureId, SDL_Texture*> textures;
+    std::map<Renderer::TextId, std::string> fontPaths;
+    std::map<std::pair<std::string, int>, TTF_Font*> fontCache;
 
     int renderOutputSizeW, renderOutputSizeH;
 
@@ -277,6 +368,18 @@ void Renderer::SetCameraPosition(float x, float y) {
 
 void Renderer::LoadAllTextures(const std::string& directory) {
     RenderManager::instance().LoadAllTextures(directory);
+}
+
+void Renderer::LoadAllFonts(const std::string& directory) {
+    RenderManager::instance().LoadAllFonts(directory);
+}
+
+void Renderer::DrawText(Renderer::TextId fontId, const std::string& text, float x, float y, int fontSize, const SDL_Color* color, int maxLineWidth) {
+    RenderManager::instance().DrawText(fontId, text, x, y, fontSize, color, maxLineWidth);
+}
+
+void Renderer::DrawTextScreen(Renderer::TextId fontId, const std::string& text, float screenX, float screenY, int fontSize, const SDL_Color* color, int maxLineWidth) {
+    RenderManager::instance().DrawTextScreen(fontId, text, screenX, screenY, fontSize, color, maxLineWidth);
 }
 
 void Renderer::BeginRender() {
