@@ -9,7 +9,7 @@ class FileSystem : public Singleton<FileSystem>
 public:
     void OpenSystemExplorer(const std::filesystem::path& relativePath) {
         auto fullPath = executableDirPath / relativePath;
-        Logger::Log(fullPath);
+        Logger::Log(fullPath.string());
 
         if (!std::filesystem::exists(fullPath))
             return;
