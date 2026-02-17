@@ -4,7 +4,7 @@
 #include <imgui/imgui.h>
 #include <Game/GameFeatures.h>
 #include <Map/Map.h>
-#include <utils/Singleton.h>
+#include <Utils/Singleton.h>
 #include <string>
 #include <format>
 #include <filesystem>
