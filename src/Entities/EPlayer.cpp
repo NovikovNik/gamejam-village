@@ -3,6 +3,7 @@
 #include "../Game/GameFeatures.h"
 #include <EventBus/EventBus.h>
 #include "Entities/EColliders.h"
+#include "Entities/EPit.h"
 #include <Map/Map.h>
 #include <Entities/EBox.h>
 #include <Entities/EInteractable.h>
@@ -25,6 +26,12 @@ bool World::EPlayer::Update(float deltaTime) {
 
     std::vector<World::EBox*> boxes;
     MapManager::GetEntitiesContainer().FindEntities(boxes);
+
+    std::vector<World::EInteractable*> interactibles;
+    MapManager::GetEntitiesContainer().FindEntities(interactibles);
+
+    std::vector<World::EPit*> pits;
+    MapManager::GetEntitiesContainer().FindEntities(pits);
 
     glm::vec2 direction(0.0f);
 
@@ -65,6 +72,26 @@ bool World::EPlayer::Update(float deltaTime) {
                      }
                  }
              }
+             for (auto* interactible : interactibles) {
+                 if (!interactible->IsValid()) continue;
+                 float nl = interactible->GetPosition().x - interactible->GetWidth() * 0.5f;
+                 float nr = interactible->GetPosition().x + interactible->GetWidth() * 0.5f;
+                 float nt = interactible->GetPosition().y - interactible->GetHeight() * 0.5f;
+                 float nb = interactible->GetPosition().y + interactible->GetHeight() * 0.5f;
+                 if (pl < nr && pr > nl && pt < nb && pb > nt) {
+                     return true;
+                 }
+                }
+            for (auto* pit : pits) {
+                if (!pit->IsValid()) continue;
+                float nl = pit->GetPosition().x - pit->GetWidth() * 0.5f;
+                float nr = pit->GetPosition().x + pit->GetWidth() * 0.5f;
+                float nt = pit->GetPosition().y - pit->GetHeight() * 0.5f;
+                float nb = pit->GetPosition().y + pit->GetHeight() * 0.5f;
+                if (pl < nr && pr > nl && pt < nb && pb > nt) {
+                    return true;
+                }
+            }
              for (auto* box : boxes) {
                  if (!box->IsValid()) continue;
                  float bl = box->GetPosition().x - box->GetWidth() * 0.5f;
@@ -163,9 +190,10 @@ World::EInteractable* World::EPlayer::TryInteract() const {
     MapManager::GetEntitiesContainer().FindEntities(interactables);
     for (const auto& interactable : interactables) {
         const auto interactablePosition = interactable->GetPosition();
+        const auto interactableWidthWithOffset = interactable->GetWidth() + 20.0f; // 20.0f то оффсет велью вывереный на глаз
         const auto playerPosition = GetPosition();
         const auto distance = glm::distance(interactablePosition, playerPosition);
-        if (distance < 64.0f) {
+        if (distance < interactableWidthWithOffset) {
             return interactable;
         }
     }

@@ -20,7 +20,6 @@ void World::EBox::Render(float deltaTime) {
     EMovable::Render(deltaTime);
 }
 
-
 bool World::EBox::CanMove(float dirX, float dirY, float speed, float deltaTime) const {
     glm::vec2 pos = GetPosition();
     float moveX = dirX * speed * deltaTime;
@@ -90,11 +89,13 @@ void World::EBox::Move(float dirX, float dirY, float speed, float deltaTime) {
     std::vector<World::EPit*> pits;
     MapManager::GetEntitiesContainer().FindEntities(pits);
     for (const auto& pit : pits) {
+        if (!pit->IsValid()) continue;
         if (pit->IsBoxNameMatch(boxName)) {
             const auto pitPosition = pit->GetPosition();
+            const auto pitWidth = pit->GetWidth();
             const auto boxPosition = GetPosition();
             const auto distance = glm::distance(pitPosition, boxPosition);
-            if (distance < 8) {
+            if (distance < pitWidth * 0.7f) { // 0.7f это коэффициент вывереный на глаз
                 pit->Destroy();
                 Destroy();
             }

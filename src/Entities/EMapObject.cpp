@@ -1,4 +1,5 @@
 #include "EMapObject.h"
+#include <Game/GameFeatures.h>
 
 bool World::EMapObject::Update(float deltaTime) {
     return Entity::Update(deltaTime);
@@ -6,6 +7,9 @@ bool World::EMapObject::Update(float deltaTime) {
 
 void World::EMapObject::Render(float deltaTime) {
     Renderer::DrawSprite(texture, positionX, positionY, width, height);
+    if (GameFeatures::isDebug) {
+        Renderer::DrawRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), 0.0);
+    }
 }
 
 void World::EMapObject::SetPosition(float x, float y) {
