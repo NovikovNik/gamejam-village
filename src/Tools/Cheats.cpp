@@ -7,6 +7,8 @@
 #include <utils/Singleton.h>
 #include <string>
 #include <format>
+#include <filesystem>
+#include <vector>
 
 class CheatsManger : public Singleton<CheatsManger>
 {
@@ -25,10 +27,28 @@ public:
         ImGui::Text("Press ~ to close");
         ImGui::Separator();
         
-        ImGui::InputText("Map Name", mapName, sizeof(mapName));
-        if (ImGui::Button("Load Map")) {
-            const auto fullPath = std::format("assets/maps/{}.json", mapName);
-            MapManager::LoadMap(fullPath);
+        RefreshMapListIfNeeded();
+        if (!mapNames.empty()) {
+            const char* preview = selectedMapIndex >= 0 && selectedMapIndex < static_cast<int>(mapNames.size())
+                ? mapNames[selectedMapIndex].c_str() : "Select level...";
+            if (ImGui::BeginCombo("Level", preview)) {
+                for (int i = 0; i < static_cast<int>(mapNames.size()); ++i) {
+                    const bool isSelected = (selectedMapIndex == i);
+                    if (ImGui::Selectable(mapNames[i].c_str(), isSelected)) {
+                        selectedMapIndex = i;
+                    }
+                    if (isSelected) {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            if (ImGui::Button("Load Map") && selectedMapIndex >= 0 && selectedMapIndex < static_cast<int>(mapNames.size())) {
+                const auto fullPath = std::format("assets/maps/{}.json", mapNames[selectedMapIndex]);
+                MapManager::LoadMap(fullPath);
+            }
+        } else {
+            ImGui::Text("No levels found in assets/maps/");
         }
         
         // Debug info
@@ -45,6 +65,23 @@ public:
     
     void ToggleCheats() {
         isCheatsActive = !isCheatsActive;
+        mapListDirty = true;
+    }
+
+    void RefreshMapListIfNeeded() {
+        if (!mapListDirty) return;
+        mapListDirty = false;
+        mapNames.clear();
+        std::string mapsPath = "assets/maps";
+        if (!std::filesystem::exists(mapsPath)) return;
+        for (const auto& entry : std::filesystem::directory_iterator(mapsPath)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".json") {
+                mapNames.push_back(entry.path().stem().string());
+            }
+        }
+        if (selectedMapIndex >= static_cast<int>(mapNames.size())) {
+            selectedMapIndex = mapNames.empty() ? -1 : 0;
+        }
     }
     
     bool AreCheatsActive() const {
@@ -52,7 +89,9 @@ public:
     }
     
 private:
-    char mapName[64] = {};
+    std::vector<std::string> mapNames;
+    int selectedMapIndex = -1;
+    bool mapListDirty = true;
     bool isCheatsActive = false;
 };
 
