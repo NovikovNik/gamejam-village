@@ -49,8 +49,8 @@ public:
         InitializeImGui();
     }
 
-    void SubscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
-        eventBus->SubscribeToEvent<WindowResizedEvent>(this, &RenderManager::OnWindowSizeChanged);
+    void SubscribeToEvents() {
+        EventBus::instance().SubscribeToEvent<WindowResizedEvent>(this, &RenderManager::OnWindowSizeChanged);
     }
 
     void OnWindowSizeChanged(WindowResizedEvent&) {
@@ -240,8 +240,8 @@ void Renderer::Destroy() {
     RenderManager::instance().Destroy();
 }
 
-void Renderer::SubscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
-    RenderManager::instance().SubscribeToEvents(eventBus);
+void Renderer::SubscribeToEvents() {
+    RenderManager::instance().SubscribeToEvents();
 }
 
 void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height) {

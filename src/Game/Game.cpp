@@ -6,9 +6,11 @@
 
 #include "Game/GameStates.h"
 #include "GameFeatures.h"
+#include <EventBus/EventsQueue.h>
 #include "../Events/WindowResizedEvent.h"
 #include "../Events/WindowFocusedEvent.h"
 #include "../Events/WindowUnfocusedEvent.h"
+#include "../Events/InterectButtonPressedEvent.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keycode.h"
 #include "SDL3/SDL_oldnames.h"
@@ -24,7 +26,6 @@ int Game::windowWidth = 800;
 // int Game::windowLogicWidth;
 
 Game::Game() {
-    eventBus = std::make_unique<EventBus>();
     Logger::Log("Game constructor called");
 }
 
@@ -65,7 +66,7 @@ void Game::Destroy() {
 
 void Game::ProcessInput() {
     // Некрасиво, но нужно подписать Renderer на события до старта событий собственно
-    Renderer::SubscribeToEvents(eventBus);
+    Renderer::SubscribeToEvents();
 
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
@@ -78,15 +79,15 @@ void Game::ProcessInput() {
                 break;
             case SDL_EVENT_WINDOW_RESIZED:
                 Logger::Debug("[Game/SDL] Window resized");
-                eventBus->EmitEvent<WindowResizedEvent>();
+                EventBus::instance().EmitEvent<WindowResizedEvent>();
                 break;
             case SDL_EVENT_WINDOW_FOCUS_GAINED:
                 Logger::Debug("[Game/SDL] Window focus gained");
-                eventBus->EmitEvent<WindowFocusedEvent>();
+                EventBus::instance().EmitEvent<WindowFocusedEvent>();
                 break;
             case SDL_EVENT_WINDOW_FOCUS_LOST:
                 Logger::Debug("[Game/SDL] Window focus lost");
-                eventBus->EmitEvent<WindowUnfocusedEvent>();
+                EventBus::instance().EmitEvent<WindowUnfocusedEvent>();
                 break;
             case SDL_EVENT_KEY_DOWN:
                 // Handle tilde key to toggle cheats (always processed)
@@ -123,6 +124,10 @@ void Game::ProcessInput() {
                 if (event.key.key == SDLK_R) {
                     // RELOAD LEVEL!
                     MapManager::ReloadMap();
+                    break;
+                }
+                if (event.key.key == SDLK_F) {
+                    EventsQueue::instance().Push(InterectButtonPressedEvent{});
                     break;
                 }
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP) {
@@ -206,8 +211,11 @@ void Game::Update() {
 
     MapManager::Update(deltaTime);
 
+    // Dispatch all events in the queue
+    EventsQueue::instance().Dispatch();
+
     // Reset all event handlers
-    eventBus->Reset();
+    EventBus::instance().Reset();
 }
 
 void Game::Render() {

@@ -1,16 +1,21 @@
 #include "EPlayer.h"
 #include "../Game/GameStates.h"
 #include "../Game/GameFeatures.h"
+#include <EventBus/EventBus.h>
 #include "Entities/EColliders.h"
 #include <Map/Map.h>
 #include <Entities/EBox.h>
 #include <Entities/EInteractable.h>
+#include <Logger/Logger.h>
+#include <format>
 
 World::EPlayer::EPlayer(const std::string& name, float x, float y) : name(name) {
     LoadData("player"_nnTex, x, y, 64, 64);
 }
 
 bool World::EPlayer::Update(float deltaTime) {
+    EventBus::instance().SubscribeToEvent<InterectButtonPressedEvent>(this, &EPlayer::OnInterectButtonPressed);
+    
     if (!EMovable::Update(deltaTime)) {
         return false;
     }
@@ -86,8 +91,33 @@ bool World::EPlayer::Update(float deltaTime) {
          }
      }
 
+     EInteractable* interactable = TryInteract();
+     if (interactable) {
+        bShowTooltip = true;
+     } else {
+        bShowTooltip = false;
+     }
+
      return true;
  }
+
+ void World::EPlayer::OnInterectButtonPressed(::InterectButtonPressedEvent& event) {
+    EInteractable* interactable = TryInteract();
+    Logger::Log(std::format("Interactable: {}", interactable ? "true" : "false"));
+    if (interactable) {
+        interactable->Interact();
+    }
+ }
+
+ void World::EPlayer::OnSpawn() {
+    tooltipTexture = make_nnTex("f_button");
+}
+
+void World::EPlayer::SetTooltipTexture(Renderer::TextureId texture, float w, float h) {
+    tooltipTexture = texture;
+    tooltipWidth = w;
+    tooltipHeight = h;
+}
 
 void World::EPlayer::OnMoved(float deltaTime) {
     std::vector<World::EBox*> boxes;
@@ -115,17 +145,16 @@ void World::EPlayer::OnMoved(float deltaTime) {
             }
         }
     }
-
-    EInteractable* interactable = TryInteract();
-    if (interactable) {
-        interactable->Interact();
-    }
 }
 
 void World::EPlayer::Render(float deltaTime) {
     EMovable::Render(deltaTime);
     if (GameFeatures::isDebug) {
         Renderer::DrawRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), 0.0);
+    }
+    if (bShowTooltip) {
+        const auto& pos = GetPosition();
+        Renderer::DrawSprite(tooltipTexture, pos.x, pos.y - tooltipHeight - 16.0f, tooltipWidth, tooltipHeight);
     }
 }
 

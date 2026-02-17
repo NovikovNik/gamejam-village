@@ -13,7 +13,6 @@ class Game {
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Rect camera;
-    std::unique_ptr<EventBus> eventBus;
 
     bool isRunning;
     int millisecPreviousFrame = 0.0;

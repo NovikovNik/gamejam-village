@@ -2,6 +2,7 @@
 
 #include "../Logger/Logger.h"
 #include "../Events/Event.h"
+#include <Utils/Singleton.h>
 #include <typeindex>
 #include <map>
 #include <list>
@@ -42,7 +43,7 @@ class EventCallback: public IEventCallback {
 
 typedef std::list<std::unique_ptr<IEventCallback>> HandlerList;
 
-class EventBus {
+class EventBus: public Singleton<EventBus>  {
     private:
         std::map<std::type_index, std::unique_ptr<HandlerList>> subscribers;
     public:
