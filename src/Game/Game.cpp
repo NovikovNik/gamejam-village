@@ -128,6 +128,11 @@ void Game::ProcessInput() {
                     FileSystemManager::OpenSystemExplorer("test");
                     break;
                 }
+                if (event.key.key == SDLK_R) {
+                    // RELOAD LEVEL!
+                    MapManager::ReloadMap();
+                    break;
+                }
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP) {
                     if (GameFeatures::movementDirection == MovementDirection::FOUR_DIRECTIONS) {
                         GameStates::instance().SetOnlyW();

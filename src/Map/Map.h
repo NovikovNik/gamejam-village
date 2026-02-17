@@ -9,4 +9,6 @@ namespace MapManager {
 
     void Update(float deltaTime);
     void Render(float deltaTime);
+    void ReloadMap();
+    void UnloadCurrentMap();
 };

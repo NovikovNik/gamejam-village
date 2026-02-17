@@ -17,3 +17,7 @@ void World::EntitiesManager::Render(float deltaTime) {
         }
     });
 }
+
+void World::EntitiesManager::Clear() {
+    entities.Clear();
+}

@@ -18,7 +18,8 @@ class Map : public Singleton<Map> {
 
 public:
     [[nodiscard]] bool LoadMap(const std::string& filename) {
-        // Destroys the previous map
+        UnloadCurrentMap();
+        currentLevel = filename;
 
         // Load JSON map data
         std::string filepath = filename;
@@ -126,6 +127,15 @@ public:
         return true;
     }
 
+    void ReloadMap() {
+        LoadMap(currentLevel);
+    }
+
+    void UnloadCurrentMap() {
+        World::Camera::instance().Unfollow();
+        entitiesManager.Clear();
+    }
+
     void Update(float deltaTime) {
         entitiesManager.Update(deltaTime);
         World::Camera::instance().Update(deltaTime);
@@ -142,12 +152,20 @@ public:
 private:
     World::EntitiesManager entitiesManager;
     World::EPlayer* player = nullptr;
+    std::string currentLevel;
 };
-
 
 namespace MapManager {
     [[nodiscard]] bool LoadMap(const std::string& filename) {
         return Map::instance().LoadMap(filename);
+    }
+
+    void ReloadMap() {
+        Map::instance().ReloadMap();
+    }
+
+    void UnloadCurrentMap() {
+        Map::instance().UnloadCurrentMap();
     }
 
     void Update(float deltaTime) {

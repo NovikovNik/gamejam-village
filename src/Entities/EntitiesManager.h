@@ -9,6 +9,7 @@ namespace World {
         public:
             void Update(float deltaTime);
             void Render(float deltaTime);
+            void Clear();
 
             template <typename T, typename... Args>
             T* SpawnEntity(Args&&... args) {
