@@ -15,7 +15,6 @@ World::EPlayer::EPlayer(const std::string& name, float x, float y) : name(name) 
 }
 
 bool World::EPlayer::Update(float deltaTime) {
-    EventBus::instance().SubscribeToEvent<InterectButtonPressedEvent>(this, &EPlayer::OnInterectButtonPressed);
     
     if (!EMovable::Update(deltaTime)) {
         return false;
@@ -137,6 +136,7 @@ bool World::EPlayer::Update(float deltaTime) {
  }
 
  void World::EPlayer::OnSpawn() {
+    EventBus::instance().SubscribeToEvent<InterectButtonPressedEvent>(this, &EPlayer::OnInterectButtonPressed);
     tooltipTexture = make_nnTex("f_button");
 }
 

@@ -132,6 +132,7 @@ public:
     }
 
     void UnloadCurrentMap() {
+        EventBus::instance().Reset();
         World::Camera::instance().Unfollow();
         entitiesManager.Clear();
     }

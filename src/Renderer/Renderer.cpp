@@ -49,7 +49,7 @@ public:
         SDL_SetRenderLogicalPresentation(renderer, windowWidth, windowHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
         UpdateWindowOutputSize();
 
-
+        SubscribeToEvents();
         InitializeImGui();
     }
 

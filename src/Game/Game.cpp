@@ -66,9 +66,6 @@ void Game::Destroy() {
 }
 
 void Game::ProcessInput() {
-    // Некрасиво, но нужно подписать Renderer на события до старта событий собственно
-    Renderer::SubscribeToEvents();
-
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
         // Let ImGui process events first
@@ -80,15 +77,15 @@ void Game::ProcessInput() {
                 break;
             case SDL_EVENT_WINDOW_RESIZED:
                 Logger::Debug("[Game/SDL] Window resized");
-                EventBus::instance().EmitEvent<WindowResizedEvent>();
+                EventsQueue::instance().Push(WindowResizedEvent{});
                 break;
             case SDL_EVENT_WINDOW_FOCUS_GAINED:
                 Logger::Debug("[Game/SDL] Window focus gained");
-                EventBus::instance().EmitEvent<WindowFocusedEvent>();
+                EventsQueue::instance().Push(WindowFocusedEvent{});
                 break;
             case SDL_EVENT_WINDOW_FOCUS_LOST:
                 Logger::Debug("[Game/SDL] Window focus lost");
-                EventBus::instance().EmitEvent<WindowUnfocusedEvent>();
+                EventsQueue::instance().Push(WindowUnfocusedEvent{});
                 break;
             case SDL_EVENT_KEY_DOWN:
                 // Handle tilde key to toggle cheats (always processed)
@@ -217,9 +214,6 @@ void Game::Update() {
 
     // Dispatch all events in the queue
     EventsQueue::instance().Dispatch();
-
-    // Reset all event handlers
-    EventBus::instance().Reset();
 }
 
 void Game::Render() {
