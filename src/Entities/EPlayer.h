@@ -15,6 +15,6 @@ namespace World {
         // Pixels per frame
 
         glm::vec2 direction; // for normalization kinda
-        float basicSpeed = 100.0f;
+        float basicSpeed = 125.0f;
     };
 }

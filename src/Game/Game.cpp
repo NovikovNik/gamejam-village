@@ -120,44 +120,54 @@ void Game::ProcessInput() {
                 if(event.key.key == SDLK_TAB) {
                     GameFeatures::isDebug = !GameFeatures::isDebug;
                     Logger::Debug("Debug state changed to: " + std::to_string(GameFeatures::isDebug));
-
+                    break;
+                }
+                if (event.key.key == SDLK_O) {
                     // FOR TEST!
                     FileSystemManager::OpenSystemExplorer("test");
                     Logger::Debug("Folder opened");
                     break;
                 }
-                if (event.key.key == SDLK_W ||event.key.key == SDLK_UP) {
-                    GameStates::instance().w = true;
+                if (event.key.key == SDLK_W || event.key.key == SDLK_UP) {
+                    if (GameFeatures::movementDirection == MovementDirection::FOUR_DIRECTIONS) {
+                        GameStates::instance().SetOnlyW();
+                    } else {
+                        GameStates::instance().w = true;
+                    }
                     break;
                 }
-                if (event.key.key == SDLK_S ||event.key.key == SDLK_DOWN) {
-                    GameStates::instance().s = true;
+                if (event.key.key == SDLK_S || event.key.key == SDLK_DOWN) {
+                    if (GameFeatures::movementDirection == MovementDirection::FOUR_DIRECTIONS) {
+                        GameStates::instance().SetOnlyS();
+                    } else {
+                        GameStates::instance().s = true;
+                    }
                     break;
                 }
-                if (event.key.key == SDLK_D ||event.key.key == SDLK_RIGHT) {
-                    GameStates::instance().d = true;
+                if (event.key.key == SDLK_D || event.key.key == SDLK_RIGHT) {
+                    if (GameFeatures::movementDirection == MovementDirection::FOUR_DIRECTIONS) {
+                        GameStates::instance().SetOnlyD();
+                    } else {
+                        GameStates::instance().d = true;
+                    }
                     break;
                 }
-                if (event.key.key == SDLK_A ||event.key.key == SDLK_LEFT) {
-                    GameStates::instance().a = true;
+                if (event.key.key == SDLK_A || event.key.key == SDLK_LEFT) {
+                    if (GameFeatures::movementDirection == MovementDirection::FOUR_DIRECTIONS) {
+                        GameStates::instance().SetOnlyA();
+                    } else {
+                        GameStates::instance().a = true;
+                    }
                     break;
                 }
                 break;
             case SDL_EVENT_KEY_UP:
-                if (event.key.key == SDLK_W ||event.key.key == SDLK_UP) {
-                    GameStates::instance().w = false;
-                    break;
-                }
-                if (event.key.key == SDLK_S ||event.key.key == SDLK_DOWN) {
-                    GameStates::instance().s = false;
-                    break;
-                }
-                if (event.key.key == SDLK_D ||event.key.key == SDLK_RIGHT) {
-                    GameStates::instance().d = false;
-                    break;
-                }
-                if (event.key.key == SDLK_A ||event.key.key == SDLK_LEFT) {
-                    GameStates::instance().a = false;
+                if (event.key.key == SDLK_W || event.key.key == SDLK_UP ||
+                    event.key.key == SDLK_S || event.key.key == SDLK_DOWN ||
+                    event.key.key == SDLK_A || event.key.key == SDLK_LEFT ||
+                    event.key.key == SDLK_D || event.key.key == SDLK_RIGHT) {
+                    bool fourDir = (GameFeatures::movementDirection == MovementDirection::FOUR_DIRECTIONS);
+                    GameStates::instance().SyncMovementFromKeyboard(fourDir);
                     break;
                 }
             default:

@@ -1,5 +1,6 @@
 #include "EPlayer.h"
 #include "../Game/GameStates.h"
+#include "../Game/GameFeatures.h"
 #include "Entities/EColliders.h"
 #include <Map/Map.h>
 #include <Entities/EBox.h>
@@ -113,4 +114,7 @@ void World::EPlayer::OnMoved(float deltaTime) {
 
 void World::EPlayer::Render(float deltaTime) {
     EMovable::Render(deltaTime);
+    if (GameFeatures::isDebug) {
+        Renderer::DrawRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), 0.0);
+    }
 }
