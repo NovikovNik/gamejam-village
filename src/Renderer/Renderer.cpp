@@ -13,6 +13,11 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
+// ImGui includes - SDL3 backends
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_sdl3.h>
+#include <imgui/imgui_impl_sdlrenderer3.h>
+
 #include <map>
 #include <string>
 #include <cstdint>
@@ -40,6 +45,8 @@ public:
         }
         SDL_SetRenderLogicalPresentation(renderer, windowWidth, windowHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
         UpdateWindowOutputSize();
+
+        InitializeImGui();
     }
 
     void SubscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
@@ -170,7 +177,47 @@ public:
         SDL_SetWindowTitle(window, title);
     }
 
+    void InitializeImGui() {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+        
+        // Setup Dear ImGui style
+        ImGui::StyleColorsDark();
+        
+        // Initialize ImGui SDL3 backends
+        ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+        ImGui_ImplSDLRenderer3_Init(renderer);
+        
+        Logger::Log("ImGui initialized");
+    }
+    
+    void ShutdownImGui() {
+        ImGui_ImplSDLRenderer3_Shutdown();
+        ImGui_ImplSDL3_Shutdown();
+        ImGui::DestroyContext();
+        
+        Logger::Log("ImGui shut down");
+    }
+    
+    void ProcessImGuiEvent(SDL_Event* event) {
+        ImGui_ImplSDL3_ProcessEvent(event);
+    }
+    
+    void BeginImGuiFrame() {
+        ImGui_ImplSDLRenderer3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
+    }
+    
+    void EndImGuiFrame() {
+        ImGui::Render();
+        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
+    }
+
     void Destroy() {
+        ShutdownImGui();
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         SDL_Quit();
@@ -227,4 +274,16 @@ void Renderer::EndRender() {
 
 void Renderer::PrintFPSinTitle(const float& fps_live) {
     RenderManager::instance().PrintFPSinTitle(fps_live);
+}
+
+void Renderer::ProcessImGuiEvent(SDL_Event* event) {
+    RenderManager::instance().ProcessImGuiEvent(event);
+}
+
+void Renderer::BeginImGuiFrame() {
+    RenderManager::instance().BeginImGuiFrame();
+}
+
+void Renderer::EndImGuiFrame() {
+    RenderManager::instance().EndImGuiFrame();
 }

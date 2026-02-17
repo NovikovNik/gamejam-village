@@ -4,6 +4,9 @@
 
 #include <libs/CPPNanoString/includes/CPPNanoString.h>
 
+// Forward declaration
+union SDL_Event;
+
 nnstrINIT_TABLES(_nnTex, std::mutex, mt, std::vector, textureNamesRn, 64, std::array, textureNamesCt)
 
 namespace Renderer {
@@ -23,4 +26,8 @@ namespace Renderer {
     void EndRender();
 
     void PrintFPSinTitle(const float& fps_live);
+    
+    void ProcessImGuiEvent(SDL_Event* event);
+    void BeginImGuiFrame();
+    void EndImGuiFrame();
 }

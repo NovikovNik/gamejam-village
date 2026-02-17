@@ -12,19 +12,9 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keycode.h"
 #include "SDL3/SDL_oldnames.h"
-//#include "../Logger/Logger.h"
-//#include <SDL3/SDL_keycode.h>
-//#include <SDL3/SDL_mouse.h>
-//#include <SDL3/SDL_render.h>
-//#include <SDL3/SDL_video.h>
-//#include <SDL3_image/SDL_image.h>
-//#include <glm/glm.hpp>
-//#include <SDL3/SDL_timer.h>
-//#include <SDL3_ttf/SDL_ttf.h>
+#include <Tools/Cheats.h>
 #include <cstddef>
-// #include <imgui/imgui.h> need to adapt
-// #include <imgui/imgui_impl_sdl2.h>
-// #include <imgui/imgui_impl_sdlrenderer2.h>
+
 
 // Remove SDL.h from here; forward declare in Game.h if needed.
 
@@ -70,10 +60,6 @@ void Game::Run() {
 
 void Game::Destroy() {
     // The order is strict because of asserts
-    // ImGui_ImplSDLRenderer2_Shutdown();
-    // ImGui_ImplSDL2_Shutdown();
-    // ImGui::DestroyContext();
-
     Renderer::Destroy();
 }
 
@@ -83,14 +69,8 @@ void Game::ProcessInput() {
 
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
-        // ImGui_ImplSDL2_ProcessEvent(&event);
-
-        // int mouseX, mouseY;
-        // const int buttons = SDL_GetMouseState(&mouseX, &mouseY);
-        // ImGuiIO& io = ImGui::GetIO();
-        // io.MousePos = ImVec2(mouseX, mouseY);
-        // io.MouseDown[0] = buttons & SDL_BUTTON(SDL_BUTTON_LEFT);
-        // io.MouseDown[1] = buttons & SDL_BUTTON(SDL_BUTTON_RIGHT);
+        // Let ImGui process events first
+        Renderer::ProcessImGuiEvent(&event);
 
         switch(event.type) {
             case SDL_EVENT_QUIT:
@@ -109,6 +89,18 @@ void Game::ProcessInput() {
                 eventBus->EmitEvent<WindowUnfocusedEvent>();
                 break;
             case SDL_EVENT_KEY_DOWN:
+                // Handle tilde key to toggle cheats (always processed)
+                if(event.key.key == SDLK_GRAVE) {
+                    Cheats::ToggleCheats();
+                    Logger::Debug("Cheats toggled: " + std::to_string(Cheats::AreCheatsActive()));
+                    break;
+                }
+                
+                // If cheats are active, ignore all other keyboard input
+                if (Cheats::AreCheatsActive()) {
+                    break;
+                }
+                
                 if(event.key.key == SDLK_ESCAPE) {
                     if (GameFeatures::isDebug) {
                         GameFeatures::isDebug = false;
@@ -167,6 +159,11 @@ void Game::ProcessInput() {
                 }
                 break;
             case SDL_EVENT_KEY_UP:
+                // If cheats are active, ignore all keyboard releases
+                if (Cheats::AreCheatsActive()) {
+                    break;
+                }
+                
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP ||
                     event.key.key == SDLK_S || event.key.key == SDLK_DOWN ||
                     event.key.key == SDLK_A || event.key.key == SDLK_LEFT ||
@@ -216,35 +213,11 @@ void Game::Update() {
 void Game::Render() {
 
     Renderer::BeginRender();
+    
+    // Render game content
     MapManager::Render(deltaTime);
+    
+
+    Cheats::UpdateAndRender();
     Renderer::EndRender();
-
-
-//    SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
-//    SDL_RenderClear(renderer);
-//
-//    if (GameFeatures::isDebug) {
-//        // Usually we should render here some debug infos
-//    }
-//
-//    // THIS BLOCK SHOULD BE DELETED. ONLY AS EXAMPLE!!
-//    SDL_Texture* texture = IMG_LoadTexture(renderer, "assets/test.png");
-//    if (!texture) {
-//        SDL_Log("Texture creation failed: %s", SDL_GetError());
-//    }
-//
-//    // Получаем размеры текстуры в SDL3
-//    float texW, texH;
-//    SDL_GetTextureSize(texture, &texW, &texH);
-//
-//    SDL_FRect destRect;
-//    destRect.w = texW;
-//    destRect.h = texH;
-//    destRect.x = (windowWidth - destRect.w) / 2.0f;
-//    destRect.y = (windowHeight - destRect.h) / 2.0f;
-//
-//    SDL_RenderTexture(renderer, texture, NULL, &destRect);
-//    // THIS BLOCK SHOULD BE DELETED. ONLY AS EXAMPLE!!
-//
-//    SDL_RenderPresent(renderer);
 }

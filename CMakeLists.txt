@@ -23,8 +23,19 @@ add_subdirectory(libs/SDL_ttf EXCLUDE_FROM_ALL)
 set(SDLIMAGE_AVIF OFF CACHE BOOL "Support loading AVIF images" FORCE)
 add_subdirectory(libs/SDL_image EXCLUDE_FROM_ALL)
 
+# Add ImGui sources
+set(IMGUI_SOURCES
+    libs/imgui/imgui.cpp
+    libs/imgui/imgui_draw.cpp
+    libs/imgui/imgui_tables.cpp
+    libs/imgui/imgui_widgets.cpp
+    libs/imgui/imgui_demo.cpp
+    libs/imgui/imgui_impl_sdl3.cpp
+    libs/imgui/imgui_impl_sdlrenderer3.cpp
+)
+
 file(GLOB_RECURSE SOURCES src/*.cpp)
-add_executable(game_engine ${SOURCES})
+add_executable(game_engine ${SOURCES} ${IMGUI_SOURCES})
 
 target_include_directories(game_engine PRIVATE
     "${CMAKE_SOURCE_DIR}"
@@ -32,6 +43,8 @@ target_include_directories(game_engine PRIVATE
     "libs"
     "libs/glm"
     "libs/termcolor"
+    "libs/imgui"
+    "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL/include"
 )
 
 target_link_libraries(game_engine PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3 SDL3_image::SDL3_image)
