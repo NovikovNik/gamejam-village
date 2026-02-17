@@ -3,16 +3,18 @@
 #include <Logger/Logger.h>
 #include <filesystem>
 #include <cstdlib>
+#include <fstream>
 
 class FileSystem : public Singleton<FileSystem>
 {
 public:
     void OpenSystemExplorer(const std::filesystem::path& relativePath) {
         auto fullPath = executableDirPath / relativePath;
-        Logger::Log(fullPath.string());
 
-        if (!std::filesystem::exists(fullPath))
+        if (!std::filesystem::exists(fullPath)) {
+            Logger::Debug("[FS] Folder doesn't exist: " + fullPath.string());
             return;
+        }
 
 #ifdef _WIN32
         std::string cmd = "explorer \"" + fullPath.string() + "\"";
@@ -22,6 +24,32 @@ public:
         std::string cmd = "xdg-open \"" + fullPath.string() + "\"";
 #endif
         std::system(cmd.c_str());
+        Logger::Debug("[FS] Folder opened: " + fullPath.string());
+    }
+
+    void CreateDirectory(const std::string& path) {
+        auto fullPath = executableDirPath / path;
+        if (!std::filesystem::exists(fullPath)) {
+            std::filesystem::create_directories(fullPath);
+        }
+    }
+
+    void CreateKeyFile(const std::string& dirPath, const std::string& filename) {
+        auto fullDir = executableDirPath / dirPath;
+        if (!std::filesystem::exists(fullDir)) {
+            std::filesystem::create_directories(fullDir);
+        }
+        auto filePath = fullDir / filename;
+        if (!std::filesystem::exists(filePath)) {
+            std::ofstream file(filePath);
+            if (file) {
+                Logger::Debug("[FS] Created file: " + filePath.string());
+            } else {
+                Logger::Debug("[FS] Failed to create file: " + filePath.string());
+            }
+        } else {
+            Logger::Debug("[FS] File already exists: " + filePath.string());
+        }
     }
 
     void SetExecutableDir(char* argv0) {
@@ -43,4 +71,12 @@ void FileSystemManager::OpenSystemExplorer(const std::string& path) {
 
 void FileSystemManager::SetExecutableDir(char* argv0) {
     FileSystem::instance().SetExecutableDir(argv0);
+}
+
+void FileSystemManager::CreateDirectory(const std::string& path) {
+    FileSystem::instance().CreateDirectory(path);
+}
+
+void FileSystemManager::CreateKeyFile(const std::string& dirPath, const std::string& filename) {
+    FileSystem::instance().CreateKeyFile(dirPath, filename);
 }

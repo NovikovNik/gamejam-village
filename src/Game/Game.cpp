@@ -97,15 +97,15 @@ void Game::ProcessInput() {
                 isRunning = false;
                 break;
             case SDL_EVENT_WINDOW_RESIZED:
-                Logger::Debug("Window resized");
+                Logger::Debug("[Game/SDL] Window resized");
                 eventBus->EmitEvent<WindowResizedEvent>();
                 break;
             case SDL_EVENT_WINDOW_FOCUS_GAINED:
-                Logger::Debug("Window focus gained");
+                Logger::Debug("[Game/SDL] Window focus gained");
                 eventBus->EmitEvent<WindowFocusedEvent>();
                 break;
             case SDL_EVENT_WINDOW_FOCUS_LOST:
-                Logger::Debug("Window focus lost");
+                Logger::Debug("[Game/SDL] Window focus lost");
                 eventBus->EmitEvent<WindowUnfocusedEvent>();
                 break;
             case SDL_EVENT_KEY_DOWN:
@@ -124,8 +124,8 @@ void Game::ProcessInput() {
                 }
                 if (event.key.key == SDLK_O) {
                     // FOR TEST!
+                    FileSystemManager::CreateKeyFile("test", "box_1.spg");
                     FileSystemManager::OpenSystemExplorer("test");
-                    Logger::Debug("Folder opened");
                     break;
                 }
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP) {

@@ -33,7 +33,8 @@ public:
             return;
         }
 
-        if (!SDL_CreateWindowAndRenderer(GameFeatures::windowTitle.c_str(), windowWidth, windowHeight, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+        Uint32 windowFlags = GameFeatures::isResizeble ? SDL_WINDOW_RESIZABLE : 0;
+        if (!SDL_CreateWindowAndRenderer(GameFeatures::windowTitle.c_str(), windowWidth, windowHeight, windowFlags, &window, &renderer)) {
             SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
             return;
         }
