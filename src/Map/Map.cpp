@@ -9,10 +9,12 @@
 #include <Entities/EPit.h>
 #include <Entities/EBox.h>
 #include <Entities/ENpc.h>
+#include <Entities/ESpawners.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 class Map : public Singleton<Map> {
 
@@ -32,13 +34,13 @@ public:
         buffer << file.rdbuf();
         file.close();
 
-        nlohmann::json jsonData = nlohmann::json::parse(buffer.str());
+        mapData = nlohmann::json::parse(buffer.str());
 
         // Load tiles from JSON
         World::ETiles* tiles = entitiesManager.SpawnEntity<World::ETiles>();
-        if (jsonData.contains("tiles") && jsonData["tiles"].is_array()) {
+        if (mapData.contains("tiles") && mapData["tiles"].is_array()) {
             std::vector<World::ETiles::Tile> tilesData;
-            for (const auto& tileJson : jsonData["tiles"]) {
+            for (const auto& tileJson : mapData["tiles"]) {
                 World::ETiles::Tile tile;
                 tile.x = tileJson["x"].get<float>();
                 tile.y = tileJson["y"].get<float>();
@@ -53,9 +55,9 @@ public:
 
         // Load colliders from JSON
         World::EColliders* colliders = entitiesManager.SpawnEntity<World::EColliders>();
-        if (jsonData.contains("colliders") && jsonData["colliders"].is_array()) {
+        if (mapData.contains("colliders") && mapData["colliders"].is_array()) {
             std::vector<World::EColliders::Collider> collidersData;
-            for (const auto& colliderJson : jsonData["colliders"]) {
+            for (const auto& colliderJson : mapData["colliders"]) {
                 World::EColliders::Collider collider;
                 collider.x = colliderJson["x"].get<float>();
                 collider.y = colliderJson["y"].get<float>();
@@ -68,8 +70,8 @@ public:
         }
         
         // Load pits from JSON
-        if (jsonData.contains("pits") && jsonData["pits"].is_array()) {
-            for (const auto& pitJson : jsonData["pits"]) {
+        if (mapData.contains("pits") && mapData["pits"].is_array()) {
+            for (const auto& pitJson : mapData["pits"]) {
                 const std::string matchBoxName = pitJson["matchBoxName"].get<std::string>();
                 World::EPit* pit = entitiesManager.SpawnEntity<World::EPit>(make_nnBoxName(matchBoxName) );
                 const float x = pitJson["x"].get<float>();
@@ -78,32 +80,42 @@ public:
                 pit->SetPosition(x, y);
             }
         }
+
+        std::vector<World::ESpawners::Spawner> spawners;
         
         // Load boxes from JSON
-        if (jsonData.contains("boxes") && jsonData["boxes"].is_array()) {
-            for (const auto& boxJson : jsonData["boxes"]) {
+        if (mapData.contains("boxes") && mapData["boxes"].is_array()) {
+            for (const auto& boxJson : mapData["boxes"]) {
                 const std::string boxName = boxJson["name"].get<std::string>();
-                World::EBox* box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(boxName));
+//                World::EBox* box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(boxName));
                 const float x = boxJson["x"].get<float>();
                 const float y = boxJson["y"].get<float>();
 
-                box->SetPosition(x, y);
+                spawners.push_back({ boxName, "box", x, y });
+
+//                box->SetPosition(x, y);
+//                box->SetTagName(std::format("{}.box", boxName));
             }
         }
 
         // Load npcs from JSON
-        if (jsonData.contains("npcs") && jsonData["npcs"].is_array()) {
-            for (const auto& npcJson : jsonData["npcs"]) {
+        if (mapData.contains("npcs") && mapData["npcs"].is_array()) {
+            for (const auto& npcJson : mapData["npcs"]) {
                 const std::string npcName = npcJson["name"].get<std::string>();
                 const float x = npcJson["x"].get<float>();
                 const float y = npcJson["y"].get<float>();
-                World::ENpc* npc = entitiesManager.SpawnEntity<World::ENpc>(npcName, x, y);
+                spawners.push_back({ npcName, "villager", x, y });
+//                World::ENpc* npc = entitiesManager.SpawnEntity<World::ENpc>(npcName, x, y);
+//                npc->SetTagName(std::format("{}.villager", npcName));
             }
         }
+
+        World::ESpawners* spawnersEntity = entitiesManager.SpawnEntity<World::ESpawners>();
+        spawnersEntity->LoadSpawners(spawners);
         
         // Load interactables from JSON
-        if (jsonData.contains("interactables") && jsonData["interactables"].is_array()) {
-            for (const auto& interactableJson : jsonData["interactables"]) {
+        if (mapData.contains("interactables") && mapData["interactables"].is_array()) {
+            for (const auto& interactableJson : mapData["interactables"]) {
                 const std::string interactableName = interactableJson["name"].get<std::string>();
                 const float x = interactableJson["x"].get<float>();
                 const float y = interactableJson["y"].get<float>();
@@ -115,8 +127,8 @@ public:
         }
 
         // Load players from JSON
-        if (jsonData.contains("players") && jsonData["players"].is_array()) {
-            for (const auto& playerJson : jsonData["players"]) {
+        if (mapData.contains("players") && mapData["players"].is_array()) {
+            for (const auto& playerJson : mapData["players"]) {
                 const std::string playerName = playerJson["name"].get<std::string>();
                 const float x = playerJson["x"].get<float>();
                 const float y = playerJson["y"].get<float>();
@@ -150,10 +162,56 @@ public:
         return entitiesManager.GetEntitiesContainer();
     }
 
+    World::Entity* SpawnEntity(const std::string& name, const std::string& type) {
+
+        const auto spawners = entitiesManager.GetEntitiesContainer().FindEntity<World::ESpawners>();
+        if (spawners) {
+            const auto optPosition = spawners->GetSpawnerPosition(name, type);
+            if (!optPosition.has_value()) {
+                return nullptr;
+            }
+
+            const auto position = optPosition.value();
+            if (type == "villager") {
+                auto npc = entitiesManager.SpawnEntity<World::ENpc>(name, position.x, position.y);
+                npc->SetTagName(std::format("{}.{}", name, type));
+                return npc;
+            }
+            if (type == "box") {
+                auto box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(name));
+                box->SetPosition(position.x, position.y);
+                box->SetTagName(std::format("{}.{}", name, type));
+                return box;
+            }
+        }
+
+//        if (type == "villager") {
+//            if (mapData.contains("npcs") && mapData["npcs"].is_array()) {
+//                for (const auto& npcJson : mapData["npcs"]) {
+//                    const std::string npcName = npcJson["name"].get<std::string>();
+//                    if (npcName == name) {
+//                        const float x = npcJson["x"].get<float>();
+//                        const float y = npcJson["y"].get<float>();
+//                        World::ENpc* npc = entitiesManager.SpawnEntity<World::ENpc>(npcName, x, y);
+//                        npc->SetTagName(std::format("{}.villager", npcName));
+//                        return npc;
+//                    }
+//                }
+//            }
+//        }
+        return nullptr;
+    }
+
+    std::string GetCurrentMapName() const {
+        return std::filesystem::path(currentLevel).filename().stem().string();
+    }
+
 private:
     World::EntitiesManager entitiesManager;
     World::EPlayer* player = nullptr;
     std::string currentLevel;
+
+    nlohmann::json mapData;
 };
 
 namespace MapManager {
@@ -177,7 +235,15 @@ namespace MapManager {
         Map::instance().Render(deltaTime);
     }
 
-    [[nodiscard]] const World::EntitiesContainer& GetEntitiesContainer() {
+    const World::EntitiesContainer& GetEntitiesContainer() {
         return Map::instance().GetEntitiesContainer();
+    }
+
+    World::Entity* SpawnEntity(const std::string& name, const std::string& type) {
+        return Map::instance().SpawnEntity(name, type);
+    }
+
+    std::string GetCurrentMapName() {
+        return Map::instance().GetCurrentMapName();
     }
 };

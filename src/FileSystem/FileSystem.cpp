@@ -12,8 +12,7 @@ public:
         auto fullPath = executableDirPath / relativePath;
 
         if (!std::filesystem::exists(fullPath)) {
-            Logger::Debug("[FS] Folder doesn't exist: " + fullPath.string());
-            return;
+            CreateDirectory(fullPath.string());
         }
 
 #ifdef _WIN32
@@ -56,6 +55,10 @@ public:
         executableDirPath = std::filesystem::absolute(argv0).parent_path();
     }
 
+    std::filesystem::path GetExecutableDir() const {
+        return executableDirPath;
+    }
+
 private:
     [[maybe_unused]] std::filesystem::path GetWorkingDirectory() const {
         return std::filesystem::current_path();
@@ -79,4 +82,8 @@ void FileSystemManager::CreateDirectory(const std::string& path) {
 
 void FileSystemManager::CreateKeyFile(const std::string& dirPath, const std::string& filename) {
     FileSystem::instance().CreateKeyFile(dirPath, filename);
+}
+
+std::filesystem::path FileSystemManager::GetExecutableDir() {
+    return FileSystem::instance().GetExecutableDir();
 }

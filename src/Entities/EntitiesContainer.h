@@ -38,6 +38,20 @@ namespace World {
             return nullptr;
         }
         
+        [[nodiscard]] Entity* FindEntity(const std::string& tagName) const {
+            for (auto& entity : entities) {
+                if (!entity) {
+                    continue;
+                }
+                if (!entity->IsValid()) {
+                    continue;
+                }
+                if (entity->GetTagName() == tagName) {
+                    return entity.get();
+                }
+            }
+            return nullptr;
+        }
 
         template <typename T>
         void FindEntities(std::vector<T*>& entitiesFound) const {

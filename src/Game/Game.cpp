@@ -11,6 +11,7 @@
 #include "../Events/WindowFocusedEvent.h"
 #include "../Events/WindowUnfocusedEvent.h"
 #include "../Events/InterectButtonPressedEvent.h"
+#include "../Gameplay/WorldState.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keycode.h"
 #include "SDL3/SDL_oldnames.h"
@@ -38,7 +39,8 @@ void Game::Initialize() {
     Renderer::Initialize(windowWidth, windowHeight);
     Renderer::LoadAllTextures("assets/textures/");
     Renderer::LoadAllFonts("assets/fonts/");
-    bool isLoaded = MapManager::LoadMap("assets/maps/world-1.json");
+    WorldState::Initiate();
+    bool isLoaded = MapManager::LoadMap("assets/maps/world-entry.json");
     if (!isLoaded) {
         Logger::Err("Failed to load map");
         return;
@@ -116,8 +118,8 @@ void Game::ProcessInput() {
                 }
                 if (event.key.key == SDLK_O) {
                     // FOR TEST!
-                    FileSystemManager::CreateKeyFile("test", "box_1.spg");
-                    FileSystemManager::OpenSystemExplorer("test");
+                    //FileSystemManager::CreateKeyFile("village", "box_1.spg");
+                    FileSystemManager::OpenSystemExplorer("village");
                     break;
                 }
                 if (event.key.key == SDLK_R) {

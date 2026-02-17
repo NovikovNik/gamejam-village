@@ -2,7 +2,7 @@
 
 #include "EventBus.h"
 #include <queue>
-#include <functional>]
+#include <functional>
 #include <Utils/Singleton.h>
 
 class EventsQueue: public Singleton<EventsQueue> {

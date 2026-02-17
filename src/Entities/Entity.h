@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 namespace World
 {
@@ -15,7 +16,10 @@ namespace World
 
             [[nodiscard]] virtual bool IsValid() const { return isValid; }
 
+            void SetTagName(const std::string& newTagName) { this->tagName = newTagName; }
+            [[nodiscard]] const std::string& GetTagName() const { return tagName; }
         protected:
             uint8_t isValid : 1 = true;
+            std::string tagName;
     };
 }
