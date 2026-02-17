@@ -4,6 +4,7 @@
 #include "Entities/EColliders.h"
 #include <Map/Map.h>
 #include <Entities/EBox.h>
+#include <Entities/EInteractable.h>
 
 bool World::EPlayer::Update(float deltaTime) {
     if (!EMovable::Update(deltaTime)) {
@@ -110,6 +111,11 @@ void World::EPlayer::OnMoved(float deltaTime) {
             }
         }
     }
+
+    EInteractable* interactable = TryInteract();
+    if (interactable) {
+        interactable->Interact();
+    }
 }
 
 void World::EPlayer::Render(float deltaTime) {
@@ -117,4 +123,18 @@ void World::EPlayer::Render(float deltaTime) {
     if (GameFeatures::isDebug) {
         Renderer::DrawRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), 0.0);
     }
+}
+
+World::EInteractable* World::EPlayer::TryInteract() const {
+    std::vector<World::EInteractable*> interactables;
+    MapManager::GetEntitiesContainer().FindEntities(interactables);
+    for (const auto& interactable : interactables) {
+        const auto interactablePosition = interactable->GetPosition();
+        const auto playerPosition = GetPosition();
+        const auto distance = glm::distance(interactablePosition, playerPosition);
+        if (distance < 64.0f) {
+            return interactable;
+        }
+    }
+    return nullptr;
 }

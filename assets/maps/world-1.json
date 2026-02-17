@@ -53,6 +53,30 @@
             "width": 256.0,
             "height": 256.0,
             "texture": "test-ground"
+        },
+        {
+            "x": 445.508544921875,
+            "y": 191.99998474121094,
+            "width": 256.0,
+            "height": 256.0,
+            "texture": "test-texture"
+        }
+    ],
+    "npcs": [
+        {
+            "x": 384.6121826171875,
+            "y": 163.22605895996094,
+            "name": "Spaghetti"
+        }
+    ],
+    "interactables": [
+        {
+            "x": 272.8935852050781,
+            "y": 460.08306884765625,
+            "width": 64.0,
+            "height": 64.0,
+            "texture": "safe",
+            "name": "safe-1"
         }
     ],
     "player": {

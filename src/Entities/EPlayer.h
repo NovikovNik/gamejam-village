@@ -11,6 +11,8 @@ namespace World {
 
         void OnMoved(float deltaTime);
 
+        [[nodiscard]] class EInteractable* TryInteract() const;
+
     private:
         // Pixels per frame
 

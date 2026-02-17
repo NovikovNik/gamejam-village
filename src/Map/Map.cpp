@@ -8,6 +8,7 @@
 #include <Entities/EColliders.h>
 #include <Entities/EPit.h>
 #include <Entities/EBox.h>
+#include <Entities/ENpc.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
 #include <fstream>
 #include <sstream>
@@ -86,6 +87,29 @@ public:
                 const float y = boxJson["y"].get<float>();
 
                 box->SetPosition(x, y);
+            }
+        }
+
+        // Load npcs from JSON
+        if (jsonData.contains("npcs") && jsonData["npcs"].is_array()) {
+            for (const auto& npcJson : jsonData["npcs"]) {
+                const std::string npcName = npcJson["name"].get<std::string>();
+                const float x = npcJson["x"].get<float>();
+                const float y = npcJson["y"].get<float>();
+                World::ENpc* npc = entitiesManager.SpawnEntity<World::ENpc>(npcName, x, y);
+            }
+        }
+        
+        // Load interactables from JSON
+        if (jsonData.contains("interactables") && jsonData["interactables"].is_array()) {
+            for (const auto& interactableJson : jsonData["interactables"]) {
+                const std::string interactableName = interactableJson["name"].get<std::string>();
+                const float x = interactableJson["x"].get<float>();
+                const float y = interactableJson["y"].get<float>();
+                const float width = interactableJson["width"].get<float>();
+                const float height = interactableJson["height"].get<float>();
+                World::EInteractable* interactable = entitiesManager.SpawnEntity<World::EInteractable>(make_nnInteractId(interactableName));
+                interactable->LoadData(make_nnTex(interactableJson["texture"].get<std::string>()), x, y, width, height);
             }
         }
 
