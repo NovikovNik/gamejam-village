@@ -17,6 +17,8 @@ namespace World {
         void Render(float deltaTime) override;
         void LoadColliders(const std::vector<Collider>& colliders);
 
+        [[nodiscard]] const std::vector<Collider>& GetColliders() const { return colliders; }
+
         void EnableRender() { bRender = true; }
         void DisableRender() { bRender = false; }
 

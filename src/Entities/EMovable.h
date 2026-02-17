@@ -15,6 +15,8 @@ namespace World {
         void AddImpulse(float x, float y);
         void SetPosition(float x, float y);
         glm::vec2 GetPosition() const;
+        float GetWidth() const { return width; }
+        float GetHeight() const { return height; }
 
     private:
         float velocityX = 0.0f;

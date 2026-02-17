@@ -123,6 +123,7 @@ void Game::ProcessInput() {
 
                     // FOR TEST!
                     FileSystemManager::OpenSystemExplorer("test");
+                    Logger::Debug("Folder opened");
                     break;
                 }
                 if (event.key.key == SDLK_W ||event.key.key == SDLK_UP) {
