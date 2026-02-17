@@ -14,9 +14,11 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 // ImGui includes - SDL3 backends
+#if ENABLE_CHEATS
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl3.h>
 #include <imgui/imgui_impl_sdlrenderer3.h>
+#endif
 
 #include <map>
 #include <string>
@@ -45,6 +47,7 @@ public:
         }
         SDL_SetRenderLogicalPresentation(renderer, windowWidth, windowHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
         UpdateWindowOutputSize();
+
 
         InitializeImGui();
     }
@@ -178,6 +181,7 @@ public:
     }
 
     void InitializeImGui() {
+#if ENABLE_CHEATS
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -191,33 +195,44 @@ public:
         ImGui_ImplSDLRenderer3_Init(renderer);
         
         Logger::Log("ImGui initialized");
+#endif
     }
     
     void ShutdownImGui() {
+#if ENABLE_CHEATS
         ImGui_ImplSDLRenderer3_Shutdown();
         ImGui_ImplSDL3_Shutdown();
         ImGui::DestroyContext();
         
         Logger::Log("ImGui shut down");
+#endif
     }
     
     void ProcessImGuiEvent(SDL_Event* event) {
+#if ENABLE_CHEATS
         ImGui_ImplSDL3_ProcessEvent(event);
+#endif
     }
     
     void BeginImGuiFrame() {
+#if ENABLE_CHEATS
         ImGui_ImplSDLRenderer3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
+#endif
     }
     
     void EndImGuiFrame() {
+#if ENABLE_CHEATS
         ImGui::Render();
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
+#endif
     }
 
     void Destroy() {
+#if ENABLE_CHEATS
         ShutdownImGui();
+#endif
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         SDL_Quit();

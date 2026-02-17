@@ -91,6 +91,7 @@ void Game::ProcessInput() {
                 break;
             case SDL_EVENT_KEY_DOWN:
                 // Handle tilde key to toggle cheats (always processed)
+#if ENABLE_CHEATS
                 if(event.key.key == SDLK_GRAVE) {
                     Cheats::ToggleCheats();
                     Logger::Debug("Cheats toggled: " + std::to_string(Cheats::AreCheatsActive()));
@@ -101,7 +102,7 @@ void Game::ProcessInput() {
                 if (Cheats::AreCheatsActive()) {
                     break;
                 }
-                
+#endif
                 if(event.key.key == SDLK_ESCAPE) {
                     if (GameFeatures::isDebug) {
                         GameFeatures::isDebug = false;
@@ -165,9 +166,11 @@ void Game::ProcessInput() {
                 break;
             case SDL_EVENT_KEY_UP:
                 // If cheats are active, ignore all keyboard releases
+#if ENABLE_CHEATS
                 if (Cheats::AreCheatsActive()) {
                     break;
                 }
+#endif
                 
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP ||
                     event.key.key == SDLK_S || event.key.key == SDLK_DOWN ||
@@ -225,7 +228,8 @@ void Game::Render() {
     // Render game content
     MapManager::Render(deltaTime);
     
-
+#if ENABLE_CHEATS
     Cheats::UpdateAndRender();
+#endif
     Renderer::EndRender();
 }

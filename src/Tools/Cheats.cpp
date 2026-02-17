@@ -1,5 +1,7 @@
 #include "Cheats.h"
 
+#if ENABLE_CHEATS
+
 #include <Renderer/Renderer.h>
 #include <imgui/imgui.h>
 #include <Game/GameFeatures.h>
@@ -106,3 +108,11 @@ void Cheats::ToggleCheats() {
 bool Cheats::AreCheatsActive() {
     return CheatsManger::instance().AreCheatsActive();
 }
+
+#else
+
+void Cheats::UpdateAndRender() {}
+void Cheats::ToggleCheats() {}
+bool Cheats::AreCheatsActive() { return false; }
+
+#endif
