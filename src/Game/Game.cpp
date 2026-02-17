@@ -185,6 +185,23 @@ void Game::Update() {
     deltaTime = (SDL_GetTicks() - millisecPreviousFrame) / 1000.0;
     millisecPreviousFrame = SDL_GetTicks();
 
+    if (GameFeatures::isDebug) {
+        static Uint32 lastTime = SDL_GetTicks();
+        static int frames = 0;
+        static float fps_live = 0.0f;
+    
+        Uint32 now = SDL_GetTicks();
+        frames++;
+    
+        Uint32 elapsed = now - lastTime;
+        if (elapsed >= 1000) {
+            fps_live = frames * 1000.0f / (now - lastTime);
+            frames = 0;
+            lastTime = now;
+            Renderer::PrintFPSinTitle(fps_live);
+        }
+    }
+
     MapManager::Update(deltaTime);
 
     // Reset all event handlers

@@ -21,4 +21,6 @@ namespace Renderer {
 
     void BeginRender();
     void EndRender();
+
+    void PrintFPSinTitle(const float& fps_live);
 }

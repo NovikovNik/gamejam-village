@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include <Utils/Singleton.h>
 #include "../Logger/Logger.h"
+#include "../Game/GameFeatures.h"
 #include "Renderer/Camera.h"
 #include "SDL3/SDL_oldnames.h"
 #include "SDL3/SDL_rect.h"
@@ -32,7 +33,7 @@ public:
             return;
         }
 
-        if (!SDL_CreateWindowAndRenderer("test", windowWidth, windowHeight, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+        if (!SDL_CreateWindowAndRenderer(GameFeatures::windowTitle.c_str(), windowWidth, windowHeight, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
             SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
             return;
         }
@@ -162,6 +163,12 @@ public:
     void SetCameraPosition(float x, float y) {
     }
 
+    void PrintFPSinTitle(const float& fps_live) {
+        char title[64];
+        std::snprintf(title, sizeof(title), "%s - FPS: %.1f", GameFeatures::windowTitle.c_str(), fps_live);
+        SDL_SetWindowTitle(window, title);
+    }
+
     void Destroy() {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
@@ -215,4 +222,8 @@ void Renderer::BeginRender() {
 
 void Renderer::EndRender() {
     RenderManager::instance().EndRender();
+}
+
+void Renderer::PrintFPSinTitle(const float& fps_live) {
+    RenderManager::instance().PrintFPSinTitle(fps_live);
 }
