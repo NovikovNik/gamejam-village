@@ -15,6 +15,7 @@
 #include <sstream>
 #include <string>
 #include <filesystem>
+#include <format>
 
 class Map : public Singleton<Map> {
 
