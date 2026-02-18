@@ -4,6 +4,7 @@
 #include "../Game/GameFeatures.h"
 #include "Entities/EColliders.h"
 #include "Entities/EPit.h"
+#include "Entities/ETriggerLocation.h"
 #include <Map/Map.h>
 #include <Entities/EBox.h>
 #include <Entities/EInteractable.h>
@@ -37,6 +38,9 @@ bool World::EPlayer::Update(float deltaTime) {
     std::vector<World::EPit*> pits;
     MapManager::GetEntitiesContainer().FindEntities(pits);
 
+    std::vector<World::ETriggerLocation*> levelChangeTriggers;
+    MapManager::GetEntitiesContainer().FindEntities(levelChangeTriggers);
+
     glm::vec2 direction(0.0f);
 
      if (GameStates::instance().w) {
@@ -59,55 +63,54 @@ bool World::EPlayer::Update(float deltaTime) {
          float moveX = direction.x * basicSpeed * deltaTime;
          float moveY = direction.y * basicSpeed * deltaTime;
 
+         const float halfW = GetWidth() * 0.5f;
+         const float halfH = GetHeight() * 0.5f;
+
          auto WouldCollide = [&](float dx, float dy) {
-             float pl = pos.x + dx - GetWidth() * 0.5f;
-             float pr = pos.x + dx + GetWidth() * 0.5f;
-             float pt = pos.y + dy - GetHeight() * 0.5f;
-             float pb = pos.y + dy + GetHeight() * 0.5f;
+             const float pl = pos.x + dx - halfW;
+             const float pr = pos.x + dx + halfW;
+             const float pt = pos.y + dy - halfH;
+             const float pb = pos.y + dy + halfH;
+
+             auto overlaps = [&](float l, float r, float t, float b) {
+                 return pl < r && pr > l && pt < b && pb > t;
+             };
 
              for (auto* collider : colliders) {
                  for (const auto& c : collider->GetColliders()) {
-                     float cl = c.x - c.width * 0.5f;
-                     float cr = c.x + c.width * 0.5f;
-                     float ct = c.y - c.height * 0.5f;
-                     float cb = c.y + c.height * 0.5f;
-                     if (pl < cr && pr > cl && pt < cb && pb > ct) {
+                     if (overlaps(c.x - c.width * 0.5f, c.x + c.width * 0.5f, c.y - c.height * 0.5f, c.y + c.height * 0.5f))
                          return true;
-                     }
                  }
              }
-             for (auto* interactible : interactibles) {
-                 if (!interactible->IsValid()) continue;
-                 float nl = interactible->GetPosition().x - interactible->GetWidth() * 0.5f;
-                 float nr = interactible->GetPosition().x + interactible->GetWidth() * 0.5f;
-                 float nt = interactible->GetPosition().y - interactible->GetHeight() * 0.5f;
-                 float nb = interactible->GetPosition().y + interactible->GetHeight() * 0.5f;
-                 if (pl < nr && pr > nl && pt < nb && pb > nt) {
-                     return true;
-                 }
-                }
-            for (auto* pit : pits) {
-                if (!pit->IsValid()) continue;
-                float nl = pit->GetPosition().x - pit->GetWidth() * 0.5f;
-                float nr = pit->GetPosition().x + pit->GetWidth() * 0.5f;
-                float nt = pit->GetPosition().y - pit->GetHeight() * 0.5f;
-                float nb = pit->GetPosition().y + pit->GetHeight() * 0.5f;
-                if (pl < nr && pr > nl && pt < nb && pb > nt) {
-                    return true;
-                }
-            }
+             for (auto* e : interactibles) {
+                 if (!e->IsValid()) continue;
+                 const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
+                 const glm::vec2 p = e->GetPosition();
+                 if (overlaps(p.x - w2, p.x + w2, p.y - h2, p.y + h2)) return true;
+             }
+             for (auto* e : pits) {
+                 if (!e->IsValid()) continue;
+                 const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
+                 const glm::vec2 p = e->GetPosition();
+                 if (overlaps(p.x - w2, p.x + w2, p.y - h2, p.y + h2)) return true;
+             }
              for (auto* box : boxes) {
                  if (!box->IsValid()) continue;
-                 float bl = box->GetPosition().x - box->GetWidth() * 0.5f;
-                 float br = box->GetPosition().x + box->GetWidth() * 0.5f;
-                 float bt = box->GetPosition().y - box->GetHeight() * 0.5f;
-                 float bb = box->GetPosition().y + box->GetHeight() * 0.5f;
-                 if (pl < br && pr > bl && pt < bb && pb > bt) {
-                     float pushX = (dx != 0.0f) ? (dx > 0.0f ? 1.0f : -1.0f) : 0.0f;
-                     float pushY = (dy != 0.0f) ? (dy > 0.0f ? 1.0f : -1.0f) : 0.0f;
-                     if (!box->CanMove(pushX, pushY, basicSpeed, deltaTime)) {
-                         return true;
-                     }
+                 const float w2 = box->GetWidth() * 0.5f, h2 = box->GetHeight() * 0.5f;
+                 const glm::vec2 p = box->GetPosition();
+                 if (overlaps(p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
+                     const float pushX = (dx != 0.0f) ? (dx > 0.0f ? 1.0f : -1.0f) : 0.0f;
+                     const float pushY = (dy != 0.0f) ? (dy > 0.0f ? 1.0f : -1.0f) : 0.0f;
+                     if (!box->CanMove(pushX, pushY, basicSpeed, deltaTime)) return true;
+                 }
+             }
+             for (auto* e : levelChangeTriggers) {
+                 if (!e->IsValid()) continue;
+                 const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
+                 const glm::vec2 p = e->GetPosition();
+                 if (overlaps(p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
+                     e->ChangeLocation();
+                     return true;
                  }
              }
              return false;

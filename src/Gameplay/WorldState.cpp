@@ -3,6 +3,7 @@
 #include <EventBus/EventBus.h>
 #include <Events/WindowFocusedEvent.h>
 #include <Events/ClearWorldStateEvent.h>
+#include <Events/ChangeLocationEvent.h>
 #include <Logger/Logger.h>
 #include <Map/Map.h>
 #include <Utils/Singleton.h>
@@ -37,6 +38,7 @@ public:
     {
         EventBus::instance().SubscribeToEvent<WindowFocusedEvent>(this, &GameStateManager::OnWindowFocused);
         EventBus::instance().SubscribeToEvent<ClearWorldStateEvent>(this, &GameStateManager::OnClearWorldState);
+        EventBus::instance().SubscribeToEvent<ChangeLocationEvent>(this, &GameStateManager::OnChangeLocation);
     }
 
     void OnWindowFocused(WindowFocusedEvent&)
@@ -75,6 +77,13 @@ public:
         Logger::Log("Clearing world state");
         currentState.clear();
         lastSeenState.clear();
+    }
+
+    // Обработчик перехода на новый уровень
+    // Словно ему место не здесь и не в Map.cpp, но пока живет тут
+    void OnChangeLocation(ChangeLocationEvent& event)
+    {
+        MapManager::LoadMap(event.locationPath);
     }
 
     [[nodiscard]] LocationsStates::LocationChanges SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName)

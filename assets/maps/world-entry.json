@@ -166,5 +166,16 @@
             "y": 10.856803894042969,
             "name": "Player"
         }
+    ],
+    "levelChangeTriggers": [
+        {
+            "name": "LevelChangeTriggers",
+            "x": 336.5999450683594,
+            "y": -3.051335334777832,
+            "width": 64.0,
+            "height": 64.0,
+            "texture": "levelchange",
+            "location": "assets/maps/world-1.json"
+        }
     ]
 }

@@ -10,8 +10,10 @@
 #include <Entities/EBox.h>
 #include <Entities/ENpc.h>
 #include <Entities/ESpawners.h>
+#include <Entities/ETriggerLocation.h>
 #include <Events/WindowFocusedEvent.h>
 #include <Events/ClearWorldStateEvent.h>
+#include <Events/ChangeLocationEvent.h>
 #include <FileSystem/FileSystem.h>
 #include <Gameplay/WorldState.h>
 #include <EventBus/EventsQueue.h>
@@ -26,15 +28,16 @@ class Map : public Singleton<Map> {
 
 public:
     [[nodiscard]] bool LoadMap(const std::string& filename) {
-        UnloadCurrentMap();
-        currentLevel = filename;
-
         // Load JSON map data
         std::string filepath = filename;
         std::ifstream file(filepath);
         if (!file.is_open()) {
+            Logger::Err(std::format("Failed to load map: {}", filepath));
             return false;
         }
+
+        UnloadCurrentMap();
+        currentLevel = filename;
 
         std::stringstream buffer;
         buffer << file.rdbuf();
@@ -139,6 +142,21 @@ public:
                 const float height = interactableJson["height"].get<float>();
                 World::EInteractable* interactable = entitiesManager.SpawnEntity<World::EInteractable>(make_nnInteractId(interactableName));
                 interactable->LoadData(make_nnTex(interactableJson["texture"].get<std::string>()), x, y, width, height);
+            }
+        }
+
+        // Load location triggers from JSON
+        if (mapData.contains("levelChangeTriggers") && mapData["levelChangeTriggers"].is_array()) {
+            for (const auto& levelChangeTriggerJson : mapData["levelChangeTriggers"]) {
+                const std::string locationName = levelChangeTriggerJson["location"].get<std::string>();
+                const float x = levelChangeTriggerJson["x"].get<float>();
+                const float y = levelChangeTriggerJson["y"].get<float>();
+                const float width = levelChangeTriggerJson["width"].get<float>();
+                const float height = levelChangeTriggerJson["height"].get<float>();
+                World::ETriggerLocation* triggerLocation = entitiesManager.SpawnEntity<World::ETriggerLocation>(locationName);
+                // Возможно триггеру не нужна будет текстура в конце концов
+                // Хотя это может быть, например, обьект телепорт. Почему бы и нет
+                triggerLocation->LoadData(make_nnTex(levelChangeTriggerJson["texture"].get<std::string>()), x, y, width, height);
             }
         }
 
