@@ -7,6 +7,7 @@
 #include <Map/Map.h>
 #include <Entities/EBox.h>
 #include <Entities/EInteractable.h>
+#include <DialogSystem/DialogSystem.h>
 #include <Logger/Logger.h>
 #include <format>
 
@@ -17,6 +18,10 @@ World::EPlayer::EPlayer(const std::string& name, float x, float y) : name(name) 
 bool World::EPlayer::Update(float deltaTime) {
     
     if (!EMovable::Update(deltaTime)) {
+        return false;
+    }
+
+    if (DialogSystemManager::IsDialogActive()) {
         return false;
     }
 
@@ -128,6 +133,10 @@ bool World::EPlayer::Update(float deltaTime) {
  }
 
  void World::EPlayer::OnInterectButtonPressed(::InterectButtonPressedEvent& event) {
+    if (DialogSystemManager::IsDialogActive()) {
+        Logger::Warn("Dialog is active, skipping interact");
+        return;
+    }
     EInteractable* interactable = TryInteract();
     Logger::Log(std::format("Interactable: {}", interactable ? "true" : "false"));
     if (interactable) {

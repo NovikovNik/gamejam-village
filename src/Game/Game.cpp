@@ -3,6 +3,7 @@
 #include <Map/Map.h>
 #include <Renderer/Renderer.h>
 #include <FileSystem/FileSystem.h>
+#include <DialogSystem/DialogSystem.h>
 
 #include "Game/GameStates.h"
 #include "GameFeatures.h"
@@ -11,6 +12,7 @@
 #include "../Events/WindowFocusedEvent.h"
 #include "../Events/WindowUnfocusedEvent.h"
 #include "../Events/InterectButtonPressedEvent.h"
+#include "../Events/NextDialogLineEvent.h"
 #include "../Gameplay/WorldState.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keycode.h"
@@ -37,6 +39,8 @@ Game::~Game() {
 void Game::Initialize() {
 
     Renderer::Initialize(windowWidth, windowHeight);
+    DialogSystemManager::Initialize();
+    DialogSystemManager::LoadAllDialogs("assets/dialogs/");
     Renderer::LoadAllTextures("assets/textures/");
     Renderer::LoadAllFonts("assets/fonts/");
     bool isLoaded = MapManager::LoadMap("assets/maps/world-entry.json");
@@ -127,6 +131,10 @@ void Game::ProcessInput() {
                 }
                 if (event.key.key == SDLK_F) {
                     EventsQueue::instance().Push(InterectButtonPressedEvent{});
+                    break;
+                }
+                if (event.key.key == SDLK_SPACE) {
+                    EventsQueue::instance().Push(NextDialogLineEvent{});
                     break;
                 }
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP) {
@@ -222,8 +230,10 @@ void Game::Render() {
     
     // Render game content
     MapManager::Render(deltaTime);
-    std::string testText = "It's a dangerous business, Frodo, going out your door. You step onto the road, and if you don't keep your feet, there's no knowing where you might be swept off to.";
-    Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), testText, 20, 500, 18, nullptr, 790);
+    // Тут точно дельта не нужна
+    // Но мб будем что-то двигать? И тогда будет нужна,
+    // Но пока пофиг
+    DialogSystemManager::RenderDialog();
 
 #if ENABLE_CHEATS
     Cheats::UpdateAndRender();

@@ -162,6 +162,26 @@ public:
         SDL_RenderTextureRotated(renderer, texture, NULL, &rect, angle, &center, SDL_FLIP_NONE);
     }
 
+    void DrawSpriteScreen(Renderer::TextureId textureId, float screenX, float screenY, float width, float height) {
+        DrawSpriteScreen(textureId, screenX, screenY, width, height, 0.0);
+    }
+
+    void DrawSpriteScreen(Renderer::TextureId textureId, float screenX, float screenY, float width, float height, double angle) {
+        SDL_Texture* texture = textures[textureId];
+        if (texture == nullptr) {
+            return;
+        }
+
+        SDL_FRect rect;
+        rect.x = screenX;
+        rect.y = screenY;
+        rect.w = width;
+        rect.h = height;
+
+        SDL_FPoint center = { width / 2.0f, height / 2.0f };
+        SDL_RenderTextureRotated(renderer, texture, NULL, &rect, angle, &center, SDL_FLIP_NONE);
+    }
+
     void DrawRectangle(float x, float y, float w, float h, float angle) {
         glm::vec2 cam = World::Camera::instance().GetPosition();
 
@@ -356,6 +376,14 @@ void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float
 
 void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, double angle) {
     RenderManager::instance().DrawSprite(textureId, x, y, width, height, angle);
+}
+
+void Renderer::DrawSpriteScreen(Renderer::TextureId textureId, float screenX, float screenY, float width, float height) {
+    RenderManager::instance().DrawSpriteScreen(textureId, screenX, screenY, width, height);
+}
+
+void Renderer::DrawSpriteScreen(Renderer::TextureId textureId, float screenX, float screenY, float width, float height, double angle) {
+    RenderManager::instance().DrawSpriteScreen(textureId, screenX, screenY, width, height, angle);
 }
 
 void Renderer::DrawRectangle(float x, float y, float w, float h, float angle = 0.0) {

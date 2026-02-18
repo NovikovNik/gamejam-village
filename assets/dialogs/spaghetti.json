@@ -1,0 +1,27 @@
+{
+    "id": "Spaghetti",
+    "name": "Spaghetti",
+    "description": "Spaghetti guy.",
+    "dialogs": {
+        "dialog-1": {
+            "lines": [
+                "My name is Van, I'm an artist, I'm a performance artist. I'm hired to people to fulfill their fantasies, their deep dark fantasies. I was gonna be a movie star y'know, modeling and acting. After a hundred and two additions and small parts I decided y'know I had enough, Then I got in to Escort world.",
+                "I'm fine, thank you.",
+                "What's your name?",
+                "My name is Spaghetti.",
+                "What's your favorite food?",
+                "My favorite food is spaghetti.",
+                "What's your favorite color?",
+                "My favorite color is spaghetti.",
+                "What's your favorite animal?"
+            ],
+            "textSize": 20
+        },
+        "dialog-2": {
+            "lines": [
+                "Hello mister Johnson!"
+            ],
+            "textSize": 20
+        }
+    }
+}

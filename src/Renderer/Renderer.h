@@ -18,6 +18,9 @@ namespace Renderer {
     void SubscribeToEvents();
     void DrawSprite(TextureId textureId, float x, float y, float width, float height);
     void DrawSprite(TextureId textureId, float x, float y, float width, float height, double angle);
+    /// Спрайт в экранных координатах (без учёта камеры) — для UI
+    void DrawSpriteScreen(TextureId textureId, float screenX, float screenY, float width, float height);
+    void DrawSpriteScreen(TextureId textureId, float screenX, float screenY, float width, float height, double angle);
     // Debug render
     void DrawRectangle(float x, float y, float w, float h, float angle);
     void SetCameraPosition(float x, float y);
