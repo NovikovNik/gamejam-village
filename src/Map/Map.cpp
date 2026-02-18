@@ -234,7 +234,7 @@ public:
     void OpenCurrentLocationInExplorer() {
         const auto locationName = GetCurrentMapName();
         const auto fullPath = std::filesystem::path("village") / locationName;
-        FileSystemManager::OpenSystemExplorer(fullPath);
+        FileSystemManager::OpenSystemExplorer(fullPath.string());
     }
 
     void SeedInstantSpawnEntitiesInFilesystem() {
