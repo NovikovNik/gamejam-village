@@ -39,7 +39,6 @@ void Game::Initialize() {
     Renderer::Initialize(windowWidth, windowHeight);
     Renderer::LoadAllTextures("assets/textures/");
     Renderer::LoadAllFonts("assets/fonts/");
-    WorldState::Initiate();
     bool isLoaded = MapManager::LoadMap("assets/maps/world-entry.json");
     if (!isLoaded) {
         Logger::Err("Failed to load map");
@@ -78,16 +77,16 @@ void Game::ProcessInput() {
                 isRunning = false;
                 break;
             case SDL_EVENT_WINDOW_RESIZED:
-                Logger::Debug("[Game/SDL] Window resized");
                 EventsQueue::instance().Push(WindowResizedEvent{});
+                Logger::Debug("[Game/SDL] Window resized event sent");
                 break;
             case SDL_EVENT_WINDOW_FOCUS_GAINED:
-                Logger::Debug("[Game/SDL] Window focus gained");
                 EventsQueue::instance().Push(WindowFocusedEvent{});
+                Logger::Debug("[Game/SDL] Window focus event sent");
                 break;
             case SDL_EVENT_WINDOW_FOCUS_LOST:
-                Logger::Debug("[Game/SDL] Window focus lost");
                 EventsQueue::instance().Push(WindowUnfocusedEvent{});
+                Logger::Debug("[Game/SDL] Window unfocus event sent");
                 break;
             case SDL_EVENT_KEY_DOWN:
                 // Handle tilde key to toggle cheats (always processed)
@@ -116,10 +115,8 @@ void Game::ProcessInput() {
                     Logger::Debug("Debug state changed to: " + std::to_string(GameFeatures::isDebug));
                     break;
                 }
-                if (event.key.key == SDLK_O) {
-                    // FOR TEST!
-                    //FileSystemManager::CreateKeyFile("village", "box_1.spg");
-                    FileSystemManager::OpenSystemExplorer("village");
+                if (event.key.key == SDLK_O) { // Open current location
+                    MapManager::OpenCurrentLocationInExplorer();
                     break;
                 }
                 if (event.key.key == SDLK_R) {

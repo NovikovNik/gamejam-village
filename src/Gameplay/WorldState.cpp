@@ -2,6 +2,7 @@
 #include <FileSystem/FileSystem.h>
 #include <EventBus/EventBus.h>
 #include <Events/WindowFocusedEvent.h>
+#include <Events/ClearWorldStateEvent.h>
 #include <Logger/Logger.h>
 #include <Map/Map.h>
 #include <Utils/Singleton.h>
@@ -35,6 +36,7 @@ public:
     void Initiate()
     {
         EventBus::instance().SubscribeToEvent<WindowFocusedEvent>(this, &GameStateManager::OnWindowFocused);
+        EventBus::instance().SubscribeToEvent<ClearWorldStateEvent>(this, &GameStateManager::OnClearWorldState);
     }
 
     void OnWindowFocused(WindowFocusedEvent&)
@@ -45,6 +47,10 @@ public:
         const auto locationName = MapManager::GetCurrentMapName();
         const auto& changes = SyncLocationAndGetChanges(locationName);
         for (const auto& change : changes.added) {
+            if (change.type.empty()) {
+                Logger::Warn(std::format("Skipping object '{}': empty type (use name.type -> Spaghetti.villager)", change.name));
+                continue;
+            }
             const auto key = std::format("{}.{}", change.name, change.type);
             persistentState.mapObjectsLocations[key] = locationName;
             [[maybe_unused]] const auto entity = MapManager::SpawnEntity(change.name, change.type);
@@ -62,6 +68,13 @@ public:
             }
             Logger::Log(std::format("Removed object: {} of type {}", change.name, change.type));
         }
+    }
+
+    void OnClearWorldState(ClearWorldStateEvent&)
+    {
+        Logger::Log("Clearing world state");
+        currentState.clear();
+        lastSeenState.clear();
     }
 
     [[nodiscard]] LocationsStates::LocationChanges SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName)
@@ -109,7 +122,9 @@ public:
                 if (!obj.type.empty() && obj.type[0] == '.') {
                     obj.type = obj.type.substr(1);
                 }
-                rootObjects.push_back(obj);
+                if (!obj.type.empty()) {
+                    rootObjects.push_back(obj);
+                }
             }
         }
         currentState[""] = rootObjects;
@@ -130,7 +145,9 @@ public:
                         if (!obj.type.empty() && obj.type[0] == '.') {
                             obj.type = obj.type.substr(1);
                         }
-                        subfolderObjects.push_back(obj);
+                        if (!obj.type.empty()) {  // skip files without extension (e.g. "villager")
+                            subfolderObjects.push_back(obj);
+                        }
                     }
                 }
                 

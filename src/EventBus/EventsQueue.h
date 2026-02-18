@@ -16,6 +16,7 @@ public:
     }
 
     void Dispatch();
+    void Clear();
 
 private:
     std::queue<std::function<void()>> events;

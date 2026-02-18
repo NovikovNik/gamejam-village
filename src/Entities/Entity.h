@@ -7,6 +7,8 @@ namespace World
 {
     class Entity {
         public:
+            virtual ~Entity() = default;
+
             [[nodiscard]] virtual bool Update(float deltaTime);
             virtual void Render(float deltaTime) = 0;
             virtual void OnDestroy() {};

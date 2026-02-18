@@ -10,6 +10,11 @@
 #include <Entities/EBox.h>
 #include <Entities/ENpc.h>
 #include <Entities/ESpawners.h>
+#include <Events/WindowFocusedEvent.h>
+#include <Events/ClearWorldStateEvent.h>
+#include <FileSystem/FileSystem.h>
+#include <Gameplay/WorldState.h>
+#include <EventBus/EventsQueue.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
 #include <fstream>
 #include <sstream>
@@ -22,6 +27,7 @@ class Map : public Singleton<Map> {
 public:
     [[nodiscard]] bool LoadMap(const std::string& filename) {
         UnloadCurrentMap();
+        WorldState::Initiate();
         currentLevel = filename;
 
         // Load JSON map data
@@ -137,6 +143,12 @@ public:
                 World::Camera::instance().Follow(player);
             }
         }
+
+        // HACK: Чтобы перезагрузить состояние мира после загрузки локации
+
+        EventsQueue::instance().Push(ClearWorldStateEvent{});
+        EventsQueue::instance().Push(WindowFocusedEvent{});
+
         return true;
     }
 
@@ -145,6 +157,7 @@ public:
     }
 
     void UnloadCurrentMap() {
+        EventsQueue::instance().Clear();
         EventBus::instance().Reset();
         World::Camera::instance().Unfollow();
         entitiesManager.Clear();
@@ -203,6 +216,12 @@ public:
         return nullptr;
     }
 
+    void OpenCurrentLocationInExplorer() {
+        const auto locationName = GetCurrentMapName();
+        const auto fullPath = std::filesystem::path("village") / locationName;
+        FileSystemManager::OpenSystemExplorer(fullPath);
+    }
+
     std::string GetCurrentMapName() const {
         return std::filesystem::path(currentLevel).filename().stem().string();
     }
@@ -246,5 +265,9 @@ namespace MapManager {
 
     std::string GetCurrentMapName() {
         return Map::instance().GetCurrentMapName();
+    }
+
+    void OpenCurrentLocationInExplorer() {
+        Map::instance().OpenCurrentLocationInExplorer();
     }
 };

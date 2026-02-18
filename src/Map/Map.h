@@ -13,4 +13,5 @@ namespace MapManager {
     void Render(float deltaTime);
     void ReloadMap();
     void UnloadCurrentMap();
+    void OpenCurrentLocationInExplorer();
 };

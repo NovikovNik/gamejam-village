@@ -7,3 +7,9 @@ void EventsQueue::Dispatch() {
         events.pop();
     }
 }
+
+void EventsQueue::Clear() {
+    while (!events.empty()) {
+        events.pop();
+    }
+}
