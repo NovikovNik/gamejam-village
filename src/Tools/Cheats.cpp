@@ -7,10 +7,14 @@
 #include <Game/GameFeatures.h>
 #include <Map/Map.h>
 #include <Utils/Singleton.h>
+#include <DialogSystem/DialogSystem.h>
+#include <EventBus/EventsQueue.h>
+#include <Events/ForceDialogStartEvent.h>
 #include <string>
 #include <format>
 #include <filesystem>
 #include <vector>
+#include <utility>
 
 class CheatsManger : public Singleton<CheatsManger>
 {
@@ -52,6 +56,31 @@ public:
         } else {
             ImGui::Text("No levels found in assets/maps/");
         }
+
+        ImGui::Separator();
+        RefreshDialogListIfNeeded();
+        if (!dialogOptions.empty()) {
+            const char* dialogPreview = selectedDialogIndex >= 0 && selectedDialogIndex < static_cast<int>(dialogOptions.size())
+                ? dialogOptions[selectedDialogIndex].c_str() : "Select dialog...";
+            if (ImGui::BeginCombo("Dialog (Source:dialog_id)", dialogPreview)) {
+                for (int i = 0; i < static_cast<int>(dialogOptions.size()); ++i) {
+                    const bool isSelected = (selectedDialogIndex == i);
+                    if (ImGui::Selectable(dialogOptions[i].c_str(), isSelected)) {
+                        selectedDialogIndex = i;
+                    }
+                    if (isSelected) {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            if (ImGui::Button("Start Dialog") && selectedDialogIndex >= 0 && selectedDialogIndex < static_cast<int>(dialogOptions.size())) {
+                const auto& [characterId, dialogId] = dialogIds[selectedDialogIndex];
+                EventsQueue::instance().Push(ForceDialogStartEvent(characterId, dialogId));
+            }
+        } else {
+            ImGui::Text("No dialogs loaded");
+        }
         
         // Debug info
         if (GameFeatures::isDebug) {
@@ -68,6 +97,7 @@ public:
     void ToggleCheats() {
         isCheatsActive = !isCheatsActive;
         mapListDirty = true;
+        dialogListDirty = true;
     }
 
     void RefreshMapListIfNeeded() {
@@ -85,6 +115,23 @@ public:
             selectedMapIndex = mapNames.empty() ? -1 : 0;
         }
     }
+
+    void RefreshDialogListIfNeeded() {
+        if (!dialogListDirty) return;
+        dialogListDirty = false;
+        dialogOptions.clear();
+        dialogIds.clear();
+        const auto& dialogs = DialogSystemManager::GetDialogs();
+        for (const auto& [characterId, dialogsMap] : dialogs) {
+            for (const auto& [dialogId, _] : dialogsMap) {
+                dialogOptions.push_back(std::format("{}:{}", characterId, dialogId));
+                dialogIds.emplace_back(characterId, dialogId);
+            }
+        }
+        if (selectedDialogIndex >= static_cast<int>(dialogOptions.size())) {
+            selectedDialogIndex = dialogOptions.empty() ? -1 : 0;
+        }
+    }
     
     bool AreCheatsActive() const {
         return isCheatsActive;
@@ -94,6 +141,12 @@ private:
     std::vector<std::string> mapNames;
     int selectedMapIndex = -1;
     bool mapListDirty = true;
+
+    std::vector<std::string> dialogOptions;
+    std::vector<std::pair<std::string, std::string>> dialogIds;
+    int selectedDialogIndex = -1;
+    bool dialogListDirty = true;
+
     bool isCheatsActive = false;
 };
 

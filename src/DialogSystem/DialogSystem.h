@@ -3,6 +3,13 @@
 #include <Renderer/Renderer.h>
 #include <string>
 
+struct DialogData {
+    std::vector<std::string> lines;
+    int textSize = 20;
+};
+
+using DialogsMap = std::map<std::string, std::map<std::string, DialogData>>;
+
 namespace DialogSystemManager {
     void Initialize();
     void LoadAllDialogs(const std::string& directory);
@@ -12,4 +19,5 @@ namespace DialogSystemManager {
     bool IsDialogActive();
     void UpdateDialog();
     void RenderDialog();
+    [[nodiscard]] const DialogsMap& GetDialogs();
 }

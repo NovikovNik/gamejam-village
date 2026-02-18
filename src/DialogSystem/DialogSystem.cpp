@@ -14,14 +14,6 @@
 #include <format>
 #include <vector>
 
-struct DialogData {
-    std::vector<std::string> lines;
-    int textSize = 20;
-};
-
-// characterId -> (dialogId -> DialogData)
-using DialogsMap = std::map<std::string, std::map<std::string, DialogData>>;
-
 struct CharacterMeta {
     std::string name;
     std::string description;
@@ -157,6 +149,10 @@ public:
         return it != characterMeta.end() ? &it->second : nullptr;
     }
 
+    [[nodiscard]] const DialogsMap& GetDialogs() {
+        return dialogs;
+    }
+
 private:
     nlohmann::json LoadDialogData(const std::string& filepath) const {
         std::ifstream file(filepath);
@@ -209,4 +205,9 @@ void DialogSystemManager::UpdateDialog() {
 
 void DialogSystemManager::RenderDialog() {
     DialogSystem::instance().RenderDialog();
+}
+
+// Читовая функция
+[[nodiscard]] const DialogsMap& DialogSystemManager::GetDialogs() {
+    return DialogSystem::instance().GetDialogs();
 }
