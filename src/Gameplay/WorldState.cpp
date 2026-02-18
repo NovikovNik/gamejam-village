@@ -36,9 +36,16 @@ class GameStateManager: public Singleton<GameStateManager>
 public:
     void Initiate()
     {
-        EventBus::instance().SubscribeToEvent<WindowFocusedEvent>(this, &GameStateManager::OnWindowFocused);
-        EventBus::instance().SubscribeToEvent<ClearWorldStateEvent>(this, &GameStateManager::OnClearWorldState);
-        EventBus::instance().SubscribeToEvent<ChangeLocationEvent>(this, &GameStateManager::OnChangeLocation);
+        onWindowFocused = EventBus::instance().SubscribeToEvent<WindowFocusedEvent>(this, &GameStateManager::OnWindowFocused);
+        onClearWorldState = EventBus::instance().SubscribeToEvent<ClearWorldStateEvent>(this, &GameStateManager::OnClearWorldState);
+        onChangeLocation = EventBus::instance().SubscribeToEvent<ChangeLocationEvent>(this, &GameStateManager::OnChangeLocation);
+    }
+
+    void Destroy()
+    {
+        onWindowFocused.Destroy();
+        onClearWorldState.Destroy();
+        onChangeLocation.Destroy();
     }
 
     void OnWindowFocused(WindowFocusedEvent&)
@@ -172,6 +179,10 @@ private:
     LocationsStates::State lastSeenState;
 
     PersistentState persistentState;
+
+    Events::Handler onWindowFocused;
+    Events::Handler onClearWorldState;
+    Events::Handler onChangeLocation;
 };
 
 void WorldState::Initiate() {
@@ -180,4 +191,8 @@ void WorldState::Initiate() {
 
 LocationsStates::LocationChanges WorldState::SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName) { 
     return GameStateManager::instance().SyncLocationAndGetChanges(locationName);
+}
+
+void WorldState::Destroy() {
+    GameStateManager::instance().Destroy();
 }

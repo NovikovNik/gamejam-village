@@ -1,7 +1,7 @@
 #pragma once
 
+#include "EventsHandler.h"
 #include "../Logger/Logger.h"
-#include "../Events/Event.h"
 #include <Utils/Singleton.h>
 #include <typeindex>
 #include <map>
@@ -9,104 +9,103 @@
 #include <functional>
 #include <memory>
 
+// ---------------------------------------------------------------------------
+// Type-erased base — one per subscription
+// ---------------------------------------------------------------------------
 class IEventCallback {
-    private:
-        virtual void Call(Event& e) = 0;
-    public:
-        virtual ~IEventCallback() = default;
-        void Execute(Event& e) {
-            Call(e);
-        }
-        virtual bool IsAlive() const = 0;
-        virtual void* GetOwner() const = 0;
+public:
+    explicit IEventCallback(int32_t id) : id(id) {}
+    virtual ~IEventCallback() = default;
+
+    virtual void Execute(void* event) = 0;
+    int32_t GetId() const { return id; }
+
+private:
+    int32_t id;
 };
 
-template <typename TOwner, typename TEvent>
-class EventCallback: public IEventCallback {
-    private:
-        using CallbackFunction = void (TOwner::*)(TEvent&);
+// ---------------------------------------------------------------------------
+// Typed callback — TEvent is the event type, callback receives TEvent&
+// ---------------------------------------------------------------------------
+template <typename TEvent>
+class EventCallback : public IEventCallback {
+public:
+    using Fn = std::function<void(TEvent&)>;
 
-        TOwner* ownerInstance;
-        CallbackFunction callbackFunction;
-        std::function<bool()> isAliveCheck;
+    EventCallback(Fn fn, int32_t id)
+        : IEventCallback(id)
+        , fn(std::move(fn))
+    {}
 
-        virtual void Call(Event& e) override {
-            if (IsAlive()) {
-                std::invoke(callbackFunction, ownerInstance, static_cast<TEvent&>(e));
-            }
-        }
-        virtual bool IsAlive() const override {
-            if (isAliveCheck) {
-                return isAliveCheck();
-            }
-            return ownerInstance != nullptr;
-        }
-        void* GetOwner() const override {
-            return ownerInstance;
-        }
+    void Execute(void* event) override {
+        fn(*static_cast<TEvent*>(event));
+    }
 
-    public:
-        EventCallback(TOwner* ownerInstance, CallbackFunction callbackFunction, std::function<bool()> isAlive = {})
-            : ownerInstance(ownerInstance)
-            , callbackFunction(callbackFunction)
-            , isAliveCheck(std::move(isAlive))
-        {}
-
-        virtual ~EventCallback() override = default;
+private:
+    Fn fn;
 };
 
-typedef std::list<std::unique_ptr<IEventCallback>> HandlerList;
+using HandlerList = std::list<std::unique_ptr<IEventCallback>>;
 
-class EventBus: public Singleton<EventBus>  {
-    private:
-        std::map<std::type_index, std::unique_ptr<HandlerList>> subscribers;
-    public:
-        EventBus() {
-            Logger::Log("EventBus constructor called");
-        };
-        ~EventBus() {
-            Logger::Log("EventBus destructor called");
-        };
+// ---------------------------------------------------------------------------
+// EventBus
+// ---------------------------------------------------------------------------
+class EventBus : public Singleton<EventBus> {
+public:
+    EventBus()  { Logger::Log("EventBus constructor called"); }
+    ~EventBus() { Logger::Log("EventBus destructor called"); }
 
-        // Clear all subscribers (resetting event bus)
-        void Reset() {
-            subscribers.clear();
+    void Reset() { subscribers.clear(); }
+
+    // Subscribe to TEvent. Keep the returned Handler alive to stay subscribed.
+    //
+    //   auto sub = EventBus::instance().SubscribeToEvent<MyEvent>(
+    //       [this](MyEvent& e) { ... });
+    template <typename TEvent>
+    [[nodiscard]] Events::Handler SubscribeToEvent(std::function<void(TEvent&)> callback) {
+        auto& list = subscribers[typeid(TEvent)];
+        if (!list) {
+            list = std::make_unique<HandlerList>();
+        }
+        Events::Handler h;
+        h.Initialize();
+        list->push_back(std::make_unique<EventCallback<TEvent>>(std::move(callback), h.GetId()));
+        return h;
+    }
+
+    template <typename TEvent, typename TOwner>
+    [[nodiscard]] Events::Handler SubscribeToEvent(TOwner* owner, void (TOwner::*method)(TEvent&)) {
+        return SubscribeToEvent<TEvent>(
+            [owner, method](TEvent& e) { (owner->*method)(e); });
+    }
+
+    // Emit TEvent — construct it from args and dispatch to all subscribers.
+    //
+    //   EventBus::instance().EmitEvent<MyEvent>(arg1, arg2);
+    template <typename TEvent, typename ...TArgs>
+    void EmitEvent(TArgs&&... args) {
+        auto it = subscribers.find(typeid(TEvent));
+        if (it == subscribers.end() || !it->second) {
+            return;
         }
 
-        // Remove all subscriptions for the given owner (call from OnDestroy)
-        [[maybe_unused]] void UnsubscribeAll(void* owner) {
-            for (auto& [typeIdx, handlers] : subscribers) {
-                if (handlers) {
-                    handlers->remove_if([owner](const std::unique_ptr<IEventCallback>& cb) {
-                        return cb->GetOwner() == owner;
-                    });
-                }
-            }
+        TEvent event(std::forward<TArgs>(args)...);
+        for (auto& handler : *it->second) {
+            handler->Execute(&event);
         }
+    }
 
-        template <typename TEvent, typename TOwner>
-        void SubscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent&), std::function<bool()> isAlive = {}) {
-            if (!subscribers[typeid(TEvent)].get()) {
-                subscribers[typeid(TEvent)] = std::make_unique<HandlerList>();
-            }
-            auto subscriber = std::make_unique<EventCallback<TOwner, TEvent>>(ownerInstance, callbackFunction, std::move(isAlive));
-            subscribers[typeid(TEvent)]->push_back(std::move(subscriber));
-        }
-
-        template <typename TEvent, typename ...TArgs>
-        void EmitEvent(TArgs&& ...args) {
-            auto handlers = subscribers[typeid(TEvent)].get();
+    // Called automatically by Events::Handler's destructor
+    void Unsubscribe(int32_t id) {
+        for (auto& [typeIdx, handlers] : subscribers) {
             if (handlers) {
-                for (auto it = handlers->begin(); it != handlers->end(); ) {
-                    if (!it->get()->IsAlive()) {
-                        it = handlers->erase(it); // Чистим подписки
-                        continue;
-                    }
-                    auto handler = it->get();
-                    TEvent event(std::forward<TArgs>(args)...);
-                    handler->Execute(event);
-                    ++it;
-                }
+                handlers->remove_if([id](const std::unique_ptr<IEventCallback>& cb) {
+                    return cb->GetId() == id;
+                });
             }
         }
+    }
+
+private:
+    std::map<std::type_index, std::unique_ptr<HandlerList>> subscribers;
 };

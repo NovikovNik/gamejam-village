@@ -24,8 +24,13 @@ public:
 
     void Initialize() {
         dialogBackgroundTexture = make_nnTex("dialog_ui_texture");
-        EventBus::instance().SubscribeToEvent<NextDialogLineEvent>(this, &DialogSystem::OnNextDialogLineEvent);
-        EventBus::instance().SubscribeToEvent<ForceDialogStartEvent>(this, &DialogSystem::OnForceDialogStartEvent);
+        onNextDialogLineEvent = EventBus::instance().SubscribeToEvent<NextDialogLineEvent>(this, &DialogSystem::OnNextDialogLineEvent);
+        onForceDialogStartEvent = EventBus::instance().SubscribeToEvent<ForceDialogStartEvent>(this, &DialogSystem::OnForceDialogStartEvent);
+    }
+
+    void Destroy() {
+        onNextDialogLineEvent.Destroy();
+        onForceDialogStartEvent.Destroy();
     }
 
     void LoadAllDialogs(const std::string& directory) {
@@ -177,6 +182,9 @@ private:
 
     DialogsMap dialogs;
     std::map<std::string, CharacterMeta> characterMeta;
+
+    Events::Handler onNextDialogLineEvent;
+    Events::Handler onForceDialogStartEvent;
 };
 
 void DialogSystemManager::Initialize() {
@@ -210,4 +218,8 @@ void DialogSystemManager::RenderDialog() {
 // Читовая функция
 [[nodiscard]] const DialogsMap& DialogSystemManager::GetDialogs() {
     return DialogSystem::instance().GetDialogs();
+}
+
+void DialogSystemManager::Destroy() {
+    DialogSystem::instance().Destroy();
 }

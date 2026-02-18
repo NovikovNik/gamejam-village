@@ -16,7 +16,8 @@
 #include <Events/ChangeLocationEvent.h>
 #include <FileSystem/FileSystem.h>
 #include <Gameplay/WorldState.h>
-#include <EventBus/EventsQueue.h>
+#include <EventBus/EventBus.h>
+#include <Events/EntitiesEvent.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
 #include <fstream>
 #include <sstream>
@@ -178,8 +179,8 @@ public:
             MarkLocationProcessed(locationName);
         }
 
-        EventsQueue::instance().Push(ClearWorldStateEvent{});
-        EventsQueue::instance().Push(WindowFocusedEvent{});
+        EventBus::instance().EmitEvent<ClearWorldStateEvent>();
+        EventBus::instance().EmitEvent<WindowFocusedEvent>();
 
         // HACK: Чтобы перезагрузить состояние мира после загрузки локации
         return true;
@@ -230,6 +231,7 @@ public:
                 box->SetTagName(std::format("{}.{}", name, type));
                 return box;
             }
+            EventBus::instance().EmitEvent<EntityCreatedEvent>(name, type);
         }
 
 //        if (type == "villager") {
@@ -249,6 +251,16 @@ public:
         return nullptr;
     }
 
+    void DestroyEntity(const std::string& name, const std::string& type) {
+        if (type == "villager") {
+            auto npc = entitiesManager.GetEntitiesContainer().FindEntity(std::format("{}.{}", name, type));
+            if (npc) {
+                EventBus::instance().EmitEvent<EntityDestroyedEvent>(name, type);
+                npc->Destroy();
+            }
+        }
+    }
+
     void OpenCurrentLocationInExplorer() {
         const auto locationName = GetCurrentMapName();
         const auto fullPath = std::filesystem::path("village") / locationName;
@@ -257,11 +269,15 @@ public:
 
     void SeedInstantSpawnEntitiesInFilesystem() {
         const auto* spawnersEntity = entitiesManager.GetEntitiesContainer().FindEntity<World::ESpawners>();
-        if (!spawnersEntity) return;
+        if (!spawnersEntity) {
+            return;
+        }
 
         const auto locationName = GetCurrentMapName();
         const auto instantSpawns = spawnersEntity->GetInstantSpawnEntities();
-        if (instantSpawns.empty()) return;
+        if (instantSpawns.empty()) {
+            return;
+        }
 
         const auto villageDir = std::filesystem::path("village") / locationName;
         for (const auto& [name, type] : instantSpawns) {
@@ -339,6 +355,10 @@ namespace MapManager {
 
     World::Entity* SpawnEntity(const std::string& name, const std::string& type) {
         return Map::instance().SpawnEntity(name, type);
+    }
+
+    void DestroyEntity(const std::string& name, const std::string& type) {
+        Map::instance().DestroyEntity(name, type);
     }
 
     std::string GetCurrentMapName() {

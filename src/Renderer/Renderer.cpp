@@ -54,7 +54,7 @@ public:
     }
 
     void SubscribeToEvents() {
-        EventBus::instance().SubscribeToEvent<WindowResizedEvent>(this, &RenderManager::OnWindowSizeChanged);
+        onWindowResized = EventBus::instance().SubscribeToEvent<WindowResizedEvent>(this, &RenderManager::OnWindowSizeChanged);
     }
 
     void OnWindowSizeChanged(WindowResizedEvent&) {
@@ -340,6 +340,7 @@ public:
     }
 
     void Destroy() {
+        onWindowResized.Destroy();
 #if ENABLE_CHEATS
         ShutdownImGui();
 #endif
@@ -357,6 +358,7 @@ private:
 
     int renderOutputSizeW, renderOutputSizeH;
 
+    Events::Handler onWindowResized;
 };
 
 void Renderer::Initialize(int32_t windowWidth, int32_t windowHeight) {

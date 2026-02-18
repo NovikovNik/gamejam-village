@@ -4,10 +4,11 @@
 #include <Renderer/Renderer.h>
 #include <FileSystem/FileSystem.h>
 #include <DialogSystem/DialogSystem.h>
+#include <Game/GameplayLogic.h>
 
 #include "Game/GameStates.h"
 #include "GameFeatures.h"
-#include <EventBus/EventsQueue.h>
+#include <EventBus/EventBus.h>
 #include "../Events/WindowResizedEvent.h"
 #include "../Events/WindowFocusedEvent.h"
 #include "../Events/WindowUnfocusedEvent.h"
@@ -69,6 +70,9 @@ void Game::Run() {
 void Game::Destroy() {
     // The order is strict because of asserts
     Renderer::Destroy();
+    WorldState::Destroy();
+    DialogSystemManager::Destroy();
+    GameplayLogic::Destroy();
 }
 
 void Game::ProcessInput() {
@@ -82,15 +86,15 @@ void Game::ProcessInput() {
                 isRunning = false;
                 break;
             case SDL_EVENT_WINDOW_RESIZED:
-                EventsQueue::instance().Push(WindowResizedEvent{});
+                EventBus::instance().EmitEvent<WindowResizedEvent>();
                 Logger::Debug("[Game/SDL] Window resized event sent");
                 break;
             case SDL_EVENT_WINDOW_FOCUS_GAINED:
-                EventsQueue::instance().Push(WindowFocusedEvent{});
+                EventBus::instance().EmitEvent<WindowFocusedEvent>();
                 Logger::Debug("[Game/SDL] Window focus event sent");
                 break;
             case SDL_EVENT_WINDOW_FOCUS_LOST:
-                EventsQueue::instance().Push(WindowUnfocusedEvent{});
+                EventBus::instance().EmitEvent<WindowUnfocusedEvent>();
                 Logger::Debug("[Game/SDL] Window unfocus event sent");
                 break;
             case SDL_EVENT_KEY_DOWN:
@@ -130,11 +134,11 @@ void Game::ProcessInput() {
                     break;
                 }
                 if (event.key.key == SDLK_F) {
-                    EventsQueue::instance().Push(InterectButtonPressedEvent{});
+                    EventBus::instance().EmitEvent<InterectButtonPressedEvent>();
                     break;
                 }
                 if (event.key.key == SDLK_SPACE) {
-                    EventsQueue::instance().Push(NextDialogLineEvent{});
+                    EventBus::instance().EmitEvent<NextDialogLineEvent>();
                     break;
                 }
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP) {
@@ -221,7 +225,7 @@ void Game::Update() {
     MapManager::Update(deltaTime);
 
     // Dispatch all events in the queue
-    EventsQueue::instance().Dispatch();
+//    EventsQueue::instance().Dispatch();
 }
 
 void Game::Render() {

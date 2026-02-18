@@ -8,7 +8,7 @@
 #include <Map/Map.h>
 #include <Utils/Singleton.h>
 #include <DialogSystem/DialogSystem.h>
-#include <EventBus/EventsQueue.h>
+#include <EventBus/EventBus.h>
 #include <Events/ForceDialogStartEvent.h>
 #include <string>
 #include <format>
@@ -76,7 +76,7 @@ public:
             }
             if (ImGui::Button("Start Dialog") && selectedDialogIndex >= 0 && selectedDialogIndex < static_cast<int>(dialogOptions.size())) {
                 const auto& [characterId, dialogId] = dialogIds[selectedDialogIndex];
-                EventsQueue::instance().Push(ForceDialogStartEvent(characterId, dialogId));
+                EventBus::instance().EmitEvent<ForceDialogStartEvent>(characterId, dialogId);
             }
         } else {
             ImGui::Text("No dialogs loaded");

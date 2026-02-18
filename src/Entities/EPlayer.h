@@ -29,5 +29,7 @@ namespace World {
         Renderer::TextureId tooltipTexture;
         float tooltipWidth = 32.0f;
         float tooltipHeight = 32.0f;
+
+        Events::Handler onInterectButtonPressed;
     };
 }

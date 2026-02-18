@@ -1,24 +1,18 @@
 #pragma once
 
-#include "Entity.h"
-#include <type_traits>
 #include <EventBus/EventBus.h>
-#include <Map/Map.h>
 
-namespace World {
-
-// Этот хендлер написал AI, я запутался в метаисториях и шаблонах, прости господи за это
-// Прослойка между Entity и EventBus: проверяет, что Entity всё ещё в контейнере, прежде чем вызвать callback
-struct EntityEventHandler {
-    template <typename TEvent, typename TEntity>
-    static void Subscribe(TEntity* entity, void (TEntity::*callback)(TEvent&)) {
-        static_assert(std::is_base_of_v<Entity, TEntity>, "TEntity must derive from Entity");
-        EventBus::instance().SubscribeToEvent<TEvent>(
-            entity,
-            callback,
-            [entity] { return MapManager::GetEntitiesContainer().Contains(entity); }
-        );
+// ---------------------------------------------------------------------------
+// EntityEventHandler
+// Convenience wrapper around EventBus for member-function subscriptions.
+//
+//   auto sub = EntityEventHandler::Subscribe<MyEvent>(this, &MyClass::OnMyEvent);
+// ---------------------------------------------------------------------------
+class EntityEventHandler {
+public:
+    template <typename TEvent, typename TOwner>
+    [[nodiscard]] static Events::Handler Subscribe(TOwner* owner, void (TOwner::*method)(TEvent&)) {
+        return EventBus::instance().SubscribeToEvent<TEvent>(
+            [owner, method](TEvent& e) { (owner->*method)(e); });
     }
 };
-
-} // namespace World
