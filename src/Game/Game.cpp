@@ -46,6 +46,7 @@ void Game::Initialize() {
     } else {
         isRunning = true;
     }
+    WorldState::Initiate();
 }
 
 void Game::Setup() {

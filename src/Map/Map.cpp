@@ -27,7 +27,6 @@ class Map : public Singleton<Map> {
 public:
     [[nodiscard]] bool LoadMap(const std::string& filename) {
         UnloadCurrentMap();
-        WorldState::Initiate();
         currentLevel = filename;
 
         // Load JSON map data
@@ -157,8 +156,8 @@ public:
     }
 
     void UnloadCurrentMap() {
-        EventsQueue::instance().Clear();
-        EventBus::instance().Reset();
+        // EventsQueue::instance().Clear();
+        // EventBus::instance().Reset();
         World::Camera::instance().Unfollow();
         entitiesManager.Clear();
     }

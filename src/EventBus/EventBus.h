@@ -17,6 +17,8 @@ class IEventCallback {
         void Execute(Event& e) {
             Call(e);
         }
+        virtual bool IsAlive() const = 0;
+        virtual void* GetOwner() const = 0;
 };
 
 template <typename TOwner,typename TEvent>
@@ -29,6 +31,12 @@ class EventCallback: public IEventCallback {
 
         virtual void Call(Event& e) override {
             std::invoke(callbackFunction, ownerInstance, static_cast<TEvent&>(e));
+        }
+        virtual bool IsAlive() const override {
+            return ownerInstance != nullptr;
+        }
+        void* GetOwner() const override {
+            return ownerInstance;
         }
 
     public:
@@ -59,6 +67,17 @@ class EventBus: public Singleton<EventBus>  {
             subscribers.clear();
         }
 
+        // Remove all subscriptions for the given owner (call from OnDestroy)
+        [[maybe_unused]] void UnsubscribeAll(void* owner) {
+            for (auto& [typeIdx, handlers] : subscribers) {
+                if (handlers) {
+                    handlers->remove_if([owner](const std::unique_ptr<IEventCallback>& cb) {
+                        return cb->GetOwner() == owner;
+                    });
+                }
+            }
+        }
+
         // eventBus->SubscribeToEvent<CollisionEvent, CollisionSystem>(this, &CollisionSystem::OnCollision);
         template <typename TEvent, typename TOwner>
         void SubscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent&)) {
@@ -75,6 +94,10 @@ class EventBus: public Singleton<EventBus>  {
             auto handlers = subscribers[typeid(TEvent)].get();
             if (handlers) {
                 for (auto it = handlers->begin(); it != handlers->end(); it++) {
+                    if (!it->get()->IsAlive()) {
+                        it = handlers->erase(it); // Чистим подписки
+                        continue;
+                    }
                     auto handler = it->get();
                     TEvent event(std::forward<TArgs>(args)...);
                     handler->Execute(event);
