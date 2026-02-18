@@ -40,6 +40,7 @@ Game::~Game() {
 void Game::Initialize() {
 
     Renderer::Initialize(windowWidth, windowHeight);
+    GameplayLogic::Initialize();
     DialogSystemManager::Initialize();
     DialogSystemManager::LoadAllDialogs("assets/dialogs/");
     Renderer::LoadAllTextures("assets/textures/");
@@ -223,6 +224,7 @@ void Game::Update() {
     }
 
     MapManager::Update(deltaTime);
+    GameplayLogic::Update();
 
     // Dispatch all events in the queue
 //    EventsQueue::instance().Dispatch();

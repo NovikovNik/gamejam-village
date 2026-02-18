@@ -71,10 +71,12 @@ public:
                 persistentState.mapObjectsLocations.erase(key);
             }
 
-            const auto entity = MapManager::GetEntitiesContainer().FindEntity(std::format("{}.{}", change.name, change.type));
-            if (entity) {
-                entity->Destroy();
-            }
+            MapManager::DestroyEntity(change.name, change.type);
+
+//            const auto entity = MapManager::GetEntitiesContainer().FindEntity(std::format("{}.{}", change.name, change.type));
+//            if (entity) {
+//                entity->Destroy();
+//            }
             Logger::Log(std::format("Removed object: {} of type {}", change.name, change.type));
         }
     }

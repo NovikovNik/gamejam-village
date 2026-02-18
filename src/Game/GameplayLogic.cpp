@@ -11,12 +11,12 @@ namespace {
     public:
         virtual ~GameAct() = default;
     
-        virtual void Initialize() = 0;
+        virtual void Initialize() {};
     };
 
     class ActTutorial: public GameAct {
     public:
-        void Initialize() override {
+        void Initialize() {
             onEntityCreated   = EventBus::instance().SubscribeToEvent<EntityCreatedEvent>(this, &ActTutorial::OnEntityCreated);
             onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &ActTutorial::OnEntityDestroyed);
         }
@@ -35,6 +35,9 @@ namespace {
     };
     
     [[nodiscard]] std::unique_ptr<GameAct> CreateGameAct(const std::string& gameActName) {
+        if (gameActName == "tutorial") {
+            return std::make_unique<ActTutorial>();
+        }
         return nullptr;
     }
 }
@@ -42,7 +45,7 @@ namespace {
 class GameplayLogicManager: public Singleton<GameplayLogicManager> {
 public:
     void Initialize() {
-
+        nextGameAct = CreateGameAct("tutorial");
     }
 
     void LoadGameAct(const std::string& gameActName) {
@@ -78,5 +81,9 @@ namespace GameplayLogic {
 
     void Destroy() {
         GameplayLogicManager::instance().Destroy();
+    }
+
+    void Update() {
+        GameplayLogicManager::instance().Update();
     }
 }

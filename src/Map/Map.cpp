@@ -219,6 +219,7 @@ public:
                 return nullptr;
             }
 
+            EventBus::instance().EmitEvent<EntityCreatedEvent>(name, type);
             const auto position = optPosition.value();
             if (type == "villager") {
                 auto npc = entitiesManager.SpawnEntity<World::ENpc>(name, position.x, position.y);
@@ -231,7 +232,6 @@ public:
                 box->SetTagName(std::format("{}.{}", name, type));
                 return box;
             }
-            EventBus::instance().EmitEvent<EntityCreatedEvent>(name, type);
         }
 
 //        if (type == "villager") {
