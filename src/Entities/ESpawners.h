@@ -14,6 +14,7 @@ namespace World {
             std::string type;
             float x;
             float y;
+            bool shouldSpawnInstantly; // Спавним ли на старте уровня или только руками
         };
     public:
         bool Update(float deltaTime) override;
@@ -22,6 +23,9 @@ namespace World {
         void LoadSpawners(const std::vector<Spawner>& spawners);
 
         [[nodiscard]] std::optional<glm::vec2> GetSpawnerPosition(const std::string& name, const std::string& type) const;
+
+        // Returns entities that should spawn on first game start (spawnOnStart=true)
+        [[nodiscard]] std::vector<std::pair<std::string, std::string>> GetInstantSpawnEntities() const;
 
     private:
         std::vector<Spawner> spawners;

@@ -1,7 +1,7 @@
 #include "EPlayer.h"
+#include "EntityEventHandler.h"
 #include "../Game/GameStates.h"
 #include "../Game/GameFeatures.h"
-#include <EventBus/EventBus.h>
 #include "Entities/EColliders.h"
 #include "Entities/EPit.h"
 #include <Map/Map.h>
@@ -136,7 +136,7 @@ bool World::EPlayer::Update(float deltaTime) {
  }
 
  void World::EPlayer::OnSpawn() {
-    EventBus::instance().SubscribeToEvent<InterectButtonPressedEvent>(this, &EPlayer::OnInterectButtonPressed);
+    EntityEventHandler::Subscribe<InterectButtonPressedEvent>(this, &EPlayer::OnInterectButtonPressed);
     tooltipTexture = make_nnTex("f_button");
 }
 

@@ -27,6 +27,16 @@ std::optional<glm::vec2> World::ESpawners::GetSpawnerPosition(const std::string&
     }
     return std::nullopt;
 }
+
+std::vector<std::pair<std::string, std::string>> World::ESpawners::GetInstantSpawnEntities() const {
+    std::vector<std::pair<std::string, std::string>> result;
+    for (const auto& spawner : spawners) {
+        if (spawner.shouldSpawnInstantly) {
+            result.emplace_back(spawner.name, spawner.type);
+        }
+    }
+    return result;
+}
 //World::Entity* World::ESpawners::SpawnEntity(const std::string& name, const std::string& type, const std::function<Entity*()>& spawnFunction) {
 //
 //}

@@ -21,18 +21,24 @@ class IEventCallback {
         virtual void* GetOwner() const = 0;
 };
 
-template <typename TOwner,typename TEvent>
+template <typename TOwner, typename TEvent>
 class EventCallback: public IEventCallback {
     private:
-        typedef void (TOwner::*CallbackFunction)(TEvent&);
+        using CallbackFunction = void (TOwner::*)(TEvent&);
 
         TOwner* ownerInstance;
         CallbackFunction callbackFunction;
+        std::function<bool()> isAliveCheck;
 
         virtual void Call(Event& e) override {
-            std::invoke(callbackFunction, ownerInstance, static_cast<TEvent&>(e));
+            if (IsAlive()) {
+                std::invoke(callbackFunction, ownerInstance, static_cast<TEvent&>(e));
+            }
         }
         virtual bool IsAlive() const override {
+            if (isAliveCheck) {
+                return isAliveCheck();
+            }
             return ownerInstance != nullptr;
         }
         void* GetOwner() const override {
@@ -40,11 +46,11 @@ class EventCallback: public IEventCallback {
         }
 
     public:
-        EventCallback(
-            TOwner* ownerInstance,
-            CallbackFunction callbackFunction):
-            ownerInstance(ownerInstance),
-            callbackFunction(callbackFunction){};
+        EventCallback(TOwner* ownerInstance, CallbackFunction callbackFunction, std::function<bool()> isAlive = {})
+            : ownerInstance(ownerInstance)
+            , callbackFunction(callbackFunction)
+            , isAliveCheck(std::move(isAlive))
+        {}
 
         virtual ~EventCallback() override = default;
 };
@@ -78,22 +84,20 @@ class EventBus: public Singleton<EventBus>  {
             }
         }
 
-        // eventBus->SubscribeToEvent<CollisionEvent, CollisionSystem>(this, &CollisionSystem::OnCollision);
         template <typename TEvent, typename TOwner>
-        void SubscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent&)) {
+        void SubscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent&), std::function<bool()> isAlive = {}) {
             if (!subscribers[typeid(TEvent)].get()) {
                 subscribers[typeid(TEvent)] = std::make_unique<HandlerList>();
             }
-
-            auto subscriber = std::make_unique<EventCallback<TOwner, TEvent>>(ownerInstance, callbackFunction);
+            auto subscriber = std::make_unique<EventCallback<TOwner, TEvent>>(ownerInstance, callbackFunction, std::move(isAlive));
             subscribers[typeid(TEvent)]->push_back(std::move(subscriber));
-        };
+        }
 
         template <typename TEvent, typename ...TArgs>
         void EmitEvent(TArgs&& ...args) {
             auto handlers = subscribers[typeid(TEvent)].get();
             if (handlers) {
-                for (auto it = handlers->begin(); it != handlers->end(); it++) {
+                for (auto it = handlers->begin(); it != handlers->end(); ) {
                     if (!it->get()->IsAlive()) {
                         it = handlers->erase(it); // Чистим подписки
                         continue;
@@ -101,7 +105,8 @@ class EventBus: public Singleton<EventBus>  {
                     auto handler = it->get();
                     TEvent event(std::forward<TArgs>(args)...);
                     handler->Execute(event);
+                    ++it;
                 }
             }
-        };
+        }
 };

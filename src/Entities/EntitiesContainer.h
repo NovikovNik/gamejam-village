@@ -15,6 +15,13 @@ namespace World {
 
         [[nodiscard]] size_t GetEntityCount() const;
 
+        [[nodiscard]] bool Contains(const Entity* ptr) const {
+            for (const auto& entity : entities) {
+                if (entity.get() == ptr) return true;
+            }
+            return false;
+        }
+
         void ForEachEntity(auto&& callback) const {
             for (auto& entity : entities) {
                 callback(entity.get());

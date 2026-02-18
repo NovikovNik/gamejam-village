@@ -14,4 +14,5 @@ namespace MapManager {
     void ReloadMap();
     void UnloadCurrentMap();
     void OpenCurrentLocationInExplorer();
+    void SeedInstantSpawnEntitiesInFilesystem();
 };

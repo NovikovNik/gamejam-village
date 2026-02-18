@@ -96,11 +96,14 @@ public:
 //                World::EBox* box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(boxName));
                 const float x = boxJson["x"].get<float>();
                 const float y = boxJson["y"].get<float>();
-
-                spawners.push_back({ boxName, "box", x, y });
-
-//                box->SetPosition(x, y);
-//                box->SetTagName(std::format("{}.box", boxName));
+                bool shouldSpawnInstantly = false;
+                if (boxJson.contains("spawnOnStart")) {
+                    shouldSpawnInstantly = boxJson["spawnOnStart"].get<bool>();
+                } else {
+                    Logger::Warn(std::format("Box {} does not have spawnOnStart property, defaulting to true", boxName));
+                    shouldSpawnInstantly = true;
+                }
+                spawners.push_back({ boxName, "box", x, y, shouldSpawnInstantly });
             }
         }
 
@@ -110,7 +113,14 @@ public:
                 const std::string npcName = npcJson["name"].get<std::string>();
                 const float x = npcJson["x"].get<float>();
                 const float y = npcJson["y"].get<float>();
-                spawners.push_back({ npcName, "villager", x, y });
+                bool shouldSpawnInstantly = false;
+                if (npcJson.contains("spawnOnStart")) {
+                    shouldSpawnInstantly = npcJson["spawnOnStart"].get<bool>();
+                } else {
+                    Logger::Warn(std::format("NPC {} does not have spawnOnStart property, defaulting to true", npcName));
+                    shouldSpawnInstantly = true;
+                }
+                spawners.push_back({ npcName, "villager", x, y, shouldSpawnInstantly });
 //                World::ENpc* npc = entitiesManager.SpawnEntity<World::ENpc>(npcName, x, y);
 //                npc->SetTagName(std::format("{}.villager", npcName));
             }
@@ -143,11 +153,17 @@ public:
             }
         }
 
-        // HACK: Чтобы перезагрузить состояние мира после загрузки локации
+        // Тут первый раз создаем все Entity на локации при старте игры (в файлавой директории)
+        const std::string locationName = GetCurrentMapName();
+        if (!IsLocationProcessed(locationName)) {
+            SeedInstantSpawnEntitiesInFilesystem();
+            MarkLocationProcessed(locationName);
+        }
 
         EventsQueue::instance().Push(ClearWorldStateEvent{});
         EventsQueue::instance().Push(WindowFocusedEvent{});
 
+        // HACK: Чтобы перезагрузить состояние мира после загрузки локации
         return true;
     }
 
@@ -221,8 +237,45 @@ public:
         FileSystemManager::OpenSystemExplorer(fullPath);
     }
 
+    void SeedInstantSpawnEntitiesInFilesystem() {
+        const auto* spawnersEntity = entitiesManager.GetEntitiesContainer().FindEntity<World::ESpawners>();
+        if (!spawnersEntity) return;
+
+        const auto locationName = GetCurrentMapName();
+        const auto instantSpawns = spawnersEntity->GetInstantSpawnEntities();
+        if (instantSpawns.empty()) return;
+
+        const auto villageDir = std::filesystem::path("village") / locationName;
+        for (const auto& [name, type] : instantSpawns) {
+            const auto filename = std::format("{}.{}", name, type);
+            FileSystemManager::CreateKeyFile(villageDir.string(), filename);
+        }
+        Logger::Log(std::format("Seeded {} instant-spawn entities in village/{}", instantSpawns.size(), locationName));
+    }
+
     std::string GetCurrentMapName() const {
         return std::filesystem::path(currentLevel).filename().stem().string();
+    }
+
+    // Проверка была ли локация уже посещена или это первый запуск игры
+    [[nodiscard]] bool IsLocationProcessed(const std::string& locationId) const {
+        for (const auto& state : locationStates) {
+            if (state.locationId == locationId && state.isProcessed) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // При первом заходе на локацию (aka новая локация или первый старт игры)
+    void MarkLocationProcessed(const std::string& locationId) {
+        for (auto& state : locationStates) {
+            if (state.locationId == locationId) {
+                state.isProcessed = true;
+                return;
+            }
+        }
+        locationStates.push_back({ locationId, true });
     }
 
 private:
@@ -231,6 +284,14 @@ private:
     std::string currentLevel;
 
     nlohmann::json mapData;
+
+    // Структура для обозначения, что локация посечена в первый раз
+    // При первом заходе на неё нужно создать все Entity с spawnOnStart=true
+    struct LocationState {
+        std::string locationId;
+        bool isProcessed = false;
+    };
+    std::vector<LocationState> locationStates;
 };
 
 namespace MapManager {
@@ -268,5 +329,9 @@ namespace MapManager {
 
     void OpenCurrentLocationInExplorer() {
         Map::instance().OpenCurrentLocationInExplorer();
+    }
+
+    void SeedInstantSpawnEntitiesInFilesystem() {
+        Map::instance().SeedInstantSpawnEntitiesInFilesystem();
     }
 };

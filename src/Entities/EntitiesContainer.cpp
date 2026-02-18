@@ -11,6 +11,11 @@ void World::EntitiesContainer::RemoveInvalidEntities() {
 }
 
 void World::EntitiesContainer::Clear() {
+    for (auto& entity : entities) {
+        if (entity) {
+            entity->OnDestroy();
+        }
+    }
     entities.clear();
 }
 

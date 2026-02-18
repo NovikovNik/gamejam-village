@@ -155,7 +155,8 @@
         {
             "x": 221.8290557861328,
             "y": 6.3292999267578125,
-            "name": "Spaghetti"
+            "name": "Spaghetti",
+            "spawnOnStart": true
         }
     ],
     "interactables": [],
