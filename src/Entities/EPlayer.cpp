@@ -188,7 +188,7 @@ void World::EPlayer::Render(float deltaTime) {
     if (GameFeatures::isDebug) {
         Renderer::DrawRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), 0.0);
     }
-    if (bShowTooltip) {
+    if (bShowTooltip && !DialogSystemManager::IsDialogActive()) {
         const auto& pos = GetPosition();
         Renderer::DrawSprite(tooltipTexture, pos.x, pos.y - tooltipHeight - 16.0f, tooltipWidth, tooltipHeight);
     }

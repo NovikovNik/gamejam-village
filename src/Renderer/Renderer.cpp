@@ -68,6 +68,7 @@ public:
 
     void LoadTexture(const std::filesystem::path& texturePath) {
         SDL_Texture* texture = IMG_LoadTexture(renderer, texturePath.string().c_str());
+        SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
         if (!texture) {
             SDL_Log("Texture creation failed: %s", SDL_GetError());
         }
