@@ -47,6 +47,7 @@ void Game::Initialize() {
     ProgressSystemManager::Initialize();
     Renderer::LoadAllTextures("assets/textures/");
     Renderer::LoadAllFonts("assets/fonts/");
+    // Стартовую локацию выставляем в сохранке!!!
     bool isLoaded = MapManager::LoadLastLoadedLevel();
     if (!isLoaded) {
         Logger::Err("Failed to load map");

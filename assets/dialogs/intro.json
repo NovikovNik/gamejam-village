@@ -1,0 +1,16 @@
+{
+    "id": "Intro",
+    "name": "Kings Letter",
+    "description": "Intro letter from the king.",
+    "dialogs": {
+        "intro-1": {
+            "lines": [
+                "By command of the Crown, thou art to ride at once to the village of AAAB.",
+                "Deliver this letter to the village elder without delay. Ensure the village stands in good order and suffers no distress worthy of report.",
+                "Obtain a written reply from the elder and return immediately to my court. There is no time to linger — the affairs of the realm will not wait.",
+                "See this task done swiftly and faithfully. (King of the Kingdom)"
+            ],
+            "textSize": 20
+        }
+    }
+}

@@ -6,6 +6,7 @@
 #include <EventBus/EventBus.h>
 #include <Events/NextDialogLineEvent.h>
 #include <Events/ForceDialogStartEvent.h>
+#include <Events/DialogEndedEvent.h>
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -108,6 +109,7 @@ public:
 
     void EndDialog() {
         dialogActive = false;
+        EventBus::instance().EmitEvent<DialogEndedEvent>(currentCharacterId, currentDialogId);
         currentCharacterId = "";
         currentDialogId = "";
         currentDialogIndex = 0;
@@ -127,7 +129,7 @@ public:
         if (!dialogActive) return;
         Renderer::DrawSpriteScreen(dialogBackgroundTexture, 2, 380, 793, 216);
         // Render character name
-        Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), characterMeta[currentCharacterId].name, 15, 404, 22, nullptr, 128);
+        Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), characterMeta[currentCharacterId].name, 15, 404, 22, nullptr, 300);
         // Render dialog text
         Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), currentDialogText, 15, 465, currentDialogTextSize, nullptr, 790);
     }

@@ -5,7 +5,7 @@
 
 struct PlayerSaveData : public BasicSaveData {
     glm::vec2 position{0.f, 0.f};
-    std::string lastLevel = "assets/maps/world-entry-2.json";
+    std::string lastLevel = "assets/maps/intro.json";
 
     int GetVersion() const override {
         return 1;
@@ -13,7 +13,7 @@ struct PlayerSaveData : public BasicSaveData {
 
     void ResetToDefaults() override {
         position = {0.f, 0.f};
-        lastLevel = "assets/maps/world-entry-2.json";
+        lastLevel = "assets/maps/intro.json";
     }
 
     void ToJson(nlohmann::json& j) const override {

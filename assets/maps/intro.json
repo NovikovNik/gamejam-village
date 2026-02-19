@@ -1,0 +1,11 @@
+{
+    "tiles": [
+        {
+            "x": 0.0,
+            "y": -60.0,
+            "width": 336.0,
+            "height": 314.0,
+            "texture": "parchment"
+        }
+    ]
+}
