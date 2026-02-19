@@ -170,6 +170,7 @@ public:
                 const float y = playerJson["y"].get<float>();
                 World::EPlayer* player = entitiesManager.SpawnEntity<World::EPlayer>(playerName, x, y);
                 World::Camera::instance().Follow(player);
+                World::Camera::instance().SetPosition(x, y); // Нужно чтобы не было небольшого смещения камеры при старте уровня
             }
         }
 
