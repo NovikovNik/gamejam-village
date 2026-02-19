@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 #include "../EventBus/EventBus.h"
 #include <imgui/imgui.h>
+#include "../Events/GameShutdownEvent.h"
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
@@ -29,6 +30,9 @@ class Game {
         void Render();
         void Destroy();
 
+    private:
+        void OnGameShutdown(GameShutdownEvent& e);
+
     public:
         static int windowWidth;
         static int windowHeight;
@@ -36,4 +40,7 @@ class Game {
         static int windowLogicHeight;
         static int mapWidth;
         static int mapHeight;
+
+    private:
+        Events::Handler onGameShutdown;
 };

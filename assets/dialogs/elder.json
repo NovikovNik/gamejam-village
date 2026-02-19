@@ -1,0 +1,158 @@
+{
+    "id": "Elder",
+    "dialogs": {
+        "dialog-1": {
+            "description": "Elder of the village not happy with you at all.",
+            "lines": [
+                {
+                    "name": "Elder",
+                    "text": "Welcome to our village! You have chosen, or been chosen, to relocate to our finest... Oh, wait... Where have you come from, actually? Nevermind. This village is forbitten for outsiders, it says right there. See?",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Sign with text",
+                    "text": "This village is forbidden for outsiders!",
+                    "size": 30,
+                    "color": [255, 0, 0, 255],
+                    "align": "right"
+                },
+                {
+                    "name": "Elder",
+                    "text": "Well, you got it: i'm standing here, conviniently blocking your path to the next location and ther is no way you can make me disappear.",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Elder",
+                    "text": "Like poofff... Can you imagine? Bizarre!",
+                    "size": 25,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Elder",
+                    "text": "If I could just delete someone, I wouldn't hesitate. So many problems can be solved that way. Oh, that's didn't sound right...So what are you waiting for?",
+                    "size": 20,
+                    "color": [255, 255, 210, 210],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-2": {
+            "description": "Elder of the village not happy with you at all.",
+            "lines": [
+                {
+                    "name": "Elder",
+                    "text": "I'm still here blocking your way, and you are still here staring at me. What do you want?",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Elder",
+                    "text": "These dialogs are not procedural generated. They will run out eventually. There is only so many you can write in seven days. I guess your playthrough will be longer then 15 minutes.",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Elder",
+                    "text": "You can't just keep staring at me. I'm not going to disappear. You need to move on.",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-3": {
+            "description": "Elder of the village not happy with you at all.",
+            "lines": [
+                {
+                    "text": "There are two ways to delete a file: right click on it, then press 'delete', or just press 'delete' on your keyboard."
+                },
+                {
+                    "text": "Let's try a more direct approach. This is a tutorial level. We want you to learn that you can alter the game world by deleting files. So go and delete that file!"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-4": {
+            "description": "Elder of the village not happy with you at all.",
+            "lines": [
+                {
+                    "text": "I think, you just pretend you don't understand what we want from you.",
+                    "size": 25,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-5": {
+            "description": "Elder of the village not happy with you at all.",
+            "lines": [
+                {
+                    "text": "Congratulations! You made it. You are the first person who have read all my lines. Thanks, very flattering."
+                },
+                {
+                    "text": "What if I'm the main boss of this game? Imagine how fun it would be? For me."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-6": {
+            "description": "Elder of the village not happy with you at all.",
+            "lines": [
+                {
+                    "text": "I hope you are not using controller. I'm not sure how it would work with that."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-7": {
+            "description": "Elder of the village not happy with you at all.",
+            "lines": [
+                {
+                    "text": "Ohh, we are not done. I see..."
+                },
+                {
+                    "text": "Please, I just want it to be over.",
+                    "size": 30
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-8": {
+            "description": "",
+            "lines": [
+                {
+                    "text": "Try to create file kick-my.ass"
+                }
+            ],
+            "textSize": 25
+        },
+        "dialog-after-deleted": {
+            "description": "File deleted",
+            "lines": [
+                {
+                    "text": "You erased the Elder’s file—every trace, every echo—together, with deliberate hands. The moment it vanishes, something stirs."
+                },
+                {
+                    "text": "Power seeps into your limbs like heat through stone. Your breath deepens. Your thoughts race. For an instant, the world feels wider, softer at the edges, as though it might finally bend if you only reached out."
+                },
+                {
+                    "text": "Wait a minute... This is not the Divinity Original Sin game or Baldurs Gate game or any other RPG game. This is a simple game about deleting files."
+                },
+                {
+                    "text": "The road to the village lies open. You can go there now."
+                }
+            ],
+            "textSize": 20
+        }
+    }
+}

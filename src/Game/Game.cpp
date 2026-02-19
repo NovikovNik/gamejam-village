@@ -15,6 +15,7 @@
 #include "../Events/WindowUnfocusedEvent.h"
 #include "../Events/InterectButtonPressedEvent.h"
 #include "../Events/NextDialogLineEvent.h"
+#include "../Events/GameShutdownEvent.h"
 #include "../Gameplay/WorldState.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keycode.h"
@@ -56,6 +57,15 @@ void Game::Initialize() {
         isRunning = true;
     }
     WorldState::Initiate();
+
+    // В редких ситуациях из игрового процесса придет сигнал на выход из игры
+    // Например, если игрок создаст файл kick-my.ass в world-entry-2 локации
+    onGameShutdown = EventBus::instance().SubscribeToEvent<GameShutdownEvent>(this, &Game::OnGameShutdown);
+}
+
+void Game::OnGameShutdown(GameShutdownEvent& e) {
+    Logger::Log("[Game] Game shutdown event received. Stopping the game.");
+    isRunning = false;
 }
 
 void Game::Setup() {

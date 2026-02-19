@@ -8,6 +8,7 @@
 #include <Game/GameFeatures.h>
 #include <Map/Map.h>
 #include <Entities/EPlayer.h>
+#include <ProgressSystem/ProgressSystem.h>
 #include <Utils/Singleton.h>
 #include <DialogSystem/DialogSystem.h>
 #include <EventBus/EventBus.h>
@@ -82,6 +83,15 @@ public:
             }
         } else {
             ImGui::Text("No dialogs loaded");
+        }
+
+        ImGui::Separator();
+        if (ImGui::Button("Reset Save")) {
+            ProgressSystemManager::Player().ResetToDefaults();
+            ProgressSystemManager::SaveData();
+        }
+        if (ImGui::IsItemHovered()) {
+            ImGui::SetTooltip("Reset save data to defaults and overwrite gamesave.json");
         }
         
         // Debug info

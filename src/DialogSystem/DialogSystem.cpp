@@ -7,6 +7,7 @@
 #include <Events/NextDialogLineEvent.h>
 #include <Events/ForceDialogStartEvent.h>
 #include <Events/DialogEndedEvent.h>
+#include <SDL3/SDL.h>
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -24,6 +25,7 @@ class DialogSystem: public Singleton<DialogSystem> {
 public:
 
     void Initialize() {
+        dialogBackgroundNameTexture = make_nnTex("dialog_ui_speeker");
         dialogBackgroundTexture = make_nnTex("dialog_ui_texture");
         onNextDialogLineEvent = EventBus::instance().SubscribeToEvent<NextDialogLineEvent>(this, &DialogSystem::OnNextDialogLineEvent);
         onForceDialogStartEvent = EventBus::instance().SubscribeToEvent<ForceDialogStartEvent>(this, &DialogSystem::OnForceDialogStartEvent);
@@ -48,19 +50,31 @@ public:
 
                 const std::string characterId = json["id"].get<std::string>();
                 characterMeta[characterId] = {
-                    json["name"].get<std::string>(),
-                    json["description"].get<std::string>()
+                    json.value("name", characterId),
+                    json.value("description", std::string())
                 };
 
                 for (auto& [dialogId, dialogJson] : json["dialogs"].items()) {
                     if (dialogId == "textSize") continue; // пропускаем глобальный textSize если ошибочно в dialogs
                     DialogData data;
                     if (dialogJson.is_array()) {
-                        data.lines = dialogJson.get<std::vector<std::string>>();
-                    } else if (dialogJson.is_object()) {
-                        data.lines = dialogJson["lines"].get<std::vector<std::string>>();
+                        for (const auto& item : dialogJson) {
+                            if (item.is_string()) {
+                                data.lines.push_back({"", item.get<std::string>(), data.textSize, {255,255,255,255}, "left"});
+                            } else if (item.is_object()) {
+                                data.lines.push_back(ParseDialogLine(item, data.textSize));
+                            }
+                        }
+                    } else if (dialogJson.is_object() && dialogJson.contains("lines")) {
                         if (dialogJson.contains("textSize")) {
                             data.textSize = dialogJson["textSize"].get<int>();
+                        }
+                        for (const auto& item : dialogJson["lines"]) {
+                            if (item.is_string()) {
+                                data.lines.push_back({"", item.get<std::string>(), data.textSize, {255,255,255,255}, "left"});
+                            } else if (item.is_object()) {
+                                data.lines.push_back(ParseDialogLine(item, data.textSize));
+                            }
                         }
                     }
                     dialogs[characterId][dialogId] = std::move(data);
@@ -75,7 +89,6 @@ public:
         currentDialogId = "";
         currentDialogIndex = 0;
         currentLines.clear();
-        currentDialogText = "";
         Logger::Log("[DialogSystem] Initialized");
     }
 
@@ -102,7 +115,6 @@ public:
         currentLines = data.lines;
         currentDialogTextSize = data.textSize;
         currentDialogIndex = 0;
-        currentDialogText = currentLines.empty() ? "" : currentLines[0];
 
         Logger::Log(std::format("[DialogSystem] Dialog: {}:{} started", characterId, dialogId));
     }
@@ -114,7 +126,6 @@ public:
         currentDialogId = "";
         currentDialogIndex = 0;
         currentLines.clear();
-        currentDialogText = "";
         currentDialogTextSize = 20;
     }
 
@@ -126,21 +137,30 @@ public:
     [[maybe_unused]] void UpdateDialog() {}
 
     void RenderDialog() {
-        if (!dialogActive) return;
-        Renderer::DrawSpriteScreen(dialogBackgroundTexture, 2, 380, 793, 216);
-        // Render character name
-        Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), characterMeta[currentCharacterId].name, 15, 404, 22, nullptr, 300);
-        // Render dialog text
-        Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), currentDialogText, 15, 465, currentDialogTextSize, nullptr, 790);
+        if (!dialogActive || currentDialogIndex >= static_cast<int>(currentLines.size())) return;
+        const DialogLine& line = currentLines[currentDialogIndex];
+        SDL_Color textColor = {line.color[0], line.color[1], line.color[2], line.color[3]};
+
+        Renderer::DrawSpriteScreen(dialogBackgroundTexture, 3, 448, 793, 147);
+        Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), line.text, 12, 465, line.size, &textColor, 790);
+
+        // Имя говорящего: из текущей строки или из меты персонажа
+        std::string speakerName = line.name.empty() ? characterMeta[currentCharacterId].name : line.name;
+        // Рендер имени говорящего и бокса под него в нужном месте (слева или справа)
+        if (line.align == "left") {
+            Renderer::DrawSpriteScreen(dialogBackgroundNameTexture, 3, 385, 308, 59);
+            Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), speakerName, 12, 404, 22, nullptr, 300);
+        } else if (line.align == "right") {
+            Renderer::DrawSpriteScreen(dialogBackgroundNameTexture, 489, 385, 308, 59);
+            Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), speakerName, 540, 404, 22, nullptr, 300);
+        }
     }
 
     void OnNextDialogLineEvent(NextDialogLineEvent&) {
         if (!dialogActive) return;
 
         currentDialogIndex++;
-        if (currentDialogIndex < static_cast<int>(currentLines.size())) {
-            currentDialogText = currentLines[currentDialogIndex];
-        } else {
+        if (currentDialogIndex >= static_cast<int>(currentLines.size())) {
             EndDialog();
         }
     }
@@ -161,6 +181,21 @@ public:
     }
 
 private:
+    static DialogLine ParseDialogLine(const nlohmann::json& item, int defaultSize) {
+        DialogLine line;
+        line.name = item.value("name", std::string());
+        line.text = item.value("text", std::string());
+        line.size = item.value("size", defaultSize);
+        line.align = item.value("align", std::string("left"));
+        if (item.contains("color") && item["color"].is_array() && item["color"].size() >= 4) {
+            line.color[0] = static_cast<std::uint8_t>(item["color"][0].get<int>());
+            line.color[1] = static_cast<std::uint8_t>(item["color"][1].get<int>());
+            line.color[2] = static_cast<std::uint8_t>(item["color"][2].get<int>());
+            line.color[3] = static_cast<std::uint8_t>(item["color"][3].get<int>());
+        }
+        return line;
+    }
+
     nlohmann::json LoadDialogData(const std::string& filepath) const {
         std::ifstream file(filepath);
         if (!file.is_open()) {
@@ -176,10 +211,10 @@ private:
     std::string currentCharacterId;
     std::string currentDialogId;
     int currentDialogIndex = 0;
-    std::vector<std::string> currentLines;
-    std::string currentDialogText;
+    std::vector<DialogLine> currentLines;
     int currentDialogTextSize = 20;
 
+    Renderer::TextureId dialogBackgroundNameTexture;
     Renderer::TextureId dialogBackgroundTexture;
 
     DialogsMap dialogs;

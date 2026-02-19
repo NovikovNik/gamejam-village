@@ -217,6 +217,13 @@ public:
 
     World::Entity* SpawnEntity(const std::string& name, const std::string& type) {
 
+        // Обработка специфичных файлов, которые на самом деле даже некуда спавнить
+        if (name == "kick-my" && type == "ass") {
+            Logger::Log("[Map] Meme file detected. Skipping spawn but sending event.");
+            EventBus::instance().EmitEvent<EntityCreatedEvent>(name, type);
+            return nullptr;
+        }
+
         const auto spawners = entitiesManager.GetEntitiesContainer().FindEntity<World::ESpawners>();
         if (spawners) {
             const auto optPosition = spawners->GetSpawnerPosition(name, type);
