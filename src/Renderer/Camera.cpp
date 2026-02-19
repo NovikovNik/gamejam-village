@@ -19,7 +19,23 @@ void World::Camera::Follow(const World::EMovable* target) {
 
 void World::Camera::Unfollow() {
     followTarget = nullptr;
+    ResetPosition();
 }
+
+void World::Camera::ResetPosition() {
+    positionX = 0.0f;
+    positionY = 0.0f;
+}
+
+void World::Camera::SetPosition(float x, float y) {
+    positionX = x;
+    positionY = y;
+}
+
+glm::vec2 World::Camera::GetPosition() const {
+    return glm::vec2(positionX, positionY);
+}
+
 
 void World::Camera::Update(float dt) {
     if (!followTarget || !followTarget->IsValid()) {
@@ -47,8 +63,4 @@ void World::Camera::Update(float dt) {
             }
         }
     }
-}
-
-glm::vec2 World::Camera::GetPosition() const {
-    return glm::vec2(positionX, positionY);
 }

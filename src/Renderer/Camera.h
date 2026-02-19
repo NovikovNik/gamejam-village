@@ -10,7 +10,9 @@ namespace World {
             void Follow(const EMovable* target);
             void Unfollow();
             void Update(float dt);
-
+            
+            void ResetPosition();
+            void SetPosition(float x, float y);
             glm::vec2 GetPosition() const;
 
         private:
