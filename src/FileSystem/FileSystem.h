@@ -9,6 +9,7 @@ namespace FileSystemManager {
     void SetExecutableDir(char* argv0);
     void CreateDirectory(const std::string& path);
     void CreateKeyFile(const std::string& dirPath, const std::string& filename);
+    void DeleteKeyFile(const std::string& dirPath, const std::string& filename);
 
     [[nodiscard]] std::filesystem::path GetExecutableDir();
 };

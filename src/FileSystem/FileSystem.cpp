@@ -51,6 +51,20 @@ public:
         }
     }
 
+    void DeleteKeyFile(const std::string& dirPath, const std::string& filename) {
+        auto fullDir = executableDirPath / dirPath;
+        if (!std::filesystem::exists(fullDir)) {
+            return;
+        }
+        auto filePath = fullDir / filename;
+        if (std::filesystem::exists(filePath)) {
+            std::filesystem::remove(filePath);
+            Logger::Debug("[FS] Deleted file: " + filePath.string());
+        } else {
+            Logger::Debug("[FS] File does not exist: " + filePath.string());
+        }
+    }
+
     void SetExecutableDir(char* argv0) {
         executableDirPath = std::filesystem::absolute(argv0).parent_path();
     }
@@ -82,6 +96,10 @@ void FileSystemManager::CreateDirectory(const std::string& path) {
 
 void FileSystemManager::CreateKeyFile(const std::string& dirPath, const std::string& filename) {
     FileSystem::instance().CreateKeyFile(dirPath, filename);
+}
+
+void FileSystemManager::DeleteKeyFile(const std::string& dirPath, const std::string& filename) {
+    FileSystem::instance().DeleteKeyFile(dirPath, filename);
 }
 
 std::filesystem::path FileSystemManager::GetExecutableDir() {

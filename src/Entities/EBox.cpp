@@ -96,8 +96,8 @@ void World::EBox::Move(float dirX, float dirY, float speed, float deltaTime) {
             const auto boxPosition = GetPosition();
             const auto distance = glm::distance(pitPosition, boxPosition);
             if (distance < pitWidth * 0.7f) { // 0.7f это коэффициент вывереный на глаз
-                pit->Destroy();
-                Destroy();
+                MapManager::DestroyEntity(pit->GetTagName().name, pit->GetTagName().type);
+                MapManager::DestroyEntity(GetTagName().name, GetTagName().type);
             }
             return;
         }

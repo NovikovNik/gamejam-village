@@ -7,6 +7,13 @@ namespace World
 {
     class Entity {
         public:
+            struct TagName {
+                std::string name;
+                std::string type;
+
+                auto operator<=>(const TagName& other) const = default;
+            };
+        public:
             virtual ~Entity() = default;
 
             [[nodiscard]] virtual bool Update(float deltaTime);
@@ -18,10 +25,10 @@ namespace World
 
             [[nodiscard]] virtual bool IsValid() const { return isValid; }
 
-            void SetTagName(const std::string& newTagName) { this->tagName = newTagName; }
-            [[nodiscard]] const std::string& GetTagName() const { return tagName; }
+            void SetTagName(const TagName& newTagName) { this->tagName = newTagName; }
+            [[nodiscard]] const TagName& GetTagName() const { return tagName; }
         protected:
             uint8_t isValid : 1 = true;
-            std::string tagName;
+            TagName tagName;
     };
 }

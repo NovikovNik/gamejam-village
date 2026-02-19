@@ -23,6 +23,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <set>
 #include <filesystem>
 #include <format>
 
@@ -79,20 +80,23 @@ public:
             colliders->LoadColliders(collidersData);
             colliders->EnableRender();
         }
+
+        std::vector<World::ESpawners::Spawner> spawners;
         
         // Load pits from JSON
         if (mapData.contains("pits") && mapData["pits"].is_array()) {
             for (const auto& pitJson : mapData["pits"]) {
                 const std::string matchBoxName = pitJson["matchBoxName"].get<std::string>();
-                World::EPit* pit = entitiesManager.SpawnEntity<World::EPit>(make_nnBoxName(matchBoxName) );
+                //World::EPit* pit = entitiesManager.SpawnEntity<World::EPit>(make_nnBoxName(matchBoxName) );
                 const float x = pitJson["x"].get<float>();
                 const float y = pitJson["y"].get<float>();
 
-                pit->SetPosition(x, y);
+                //pit->SetPosition(x, y);
+                //pit->SetTagName({ matchBoxName, "pit" });
+
+                spawners.push_back({ matchBoxName, "pit", x, y, true });
             }
         }
-
-        std::vector<World::ESpawners::Spawner> spawners;
         
         // Load boxes from JSON
         if (mapData.contains("boxes") && mapData["boxes"].is_array()) {
@@ -176,9 +180,14 @@ public:
 
         // Тут первый раз создаем все Entity на локации при старте игры (в файлавой директории)
         const std::string locationName = GetCurrentMapName();
+        RevealLocationInFilesystem(locationName);
         if (!IsLocationProcessed(locationName)) {
             SeedInstantSpawnEntitiesInFilesystem();
             MarkLocationProcessed(locationName);
+        }
+        const auto& objects = objectsLocations[locationName];
+        for (const auto& object : objects) {
+            SpawnEntity(object.name, object.type, true);
         }
 
         EventBus::instance().EmitEvent<ClearWorldStateEvent>();
@@ -216,7 +225,10 @@ public:
         return entitiesManager.GetEntitiesContainer();
     }
 
-    World::Entity* SpawnEntity(const std::string& name, const std::string& type) {
+    World::Entity* SpawnEntity(const std::string& name, const std::string& type, bool silently = false) {
+        if (const World::Entity* foundEntity = entitiesManager.GetEntitiesContainer().FindEntity({ name, type }); foundEntity != nullptr) {
+            return nullptr;
+        }
 
         // Обработка специфичных файлов, которые на самом деле даже некуда спавнить
         if (name == "kick-my" && type == "ass") {
@@ -232,18 +244,29 @@ public:
                 return nullptr;
             }
 
-            EventBus::instance().EmitEvent<EntityCreatedEvent>(name, type);
+            if (silently) {
+                EventBus::instance().EmitEvent<EntityCreatedEvent>(name, type);
+            }
+
+            objectsLocations[GetCurrentMapName()].insert({ { name, type } });
             const auto position = optPosition.value();
             if (type == "villager") {
                 auto npc = entitiesManager.SpawnEntity<World::ENpc>(name, position.x, position.y);
-                npc->SetTagName(std::format("{}.{}", name, type));
+                npc->SetTagName({ name, type });
+                Logger::Log(std::format("[Map] Spawned NPC: {} of type {}", name, type));
                 return npc;
             }
             if (type == "box") {
                 auto box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(name));
                 box->SetPosition(position.x, position.y);
-                box->SetTagName(std::format("{}.{}", name, type));
+                box->SetTagName({ name, type });
                 return box;
+            }
+            if (type == "pit") {
+                auto pit = entitiesManager.SpawnEntity<World::EPit>(make_nnBoxName(name));
+                pit->SetPosition(position.x, position.y);
+                pit->SetTagName({ name, type });
+                return pit;
             }
         }
 
@@ -265,13 +288,15 @@ public:
     }
 
     void DestroyEntity(const std::string& name, const std::string& type) {
-        if (type == "villager") {
-            auto npc = entitiesManager.GetEntitiesContainer().FindEntity(std::format("{}.{}", name, type));
-            if (npc) {
+        if (!type.empty() && !name.empty()) {
+            auto entity = entitiesManager.GetEntitiesContainer().FindEntity({ name, type });
+            if (entity) {
                 EventBus::instance().EmitEvent<EntityDestroyedEvent>(name, type);
-                npc->Destroy();
+                entity->Destroy();
+                WorldState::RemoveFromWorldState({ name, type });
             }
         }
+        objectsLocations[GetCurrentMapName()].erase({ name, type });
     }
 
     void OpenCurrentLocationInExplorer() {
@@ -291,11 +316,9 @@ public:
         if (instantSpawns.empty()) {
             return;
         }
-
-        const auto villageDir = std::filesystem::path("village") / locationName;
+        
         for (const auto& [name, type] : instantSpawns) {
-            const auto filename = std::format("{}.{}", name, type);
-            FileSystemManager::CreateKeyFile(villageDir.string(), filename);
+            objectsLocations[locationName].insert({ { name, type } });\
         }
         Logger::Log(std::format("Seeded {} instant-spawn entities in village/{}", instantSpawns.size(), locationName));
     }
@@ -306,23 +329,17 @@ public:
 
     // Проверка была ли локация уже посещена или это первый запуск игры
     [[nodiscard]] bool IsLocationProcessed(const std::string& locationId) const {
-        for (const auto& state : locationStates) {
-            if (state.locationId == locationId && state.isProcessed) {
-                return true;
-            }
-        }
-        return false;
+        return processedLocations.contains(locationId);
     }
 
     // При первом заходе на локацию (aka новая локация или первый старт игры)
     void MarkLocationProcessed(const std::string& locationId) {
-        for (auto& state : locationStates) {
-            if (state.locationId == locationId) {
-                state.isProcessed = true;
-                return;
-            }
-        }
-        locationStates.push_back({ locationId, true });
+        processedLocations.insert(locationId);
+    }
+
+    void RevealLocationInFilesystem(const std::string& locationName) {
+        const auto villageDir = std::filesystem::path("village") / locationName;
+        FileSystemManager::CreateDirectory(villageDir.string());
     }
 
 private:
@@ -334,11 +351,9 @@ private:
 
     // Структура для обозначения, что локация посечена в первый раз
     // При первом заходе на неё нужно создать все Entity с spawnOnStart=true
-    struct LocationState {
-        std::string locationId;
-        bool isProcessed = false;
-    };
-    std::vector<LocationState> locationStates;
+
+    std::set<std::string> processedLocations;
+    std::map<std::string, std::set<World::Entity::TagName>> objectsLocations;
 };
 
 namespace MapManager {
@@ -389,4 +404,5 @@ namespace MapManager {
     void SeedInstantSpawnEntitiesInFilesystem() {
         Map::instance().SeedInstantSpawnEntitiesInFilesystem();
     }
+
 };

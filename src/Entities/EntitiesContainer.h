@@ -45,7 +45,7 @@ namespace World {
             return nullptr;
         }
         
-        [[nodiscard]] Entity* FindEntity(const std::string& tagName) const {
+        [[nodiscard]] Entity* FindEntity(const Entity::TagName& tagName) const {
             for (auto& entity : entities) {
                 if (!entity) {
                     continue;

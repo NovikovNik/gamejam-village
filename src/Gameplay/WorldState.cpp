@@ -63,8 +63,13 @@ public:
             }
             const auto key = std::format("{}.{}", change.name, change.type);
             persistentState.mapObjectsLocations[key] = locationName;
-            [[maybe_unused]] const auto entity = MapManager::SpawnEntity(change.name, change.type);
-            Logger::Log(std::format("[WorldState] Added object: {} of type {}", change.name, change.type));
+            const auto entity = MapManager::SpawnEntity(change.name, change.type);
+            if (entity != nullptr) {
+                Logger::Log(std::format("[WorldState] Added object: {} of type {}", change.name, change.type));
+            }
+            else {
+                Logger::Warn(std::format("[WorldState] Failed to spawn object: {} of type {}", change.name, change.type));
+            }
         }
         for (const auto& change : changes.removed) {
             const auto key = std::format("{}.{}", change.name, change.type);
@@ -161,13 +166,56 @@ public:
                 for (const auto& fileEntry : fs::directory_iterator(entry.path())) {
                     if (fileEntry.is_regular_file()) {
                         LocationsStates::Object obj;
-                        obj.name = fileEntry.path().stem().string();  // filename without extension
-                        obj.type = fileEntry.path().extension().string();
+                        
+                        // Handle files with pattern: <name>.<type>.txt
+                        auto originalFilePath = fileEntry.path();
+                        auto filePath = originalFilePath;
+                        bool wasTextFile = false;
+                        
+                        // If the file ends with .txt, remove it first
+                        if (filePath.extension() == ".txt") {
+                            filePath = filePath.stem();  // Remove .txt, get <name>.<type>
+                            wasTextFile = true;
+                        }
+                        
+                        // Now extract name and type from <name>.<type>
+                        obj.name = filePath.stem().string();  // filename without extension
+                        obj.type = filePath.extension().string();
+                        
                         // Remove the leading dot from extension
                         if (!obj.type.empty() && obj.type[0] == '.') {
                             obj.type = obj.type.substr(1);
                         }
+                        
                         if (!obj.type.empty()) {  // skip files without extension (e.g. "villager")
+                            // Migrate old .txt files to new format
+                            if (wasTextFile) {
+                                auto newFilePath = originalFilePath.parent_path() / (obj.name + "." + obj.type);
+                                
+                                // Delete old .txt file
+                                try {
+                                    fs::remove(originalFilePath);
+                                    Logger::Log(std::format("[WorldState] Deleted old file: {}", 
+                                        originalFilePath.filename().string()));
+                                } catch (const std::exception& e) {
+                                    Logger::Err(std::format("[WorldState] Failed to remove old file: {}", e.what()));
+                                }
+                                
+                                // Create new file without .txt extension
+                                if (!fs::exists(newFilePath)) {
+                                    try {
+                                        FileSystemManager::CreateKeyFile(
+                                            originalFilePath.parent_path().string(), 
+                                            obj.name + "." + obj.type
+                                        );
+                                        Logger::Log(std::format("[WorldState] Created new file: {}", 
+                                            newFilePath.filename().string()));
+                                    } catch (const std::exception& e) {
+                                        Logger::Err(std::format("[WorldState] Failed to create new file: {}", e.what()));
+                                    }
+                                }
+                            }
+                            
                             subfolderObjects.push_back(obj);
                         }
                     }
@@ -178,6 +226,53 @@ public:
         }
         
         Logger::Log("Loaded game state from village folder");
+    }
+
+    void AddToWorldState(const World::Entity::TagName& tagName) {
+
+        const auto locationName = MapManager::GetCurrentMapName();
+        const auto locationObjects = currentState.find(locationName);
+        if (locationObjects == currentState.end()) {
+            return;
+        }
+
+        const auto object = std::find_if(locationObjects->second.begin(), locationObjects->second.end(), [&tagName](const LocationsStates::Object& object) {
+            return object.name == tagName.name && object.type == tagName.type;
+        });
+        if (object != locationObjects->second.end()) {
+            return;
+        }
+        
+        const auto villageDir = std::filesystem::path("village") / locationName;
+        const auto filename = std::format("{}.{}", tagName.name, tagName.type);
+        
+        // Delete old .txt file if it exists (migration from old format)
+        const auto oldFilenameWithTxt = filename + ".txt";
+        FileSystemManager::DeleteKeyFile(villageDir.string(), oldFilenameWithTxt);
+        
+        // Create new file without .txt extension
+        FileSystemManager::CreateKeyFile(villageDir.string(), filename);
+
+        lastSeenState[locationName].push_back(LocationsStates::Object{
+            .name = tagName.name,
+            .type = tagName.type,
+        });
+    }
+
+    void RemoveFromWorldState(const World::Entity::TagName& tagName) {
+        const auto locationName = MapManager::GetCurrentMapName();
+
+        const auto villageDir = std::filesystem::path("village") / locationName;
+        const auto filename = std::format("{}.{}", tagName.name, tagName.type);
+        
+        // Delete both old .txt format and new format (whichever exists)
+        const auto oldFilenameWithTxt = filename + ".txt";
+        FileSystemManager::DeleteKeyFile(villageDir.string(), oldFilenameWithTxt);
+        FileSystemManager::DeleteKeyFile(villageDir.string(), filename);
+        
+        lastSeenState[locationName].erase(std::remove_if(lastSeenState[locationName].begin(), lastSeenState[locationName].end(), [&tagName](const LocationsStates::Object& object) {
+            return object.name == tagName.name && object.type == tagName.type;
+        }), lastSeenState[locationName].end());
     }
 
 private:
@@ -201,4 +296,12 @@ LocationsStates::LocationChanges WorldState::SyncLocationAndGetChanges(const Loc
 
 void WorldState::Destroy() {
     GameStateManager::instance().Destroy();
+}
+
+void WorldState::AddToWorldState(const World::Entity::TagName& tagName) {
+    GameStateManager::instance().AddToWorldState(tagName);
+}
+
+void WorldState::RemoveFromWorldState(const World::Entity::TagName& tagName) {
+    GameStateManager::instance().RemoveFromWorldState(tagName);
 }

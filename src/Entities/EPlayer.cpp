@@ -10,6 +10,7 @@
 #include <Entities/EInteractable.h>
 #include <DialogSystem/DialogSystem.h>
 #include <Logger/Logger.h>
+#include <Gameplay/WorldState.h>
 #include <format>
 #include <optional>
 
@@ -91,14 +92,18 @@ bool World::EPlayer::Update(float deltaTime) {
             }
 
             for (auto* e : interactibles) {
-                if (!e->IsValid()) { continue; }
+                if (!e->IsValid()) { 
+                    continue; 
+                }
                 const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
                 const glm::vec2 p = e->GetPosition();
                 checkBoth(p.x - w2, p.x + w2, p.y - h2, p.y + h2);
             }
 
             for (auto* e : pits) {
-                if (!e->IsValid()) { continue; }
+                if (!e->IsValid()) { 
+                    continue;
+                }
                 const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
                 const glm::vec2 p = e->GetPosition();
                 checkBoth(p.x - w2, p.x + w2, p.y - h2, p.y + h2);
@@ -109,15 +114,24 @@ bool World::EPlayer::Update(float deltaTime) {
                 const float w2 = box->GetWidth() * 0.5f, h2 = box->GetHeight() * 0.5f;
                 const glm::vec2 p = box->GetPosition();
                 if (overlaps(moveX, 0.0f, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
-                    if (!box->CanMove(moveX > 0.0f ? 1.0f : -1.0f, 0.0f, basicSpeed, deltaTime)) { blockedX = true; }
+                    if (!box->CanMove(moveX > 0.0f ? 1.0f : -1.0f, 0.0f, basicSpeed, deltaTime)) { 
+                        blockedX = true; 
+                    }
                 }
                 if (overlaps(0.0f, moveY, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
-                    if (!box->CanMove(0.0f, moveY > 0.0f ? 1.0f : -1.0f, basicSpeed, deltaTime)) { blockedY = true; }
+                    if (!box->CanMove(0.0f, moveY > 0.0f ? 1.0f : -1.0f, basicSpeed, deltaTime)) { 
+                        blockedY = true; 
+                    }
+                }
+                if (blockedX || blockedY) {
+                    WorldState::AddToWorldState(box->GetTagName());
                 }
             }
 
             for (auto* e : levelChangeTriggers) {
-                if (!e->IsValid()) { continue; }
+                if (!e->IsValid()) { 
+                    continue; 
+                }
                 const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
                 const glm::vec2 p = e->GetPosition();
                 if (overlaps(moveX, 0.0f, p.x - w2, p.x + w2, p.y - h2, p.y + h2) ||
@@ -142,11 +156,19 @@ bool World::EPlayer::Update(float deltaTime) {
         }
      }
 
-     EInteractable* interactable = TryInteract();
-     if (interactable) {
-        bShowTooltip = true;
-     } else {
+     if (currentInteractable && !currentInteractable->IsValid()) {
+        currentInteractable = nullptr;
         bShowTooltip = false;
+     }
+     EInteractable* interactable = TryInteract();
+     if (interactable != currentInteractable) {
+        currentInteractable = interactable;
+        if (currentInteractable) {
+            bShowTooltip = true;
+            WorldState::AddToWorldState(currentInteractable->GetTagName());
+        } else {
+            bShowTooltip = false;
+        }
      }
 
      return true;

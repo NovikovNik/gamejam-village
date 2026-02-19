@@ -31,5 +31,7 @@ namespace World {
         float tooltipHeight = 32.0f;
 
         Events::Handler onInterectButtonPressed;
+
+        class EInteractable* currentInteractable = nullptr;
     };
 }
