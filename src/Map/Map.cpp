@@ -188,8 +188,7 @@ public:
     }
 
     [[nodiscard]] bool LoadLastLoadedLevel() {
-        const auto lastLoadedLevel = ProgressSystemManager::GetLastLoadedLevel();
-        return LoadMap(lastLoadedLevel);
+        return LoadMap(ProgressSystemManager::Player().lastLevel);
     }
 
     void ReloadMap() {

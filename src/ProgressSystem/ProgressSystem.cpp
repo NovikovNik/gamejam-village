@@ -4,7 +4,8 @@
 #include "AppDataSaveHelper.h"
 #include <Entities/EPlayer.h>
 #include <glm/glm.hpp>
-
+#include "PlayerSaveData.h"
+#include <libs/json/single_include/nlohmann/json.hpp>
 
 class ProgressSystem: public Singleton<ProgressSystem> {
     public:
@@ -13,8 +14,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             if (!AppDataSaveHelper::GameSaveExists()) {
                 Logger::Log("[ProgressSystem] No save file found, creating new save file");
                 // Инициализация данных по умолчанию
-                SetLastLoadedLevel("assets/maps/world-entry-2.json");
-                SetPlayerPosition(glm::vec2(0.0f, 0.0f));
+                playerSaveData.ResetToDefaults();
                 SaveData();
             }
             else {
@@ -25,56 +25,33 @@ class ProgressSystem: public Singleton<ProgressSystem> {
         }
 
         void SaveData() {
-            nlohmann::json data = GetDataToSave();
-            AppDataSaveHelper::SaveGameJson(data);
+            nlohmann::json j;
+            playerSaveData.ToJson(j);
+            AppDataSaveHelper::SaveGameJson(j);
+            dirty = false;
             Logger::Log("[ProgressSystem] Data saved");
         }
 
         void LoadData() {
-            AppDataSaveHelper::LoadGameJson(gameSaveData);
-            // Позиция игрока
-            playerPosition.x = gameSaveData["playerPosition"]["x"].get<float>();
-            playerPosition.y = gameSaveData["playerPosition"]["y"].get<float>();
-            // Последняя загруженная локация
-            lastLoadedLevel = gameSaveData["lastLoadedLevel"].get<std::string>();
+            nlohmann::json j; 
+            if (!AppDataSaveHelper::LoadGameJson(j)) {
+                Logger::Warn("[ProgressSystem] Failed to load save file, using defaults");
+                playerSaveData.ResetToDefaults();
+                return;
+            }
+            playerSaveData.FromJson(j);
             Logger::Log("[ProgressSystem] Data loaded");
         }
+
     public:
-        // Позиция игрока
-        glm::vec2 GetPlayerPosition() {
-            return playerPosition;
-        }
-
-        void SetPlayerPosition(const glm::vec2& position) {
-            playerPosition = position;
-        }
-
-        // Последняя загруженная локация
-        std::string GetLastLoadedLevel() const {
-            return lastLoadedLevel;
-        }
-
-        void SetLastLoadedLevel(const std::string& level) {
-            lastLoadedLevel = level;
+        PlayerSaveData& Player() { 
+            dirty = true;
+            return playerSaveData; 
         }
 
     private:
-        // Метод для трансформации данных в json формат
-        nlohmann::json GetDataToSave() {
-            nlohmann::json data;
-            data["playerPosition"]["x"] = static_cast<float>(playerPosition.x);
-            data["playerPosition"]["y"] = static_cast<float>(playerPosition.y);
-            // Последняя загруженная локация
-            data["lastLoadedLevel"] = lastLoadedLevel;
-            return data;
-        }
-
-    private:
-        nlohmann::json gameSaveData;
-
-        // Save related variables
-        glm::vec2 playerPosition;
-        std::string lastLoadedLevel;
+        bool dirty = false;
+        PlayerSaveData playerSaveData;
 };
 
 void ProgressSystemManager::Initialize() {
@@ -89,18 +66,6 @@ void ProgressSystemManager::LoadData() {
     ProgressSystem::instance().LoadData();
 }
 
-glm::vec2 ProgressSystemManager::GetPlayerPosition() {
-    return ProgressSystem::instance().GetPlayerPosition();
-}
-
-void ProgressSystemManager::SetPlayerPosition(const glm::vec2& position) {
-    ProgressSystem::instance().SetPlayerPosition(position);
-}
-
-std::string ProgressSystemManager::GetLastLoadedLevel() {
-    return ProgressSystem::instance().GetLastLoadedLevel();
-}
-
-void ProgressSystemManager::SetLastLoadedLevel(const std::string& level) {
-    ProgressSystem::instance().SetLastLoadedLevel(level);
+PlayerSaveData& ProgressSystemManager::Player() {
+    return ProgressSystem::instance().Player();
 }

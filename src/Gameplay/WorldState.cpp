@@ -95,7 +95,8 @@ public:
     {
         Logger::Log(std::format("[WorldState] Changing location to: {}", event.locationPath));
         MapManager::LoadMap(event.locationPath);
-        ProgressSystemManager::SetLastLoadedLevel(event.locationPath);
+        ProgressSystemManager::Player().lastLevel = event.locationPath;
+        ProgressSystemManager::SaveData();
     }
 
     [[nodiscard]] LocationsStates::LocationChanges SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName)
