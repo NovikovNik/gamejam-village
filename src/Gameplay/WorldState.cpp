@@ -50,20 +50,20 @@ public:
 
     void OnWindowFocused(WindowFocusedEvent&)
     {
-        Logger::Log("Window focused");
+        Logger::Log("[WorldState] Window focused");
         LoadNewGameStateFromFilesystem();
 
         const auto locationName = MapManager::GetCurrentMapName();
         const auto& changes = SyncLocationAndGetChanges(locationName);
         for (const auto& change : changes.added) {
             if (change.type.empty()) {
-                Logger::Warn(std::format("Skipping object '{}': empty type (use name.type -> Spaghetti.villager)", change.name));
+                Logger::Warn(std::format("[WorldState] Skipping object '{}': empty type (use name.type -> Spaghetti.villager)", change.name));
                 continue;
             }
             const auto key = std::format("{}.{}", change.name, change.type);
             persistentState.mapObjectsLocations[key] = locationName;
             [[maybe_unused]] const auto entity = MapManager::SpawnEntity(change.name, change.type);
-            Logger::Log(std::format("Added object: {} of type {}", change.name, change.type));
+            Logger::Log(std::format("[WorldState] Added object: {} of type {}", change.name, change.type));
         }
         for (const auto& change : changes.removed) {
             const auto key = std::format("{}.{}", change.name, change.type);
@@ -77,13 +77,13 @@ public:
 //            if (entity) {
 //                entity->Destroy();
 //            }
-            Logger::Log(std::format("Removed object: {} of type {}", change.name, change.type));
+            Logger::Log(std::format("[WorldState] Removed object: {} of type {}", change.name, change.type));
         }
     }
 
     void OnClearWorldState(ClearWorldStateEvent&)
     {
-        Logger::Log("Clearing world state");
+        Logger::Log("[WorldState] Clearing world state");
         currentState.clear();
         lastSeenState.clear();
     }
@@ -92,6 +92,7 @@ public:
     // Словно ему место не здесь и не в Map.cpp, но пока живет тут
     void OnChangeLocation(ChangeLocationEvent& event)
     {
+        Logger::Log(std::format("[WorldState] Changing location to: {}", event.locationPath));
         MapManager::LoadMap(event.locationPath);
     }
 

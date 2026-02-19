@@ -52,8 +52,8 @@ using HandlerList = std::list<std::unique_ptr<IEventCallback>>;
 // ---------------------------------------------------------------------------
 class EventBus : public Singleton<EventBus> {
 public:
-    EventBus()  { Logger::Log("EventBus constructor called"); }
-    ~EventBus() { Logger::Log("EventBus destructor called"); }
+    EventBus()  { Logger::Log("[EventBus] Constructor called"); }
+    ~EventBus() { Logger::Log("[EventBus] Destructor called"); }
 
     void Reset() { subscribers.clear(); }
 

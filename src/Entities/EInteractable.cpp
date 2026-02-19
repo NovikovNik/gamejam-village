@@ -11,5 +11,5 @@ bool World::EInteractable::Update(float deltaTime) {
 }
 
 void World::EInteractable::Interact() {
-    Logger::Log(std::format("Interact with interactable: {}", get_nnInteractId(GetInteractId())));
+    Logger::Log(std::format("[EInteractable] Interact with interactable: {}", get_nnInteractId(GetInteractId())));
 }

@@ -30,11 +30,11 @@ int Game::windowWidth = 800;
 // int Game::windowLogicWidth;
 
 Game::Game() {
-    Logger::Log("Game constructor called");
+    Logger::Log("[Game] Constructor called");
 }
 
 Game::~Game() {
-    Logger::Log("Game destructor called");
+    Logger::Log("[Game] Game destructor called");
 }
 
 void Game::Initialize() {
@@ -87,16 +87,16 @@ void Game::ProcessInput() {
                 isRunning = false;
                 break;
             case SDL_EVENT_WINDOW_RESIZED:
+                Logger::Debug("[Game/SDL] Window resized event received");
                 EventBus::instance().EmitEvent<WindowResizedEvent>();
-                Logger::Debug("[Game/SDL] Window resized event sent");
                 break;
             case SDL_EVENT_WINDOW_FOCUS_GAINED:
+                Logger::Debug("[Game/SDL] Window focus event received");
                 EventBus::instance().EmitEvent<WindowFocusedEvent>();
-                Logger::Debug("[Game/SDL] Window focus event sent");
                 break;
             case SDL_EVENT_WINDOW_FOCUS_LOST:
+                Logger::Debug("[Game/SDL] Window unfocus event received");
                 EventBus::instance().EmitEvent<WindowUnfocusedEvent>();
-                Logger::Debug("[Game/SDL] Window unfocus event sent");
                 break;
             case SDL_EVENT_KEY_DOWN:
                 // Handle tilde key to toggle cheats (always processed)

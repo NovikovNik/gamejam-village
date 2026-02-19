@@ -18,6 +18,6 @@ void World::ENpc::Render(float deltaTime) {
 }
 
 void World::ENpc::Interact() {
-    Logger::Log(std::format("Interact with NPC: {}", get_nnInteractId(GetInteractId())));
+    Logger::Log(std::format("[ENpc] Interact with NPC: {}", get_nnInteractId(GetInteractId())));
     EventBus::instance().EmitEvent<ForceDialogStartEvent>(get_nnInteractId(GetInteractId()), "dialog-1");
 }

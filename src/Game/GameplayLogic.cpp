@@ -22,11 +22,11 @@ namespace {
         }
 
         void OnEntityCreated(EntityCreatedEvent& e) {
-            Logger::Log(std::format("EntityCreated: {} {}", e.GetName(), e.GetType()));
+            Logger::Log(std::format("[Gameplay][Tutorial] EntityCreated: {} {}", e.GetName(), e.GetType()));
         }
 
         void OnEntityDestroyed(EntityDestroyedEvent& e) {
-            Logger::Log(std::format("EntityDestroyed: {} {}", e.GetName(), e.GetType()));
+            Logger::Log(std::format("[Gameplay][Tutorial] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
         }
 
     private:

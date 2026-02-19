@@ -65,7 +65,7 @@ public:
                     dialogs[characterId][dialogId] = std::move(data);
                 }
 
-                Logger::Log(std::format("Dialog: {} loaded ({} dialogs)", entry.path().stem().string(), json["dialogs"].size()));
+                Logger::Log(std::format("[DialogSystem] Dialog: {} loaded ({} dialogs)", entry.path().stem().string(), json["dialogs"].size()));
             }
         }
 
@@ -75,7 +75,7 @@ public:
         currentDialogIndex = 0;
         currentLines.clear();
         currentDialogText = "";
-        Logger::Log("DialogSystem initialized");
+        Logger::Log("[DialogSystem] Initialized");
     }
 
     void StartDialog(const std::string& characterId, const std::string& dialogId) {

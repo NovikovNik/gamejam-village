@@ -63,7 +63,7 @@ public:
 
     void UpdateWindowOutputSize() {
         SDL_GetCurrentRenderOutputSize(renderer, &renderOutputSizeW, &renderOutputSizeH);
-        Logger::Log(std::to_string(renderOutputSizeW) + " | " + std::to_string(renderOutputSizeH));
+        Logger::Log("[Renderer] Window output size: " + std::to_string(renderOutputSizeW) + " | " + std::to_string(renderOutputSizeH));
     }
 
     void LoadTexture(const std::filesystem::path& texturePath) {
@@ -304,7 +304,7 @@ public:
         ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
         ImGui_ImplSDLRenderer3_Init(renderer);
         
-        Logger::Log("ImGui initialized");
+        Logger::Log("[Renderer] ImGui initialized");
 #endif
     }
     
@@ -314,7 +314,7 @@ public:
         ImGui_ImplSDL3_Shutdown();
         ImGui::DestroyContext();
         
-        Logger::Log("ImGui shut down");
+        Logger::Log("[Renderer] ImGui shut down");
 #endif
     }
     

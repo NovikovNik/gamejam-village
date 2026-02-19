@@ -158,7 +158,7 @@ bool World::EPlayer::Update(float deltaTime) {
         return;
     }
     EInteractable* interactable = TryInteract();
-    Logger::Log(std::format("Interactable: {}", interactable ? "true" : "false"));
+    Logger::Log(std::format("[EPlayer] Interactable: {}", interactable ? "true" : "false"));
     if (interactable) {
         interactable->Interact();
     }
