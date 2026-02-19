@@ -103,7 +103,7 @@ public:
         currentDialogIndex = 0;
         currentDialogText = currentLines.empty() ? "" : currentLines[0];
 
-        Logger::Log(std::format("Dialog: {} / {} started", characterId, dialogId));
+        Logger::Log(std::format("[DialogSystem] Dialog: {}:{} started", characterId, dialogId));
     }
 
     void EndDialog() {

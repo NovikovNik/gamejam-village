@@ -1,7 +1,9 @@
 #include "Camera.h"
 #include "../Entities/EMovable.h"
 #include "../Entities/EntitiesContainer.h"
+#include "../Map/Map.h"
 #include "Logger/Logger.h"
+#include <format>
 
 void World::Camera::Follow(const World::EMovable* target) {
     if (!target) {
@@ -29,6 +31,22 @@ void World::Camera::Update(float dt) {
     float t = 1.0f - std::exp(-smoothSpeed * dt);
     positionX += (target.x - positionX) * t;
     positionY += (target.y - positionY) * t;
+
+    // Временная система ограничений камеры на уровень
+    std::string currentLocationName = MapManager::GetCurrentMapName();
+    if (!currentLocationName.empty()) {
+        if (currentLocationName == "world-entry-2") {
+            if (positionY > 14.0) {
+                positionY = 14.0;
+            }
+            if (positionX < -150.0) {
+                positionX = -150.0;
+            }
+            if (positionX > 255.0) {
+                positionX = 255.0;
+            }
+        }
+    }
 }
 
 glm::vec2 World::Camera::GetPosition() const {

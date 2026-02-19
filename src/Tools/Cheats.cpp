@@ -3,9 +3,11 @@
 #if ENABLE_CHEATS
 
 #include <Renderer/Renderer.h>
+#include <Renderer/Camera.h>
 #include <imgui/imgui.h>
 #include <Game/GameFeatures.h>
 #include <Map/Map.h>
+#include <Entities/EPlayer.h>
 #include <Utils/Singleton.h>
 #include <DialogSystem/DialogSystem.h>
 #include <EventBus/EventBus.h>
@@ -86,6 +88,17 @@ public:
         if (GameFeatures::isDebug) {
             ImGui::Separator();
             ImGui::Text("Debug Mode: ON");
+
+            const auto& entities = MapManager::GetEntitiesContainer();
+            if (auto* player = entities.FindEntity<World::EPlayer>()) {
+                const auto pos = player->GetPosition();
+                ImGui::Text("Player Pos: X=%.1f Y=%.1f", pos.x, pos.y);
+            } else {
+                ImGui::Text("Player: <not found>");
+            }
+
+            const auto cameraPos = World::Camera::instance().GetPosition();
+            ImGui::Text("Camera Pos: X=%.1f Y=%.1f", cameraPos.x, cameraPos.y);
         }
         
         ImGui::End();
