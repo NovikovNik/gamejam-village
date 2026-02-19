@@ -4,6 +4,7 @@
 #include <Events/WindowFocusedEvent.h>
 #include <Events/ClearWorldStateEvent.h>
 #include <Events/ChangeLocationEvent.h>
+#include <ProgressSystem/ProgressSystem.h>
 #include <Logger/Logger.h>
 #include <Map/Map.h>
 #include <Utils/Singleton.h>
@@ -94,6 +95,7 @@ public:
     {
         Logger::Log(std::format("[WorldState] Changing location to: {}", event.locationPath));
         MapManager::LoadMap(event.locationPath);
+        ProgressSystemManager::SetLastLoadedLevel(event.locationPath);
     }
 
     [[nodiscard]] LocationsStates::LocationChanges SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName)

@@ -15,6 +15,7 @@
 #include <Events/ClearWorldStateEvent.h>
 #include <Events/ChangeLocationEvent.h>
 #include <FileSystem/FileSystem.h>
+#include <ProgressSystem/ProgressSystem.h>
 #include <Gameplay/WorldState.h>
 #include <EventBus/EventBus.h>
 #include <Events/EntitiesEvent.h>
@@ -186,6 +187,11 @@ public:
         return true;
     }
 
+    [[nodiscard]] bool LoadLastLoadedLevel() {
+        const auto lastLoadedLevel = ProgressSystemManager::GetLastLoadedLevel();
+        return LoadMap(lastLoadedLevel);
+    }
+
     void ReloadMap() {
         LoadMap(currentLevel);
     }
@@ -331,6 +337,10 @@ private:
 namespace MapManager {
     [[nodiscard]] bool LoadMap(const std::string& filename) {
         return Map::instance().LoadMap(filename);
+    }
+
+    [[nodiscard]] bool LoadLastLoadedLevel() {
+        return Map::instance().LoadLastLoadedLevel();
     }
 
     void ReloadMap() {

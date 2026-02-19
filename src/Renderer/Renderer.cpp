@@ -42,7 +42,7 @@ public:
         }
 
         Uint32 windowFlags = GameFeatures::isResizeble ? SDL_WINDOW_RESIZABLE : 0;
-        if (!SDL_CreateWindowAndRenderer(GameFeatures::windowTitle.c_str(), windowWidth, windowHeight, windowFlags, &window, &renderer)) {
+        if (!SDL_CreateWindowAndRenderer(GameFeatures::gameTitle.c_str(), windowWidth, windowHeight, windowFlags, &window, &renderer)) {
             SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
             return;
         }
@@ -286,7 +286,7 @@ public:
 
     void PrintFPSinTitle(const float& fps_live) {
         char title[64];
-        std::snprintf(title, sizeof(title), "%s - FPS: %.1f", GameFeatures::windowTitle.c_str(), fps_live);
+        std::snprintf(title, sizeof(title), "%s - FPS: %.1f", GameFeatures::gameTitle.c_str(), fps_live);
         SDL_SetWindowTitle(window, title);
     }
 

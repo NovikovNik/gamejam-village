@@ -3,6 +3,7 @@
 #include <Map/Map.h>
 #include <Renderer/Renderer.h>
 #include <FileSystem/FileSystem.h>
+#include <ProgressSystem/ProgressSystem.h>
 #include <DialogSystem/DialogSystem.h>
 #include <Game/GameplayLogic.h>
 
@@ -43,9 +44,10 @@ void Game::Initialize() {
     GameplayLogic::Initialize();
     DialogSystemManager::Initialize();
     DialogSystemManager::LoadAllDialogs("assets/dialogs/");
+    ProgressSystemManager::Initialize();
     Renderer::LoadAllTextures("assets/textures/");
     Renderer::LoadAllFonts("assets/fonts/");
-    bool isLoaded = MapManager::LoadMap("assets/maps/world-entry.json");
+    bool isLoaded = MapManager::LoadLastLoadedLevel();
     if (!isLoaded) {
         Logger::Err("Failed to load map");
         return;
@@ -84,6 +86,8 @@ void Game::ProcessInput() {
 
         switch(event.type) {
             case SDL_EVENT_QUIT:
+                // Перед выходом сохраняем прогресс в файл!
+                ProgressSystemManager::SaveData();
                 isRunning = false;
                 break;
             case SDL_EVENT_WINDOW_RESIZED:
