@@ -50,6 +50,7 @@ target_include_directories(game_engine PRIVATE
     "libs/glm"
     "libs/termcolor"
     "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/libs/base64/include"
 )
 if(ENABLE_CHEATS)
     target_include_directories(game_engine PRIVATE "libs/imgui")

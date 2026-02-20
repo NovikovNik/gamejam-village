@@ -26,18 +26,24 @@ struct PlayerSaveData : public BasicSaveData {
     }
 
     void FromJson(const nlohmann::json& j) override {
+        if (!j.is_object()) {
+            ResetToDefaults();
+            return;
+        }
         int fileVersion = j.value("version", 0);
 
         if (fileVersion < GetVersion()) {
             Migrate(fileVersion);
         }
 
-        if (j.contains("position")) {
+        if (j.contains("position") && j["position"].is_object()) {
             position.x = j["position"].value("x", 0.f);
             position.y = j["position"].value("y", 0.f);
         }
 
-        lastLevel = j.value("lastLevel", lastLevel);
+        if (j.contains("lastLevel") && j["lastLevel"].is_string()) {
+            lastLevel = j["lastLevel"].get<std::string>();
+        }
 
         if (!Validate()) {
             ResetToDefaults();

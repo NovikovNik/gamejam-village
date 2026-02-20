@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <Game/GameFeatures.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
+#include <libs/base64/base64.hpp>
 
 #if defined(_WIN32)
     #include <windows.h>
@@ -45,9 +46,14 @@ inline std::filesystem::path GetBaseAppDataPath() {
 }
 
 inline std::filesystem::path GetGameSavePath() {
+#if ENABLE_CHEATS
+    const std::filesystem::path saveFileName = "gamesave-debug.json";
+#else
+    const std::filesystem::path saveFileName = "gamesave.json";
+#endif
     return GetBaseAppDataPath()
         / GameFeatures::gameTitle
-        / "gamesave.json";
+        / saveFileName;
 }
 
 inline bool EnsureGameSaveDirectoryExists() {
@@ -71,7 +77,11 @@ inline bool SaveGameJson(const nlohmann::json& data) {
         return false;
     }
 
+#if ENABLE_CHEATS
     file << data.dump(4);
+#else
+    file << base64::to_base64(data.dump(4));
+#endif
     return static_cast<bool>(file);
 }
 
@@ -87,8 +97,16 @@ inline bool LoadGameJson(nlohmann::json& outData) {
     }
 
     try {
+#if ENABLE_CHEATS
         file >> outData;
+#else
+        std::string base64Data;
+        file >> base64Data;
+        outData = nlohmann::json::parse(base64::from_base64(base64Data));
+#endif
     } catch (const nlohmann::json::parse_error&) {
+        return false;
+    } catch (const nlohmann::json::type_error&) {
         return false;
     }
 
