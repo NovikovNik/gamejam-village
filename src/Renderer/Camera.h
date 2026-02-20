@@ -23,5 +23,7 @@ namespace World {
             float positionY;
             float scaleFactor = 1.7;
             float smoothSpeed = 6.0f;
+            float lookAheadTime = 0.2f;   // секунды движения, на которые камера смещается в сторону хода
+            float lookAheadMax = 15.0f;    // макс. смещение в мировых единицах
     };
 }

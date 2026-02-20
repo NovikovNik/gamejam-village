@@ -3,6 +3,7 @@
 #include "../Entities/EntitiesContainer.h"
 #include "../Map/Map.h"
 #include "Logger/Logger.h"
+#include <glm/glm.hpp>
 #include <format>
 
 void World::Camera::Follow(const World::EMovable* target) {
@@ -46,8 +47,18 @@ void World::Camera::Update(float dt) {
         return;
     }
 
+    // glm::vec2 pos = followTarget->GetPosition();
+    // glm::vec2 vel = followTarget->GetVelocity();
+    // // Смещение
+    // glm::vec2 offset = vel * lookAheadTime;
+    // float len = glm::length(offset);
+    // if (len > lookAheadMax && len > 0.0f) {
+    //     offset *= (lookAheadMax / len);
+    // }
     glm::vec2 target = followTarget->GetPosition();
-    float t = 1.0f - std::exp(-smoothSpeed * dt);
+    float t = 1.0f- std::exp(-smoothSpeed * dt);
+    // float t = 1.0f;
+
     positionX += (target.x - positionX) * t;
     positionY += (target.y - positionY) * t;
 
@@ -58,8 +69,8 @@ void World::Camera::Update(float dt) {
             if (positionY > -25.0) {
                 positionY = -25.0;
             }
-            if (positionY < -28.0) {
-                positionY = -28.0;
+            if (positionY < -25.0) {
+                positionY = -25.0;
             }
             if (positionX < -28.0) {
                 positionX = -28.0;

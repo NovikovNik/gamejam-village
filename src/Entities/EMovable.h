@@ -10,6 +10,7 @@ namespace World {
         bool Update(float deltaTime) override;
 
         void AddImpulse(float x, float y);
+        glm::vec2 GetVelocity() const { return glm::vec2(velocityX, velocityY); }
 
     private:
         float velocityX = 0.0f;
