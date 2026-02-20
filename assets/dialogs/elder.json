@@ -156,15 +156,21 @@
             "description": "File deleted",
             "lines": [
                 {
+                    "name": "Narrator",
                     "text": "You erased the Elder’s file—every trace, every echo—together, with deliberate hands. The moment it vanishes, something stirs."
                 },
                 {
+                    "name": "Narrator",
                     "text": "Power seeps into your limbs like heat through stone. Your breath deepens. Your thoughts race. For an instant, the world feels wider, softer at the edges, as though it might finally bend if you only reached out."
                 },
                 {
+                    "name": "Consciousness",
+                    "align": "right",
+                    "color": [255, 255, 210, 250],
                     "text": "Wait a minute... This is not the Divinity Original Sin game or Baldurs Gate game or any other RPG game. This is a simple game about deleting files."
                 },
                 {
+                    "name": "Narrator",
                     "text": "The road to the village lies open. You can go there now."
                 }
             ],
