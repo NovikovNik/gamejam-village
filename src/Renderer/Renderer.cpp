@@ -136,11 +136,13 @@ public:
         }
         SDL_FRect rect;
         glm::vec2 cameraPos = World::Camera::instance().GetPosition();
+        float scaleFactor = World::Camera::instance().GetScaleFactor();
 
-        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x) - width * 0.5f;
-        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y) - height * 0.5f;
-        rect.w = width;
-        rect.h = height;
+        // Единый масштаб: 1 world unit = scaleFactor pixels (позиция и размер)
+        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x) * scaleFactor - width * 0.5f * scaleFactor;
+        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y) * scaleFactor - height * 0.5f * scaleFactor;
+        rect.w = width * scaleFactor;
+        rect.h = height * scaleFactor;
 
         SDL_RenderTexture(renderer, texture, NULL, &rect);
     }
@@ -153,11 +155,13 @@ public:
 
         SDL_FRect rect;
         glm::vec2 cameraPos = World::Camera::instance().GetPosition();
+        float scaleFactor = World::Camera::instance().GetScaleFactor();
 
-        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x) - width * 0.5f;
-        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y) - height * 0.5f;
-        rect.w = width;
-        rect.h = height;
+        // Единый масштаб: 1 world unit = scaleFactor pixels (позиция и размер)
+        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x) * scaleFactor - width * 0.5f * scaleFactor;
+        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y) * scaleFactor - height * 0.5f * scaleFactor;
+        rect.w = width * scaleFactor;
+        rect.h = height * scaleFactor;
 
         SDL_FPoint center = { width / 2.0f, height / 2.0f };
         SDL_RenderTextureRotated(renderer, texture, NULL, &rect, angle, &center, SDL_FLIP_NONE);
@@ -185,21 +189,26 @@ public:
 
     void DrawRectangle(float x, float y, float w, float h, float angle) {
         glm::vec2 cam = World::Camera::instance().GetPosition();
+        float scaleFactor = World::Camera::instance().GetScaleFactor();
 
+        // Единый масштаб с DrawSprite: 1 world unit = scaleFactor pixels (позиция и размер)
         glm::vec2 center(
-            renderOutputSizeW * 0.5f + (x - cam.x),
-            renderOutputSizeH * 0.5f + (y - cam.y)
+            renderOutputSizeW * 0.5f + (x - cam.x) * scaleFactor,
+            renderOutputSizeH * 0.5f + (y - cam.y) * scaleFactor
         );
+
+        const float hw = w * 0.5f * scaleFactor;
+        const float hh = h * 0.5f * scaleFactor;
 
         float rad = glm::radians(angle);
         float c = cos(rad);
         float s = sin(rad);
 
         glm::vec2 corners[4] = {
-            {-w * 0.5f, -h * 0.5f},
-            {  w * 0.5f, -h * 0.5f},
-            {  w * 0.5f,  h * 0.5f},
-            { -w * 0.5f,  h * 0.5f}
+            {-hw, -hh},
+            { hw, -hh},
+            { hw,  hh},
+            {-hw,  hh}
         };
 
         SDL_FPoint pts[5];
@@ -237,9 +246,10 @@ public:
         if (!texture) return;
 
         glm::vec2 cameraPos = World::Camera::instance().GetPosition();
+        float scaleFactor = World::Camera::instance().GetScaleFactor();
         SDL_FRect rect;
-        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x);
-        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y);
+        rect.x = renderOutputSizeW * 0.5f + (x - cameraPos.x) * scaleFactor;
+        rect.y = renderOutputSizeH * 0.5f + (y - cameraPos.y) * scaleFactor;
         rect.w = static_cast<float>(w);
         rect.h = static_cast<float>(h);
 

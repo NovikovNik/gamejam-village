@@ -36,6 +36,9 @@ glm::vec2 World::Camera::GetPosition() const {
     return glm::vec2(positionX, positionY);
 }
 
+void World::Camera::SetScaleFactor(float scaleFactor) {
+    this->scaleFactor = scaleFactor;
+}
 
 void World::Camera::Update(float dt) {
     if (!followTarget || !followTarget->IsValid()) {
@@ -52,14 +55,17 @@ void World::Camera::Update(float dt) {
     std::string currentLocationName = MapManager::GetCurrentMapName();
     if (!currentLocationName.empty()) {
         if (currentLocationName == "world-entry-2") {
-            if (positionY > 14.0) {
-                positionY = 14.0;
+            if (positionY > -25.0) {
+                positionY = -25.0;
             }
-            if (positionX < -150.0) {
-                positionX = -150.0;
+            if (positionY < -28.0) {
+                positionY = -28.0;
             }
-            if (positionX > 255.0) {
-                positionX = 255.0;
+            if (positionX < -28.0) {
+                positionX = -28.0;
+            }
+            if (positionX > 128.0) {
+                positionX = 128.0;
             }
         }
     }

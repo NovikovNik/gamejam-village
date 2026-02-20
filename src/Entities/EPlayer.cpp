@@ -5,6 +5,7 @@
 #include "Entities/EColliders.h"
 #include "Entities/EPit.h"
 #include "Entities/ETriggerLocation.h"
+#include <Renderer/Camera.h>
 #include <Map/Map.h>
 #include <Entities/EBox.h>
 #include <Entities/EInteractable.h>
@@ -240,7 +241,8 @@ void World::EPlayer::OnMoved(float deltaTime) {
 void World::EPlayer::Render(float deltaTime) {
     EMovable::Render(deltaTime);
     if (GameFeatures::isDebug) {
-        Renderer::DrawRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), 0.0);
+        const auto& pos = GetPosition();
+        Renderer::DrawRectangle(pos.x, pos.y, GetWidth(), GetHeight(), 0.0);
     }
     if (bShowTooltip && !DialogSystemManager::IsDialogActive()) {
         const auto& pos = GetPosition();

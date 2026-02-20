@@ -13,12 +13,15 @@ namespace World {
             
             void ResetPosition();
             void SetPosition(float x, float y);
+            void SetScaleFactor(float scaleFactor);
+            inline float GetScaleFactor() const { return scaleFactor; };
             glm::vec2 GetPosition() const;
 
         private:
             const EMovable* followTarget = nullptr;
             float positionX;
             float positionY;
+            float scaleFactor = 1.7;
             float smoothSpeed = 6.0f;
     };
 }

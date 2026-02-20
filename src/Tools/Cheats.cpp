@@ -140,6 +140,13 @@ public:
 
             const auto cameraPos = World::Camera::instance().GetPosition();
             ImGui::Text("Camera Pos: X=%.1f Y=%.1f", cameraPos.x, cameraPos.y);
+            ImGui::Text("Camera Scale: %.1f", World::Camera::instance().GetScaleFactor());
+            if (ImGui::Button("Increase Camera Scale")) {
+                World::Camera::instance().SetScaleFactor(World::Camera::instance().GetScaleFactor() + 0.1f);
+            }
+            if (ImGui::Button("Decrease Camera Scale")) {
+                World::Camera::instance().SetScaleFactor(World::Camera::instance().GetScaleFactor() - 0.1f);
+            }
         }
                 ImGui::EndTabItem();
             }
