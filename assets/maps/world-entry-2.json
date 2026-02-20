@@ -44,16 +44,15 @@
             "spawnOnStart": true
         }
     ],
-    "interactables": [
+    "interactible_objects": [
         {
             "x": -409.9834289550781,
             "y": -84.09915161132812,
-            "width": 73.67330169677734,
-            "height": 73.67330169677734,
-            "texture": "test-texture",
-            "name": "InfoTrigger"
+            "name": "Road_Sign",
+            "spawnOnStart": true
         }
     ],
+    "interactables": [],
     "players": [
         {
             "x": -364.2008056640625,

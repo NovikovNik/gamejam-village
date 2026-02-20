@@ -9,6 +9,7 @@
 #include <Entities/EPit.h>
 #include <Entities/EBox.h>
 #include <Entities/ENpc.h>
+#include <Entities/EInteractableObject.h>
 #include <Entities/ESpawners.h>
 #include <Entities/ETriggerLocation.h>
 #include <Events/WindowFocusedEvent.h>
@@ -135,10 +136,27 @@ public:
             }
         }
 
+        // Load interactible_objects into spawners before LoadSpawners (must be in spawners for SeedInstantSpawn + SpawnEntity)
+        if (mapData.contains("interactible_objects") && mapData["interactible_objects"].is_array()) {
+            for (const auto& interactableObjectJson : mapData["interactible_objects"]) {
+                const std::string interactableObjectName = interactableObjectJson["name"].get<std::string>();
+                const float x = interactableObjectJson["x"].get<float>();
+                const float y = interactableObjectJson["y"].get<float>();
+                bool shouldSpawnInstantly = false;
+                if (interactableObjectJson.contains("spawnOnStart")) {
+                    shouldSpawnInstantly = interactableObjectJson["spawnOnStart"].get<bool>();
+                } else {
+                    Logger::Warn(std::format("InteractibleObject {} does not have spawnOnStart property, defaulting to true", interactableObjectName));
+                    shouldSpawnInstantly = true;
+                }
+                spawners.push_back({ interactableObjectName, "object", x, y, shouldSpawnInstantly });
+            }
+        }
+
         World::ESpawners* spawnersEntity = entitiesManager.SpawnEntity<World::ESpawners>();
         spawnersEntity->LoadSpawners(spawners);
         
-        // Load interactables from JSON
+        // Load interactables from JSON (direct spawn, not via spawners)
         if (mapData.contains("interactables") && mapData["interactables"].is_array()) {
             for (const auto& interactableJson : mapData["interactables"]) {
                 const std::string interactableName = interactableJson["name"].get<std::string>();
@@ -255,6 +273,12 @@ public:
                 npc->SetTagName({ name, type });
                 Logger::Log(std::format("[Map] Spawned NPC: {} of type {}", name, type));
                 return npc;
+            }
+            if (type == "object") {
+                auto obj = entitiesManager.SpawnEntity<World::EInteractableObject>(name, position.x, position.y);
+                obj->SetTagName({ name, type });
+                Logger::Log(std::format("[Map] Spawned interactable object: {} of type {}", name, type));
+                return obj;
             }
             if (type == "box") {
                 auto box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(name));

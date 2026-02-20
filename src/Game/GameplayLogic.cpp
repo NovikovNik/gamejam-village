@@ -79,6 +79,12 @@ namespace {
                 }
                 DialogSystemManager::StartDialog("Elder", "dialog-after-deleted");
             }
+            if (e.GetName() == "Road_Sign") {
+                // Игрок может удалить дорожный знак — он останется на карте, но это будет
+                // обыграно словно он стер надпсь на нём
+                Logger::Log("[Gameplay][Tutorial] Road_Sign destroyed");
+                DialogSystemManager::StartDialog("Utility", "roadside-info-destroyed");
+            }
         }
 
         // Последний диалог dialog-8 (про kick-my-ass)
@@ -92,8 +98,8 @@ namespace {
                 DialogSystemManager::StartDialog("Elder", dialogId);
             }
 
-            if (e.entityId == "InfoTrigger") {
-                Logger::Log("[Gameplay][Tutorial] InfoTrigger interacted");
+            if (e.entityId == "Road_Sign") {
+                Logger::Log("[Gameplay][Tutorial] Road_Sign interacted");
                 DialogSystemManager::StartDialog("Utility", "roadside-info-1");
             }
         }

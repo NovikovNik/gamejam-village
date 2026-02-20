@@ -14,6 +14,16 @@
                 }
             ],
             "textSize": 20
+        },
+        "roadside-info-destroyed": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "No name. No direction. No promise of what lies further down the road.",
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
         }
     }
 }
