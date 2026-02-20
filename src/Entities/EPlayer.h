@@ -27,6 +27,8 @@ namespace World {
         float basicSpeed = 140.0f;
         std::string name;
         bool bShowTooltip = false;
+
+        float footstepTimer = 0;  // start at max → first step plays immediately
         Renderer::TextureId tooltipTexture;
         float tooltipWidth = 32.0f;
         float tooltipHeight = 32.0f;

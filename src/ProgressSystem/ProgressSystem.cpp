@@ -5,6 +5,8 @@
 #include <Entities/EPlayer.h>
 #include <glm/glm.hpp>
 #include "PlayerSaveData.h"
+#include "AudioSaveData.h"
+#include <AudioSystem/AudioSystem.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
 
 class ProgressSystem: public Singleton<ProgressSystem> {
@@ -25,33 +27,48 @@ class ProgressSystem: public Singleton<ProgressSystem> {
         }
 
         void SaveData() {
+            // Snapshot current audio state before writing.
+            audioSaveData.masterVolume = AudioSystem::GetMasterVolume();
+            audioSaveData.musicVolume  = AudioSystem::GetMusicVolume();
+            audioSaveData.sfxVolume    = AudioSystem::GetSfxVolume();
+            audioSaveData.muted        = AudioSystem::IsMuted();
+
             nlohmann::json j;
             playerSaveData.ToJson(j);
+            audioSaveData.ToJson(j["audio"]);
             AppDataSaveHelper::SaveGameJson(j);
             dirty = false;
             Logger::Log("[ProgressSystem] Data saved");
         }
 
         void LoadData() {
-            nlohmann::json j; 
+            nlohmann::json j;
             if (!AppDataSaveHelper::LoadGameJson(j)) {
                 Logger::Warn("[ProgressSystem] Failed to load save file, using defaults");
                 playerSaveData.ResetToDefaults();
+                audioSaveData.ResetToDefaults();
                 return;
             }
             playerSaveData.FromJson(j);
+            audioSaveData.FromJson(j.value("audio", nlohmann::json::object()));
             Logger::Log("[ProgressSystem] Data loaded");
         }
 
     public:
-        PlayerSaveData& Player() { 
+        PlayerSaveData& Player() {
             dirty = true;
-            return playerSaveData; 
+            return playerSaveData;
+        }
+
+        AudioSaveData& Audio() {
+            dirty = true;
+            return audioSaveData;
         }
 
     private:
         bool dirty = false;
         PlayerSaveData playerSaveData;
+        AudioSaveData  audioSaveData;
 };
 
 void ProgressSystemManager::Initialize() {
@@ -68,4 +85,8 @@ void ProgressSystemManager::LoadData() {
 
 PlayerSaveData& ProgressSystemManager::Player() {
     return ProgressSystem::instance().Player();
+}
+
+AudioSaveData& ProgressSystemManager::Audio() {
+    return ProgressSystem::instance().Audio();
 }

@@ -291,6 +291,14 @@ public:
         SDL_DestroyTexture(texture);
     }
 
+    void DrawFilledRectScreen(float x, float y, float w, float h, SDL_Color color) {
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+        SDL_FRect rect{x, y, w, h};
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+    }
+
     void BeginRender() {
         SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
         SDL_RenderClear(renderer);
@@ -410,6 +418,10 @@ void Renderer::DrawSpriteScreen(Renderer::TextureId textureId, float screenX, fl
 
 void Renderer::DrawRectangle(float x, float y, float w, float h, float angle = 0.0) {
     RenderManager::instance().DrawRectangle(x, y, w, h, angle);
+}
+
+void Renderer::DrawFilledRectScreen(float x, float y, float w, float h, SDL_Color color) {
+    RenderManager::instance().DrawFilledRectScreen(x, y, w, h, color);
 }
 
 void Renderer::SetCameraPosition(float x, float y) {

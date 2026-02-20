@@ -6,6 +6,9 @@
 #include <ProgressSystem/ProgressSystem.h>
 #include <DialogSystem/DialogSystem.h>
 #include <Game/GameplayLogic.h>
+#include <AudioSystem/AudioSystem.h>
+#include <DialogSystem/DialogSystem.h>
+#include <PauseMenu/PauseMenu.h>
 
 #include "Game/GameStates.h"
 #include "GameFeatures.h"
@@ -14,6 +17,7 @@
 #include "../Events/WindowFocusedEvent.h"
 #include "../Events/WindowUnfocusedEvent.h"
 #include "../Events/InterectButtonPressedEvent.h"
+#include "../Events/PlaySoundEvent.h"
 #include "../Events/NextDialogLineEvent.h"
 #include "../Events/GameShutdownEvent.h"
 #include "../Gameplay/WorldState.h"
@@ -42,7 +46,20 @@ Game::~Game() {
 void Game::Initialize() {
 
     Renderer::Initialize(windowWidth, windowHeight);
+    AudioSystem::Initialize();
+    AudioSystem::LoadAllSounds("assets/audio/");
     ProgressSystemManager::Initialize();
+
+    // Apply saved audio settings before starting playback.
+    {
+        const AudioSaveData& a = ProgressSystemManager::Audio();
+        AudioSystem::SetMasterVolume(a.masterVolume);
+        AudioSystem::SetMusicVolume(a.musicVolume);
+        AudioSystem::SetSfxVolume(a.sfxVolume);
+        AudioSystem::SetMuted(a.muted);
+    }
+
+    AudioSystem::PlayMusic("village_theme");
     GameplayLogic::Initialize();
     DialogSystemManager::Initialize();
     DialogSystemManager::LoadAllDialogs("assets/dialogs/");
@@ -83,6 +100,7 @@ void Game::Run() {
 
 void Game::Destroy() {
     // The order is strict because of asserts
+    AudioSystem::Destroy();
     Renderer::Destroy();
     WorldState::Destroy();
     DialogSystemManager::Destroy();
@@ -113,8 +131,8 @@ void Game::ProcessInput() {
                 Logger::Debug("[Game/SDL] Window unfocus event received");
                 EventBus::instance().EmitEvent<WindowUnfocusedEvent>();
                 break;
-            case SDL_EVENT_KEY_DOWN:
-                // Handle tilde key to toggle cheats (always processed)
+        case SDL_EVENT_KEY_DOWN:
+            // Handle tilde key to toggle cheats (always processed)
 #if ENABLE_CHEATS
                 if(event.key.key == SDLK_GRAVE) {
                     Cheats::ToggleCheats();
@@ -127,12 +145,18 @@ void Game::ProcessInput() {
                     break;
                 }
 #endif
+                // Delegate all input to the pause menu while it is open
+                if (PauseMenu::IsOpen()) {
+                    PauseMenu::HandleKeyDown(event.key.key);
+                    break;
+                }
+
                 if(event.key.key == SDLK_ESCAPE) {
                     if (GameFeatures::isDebug) {
                         GameFeatures::isDebug = false;
                         break;
                     }
-                    isRunning = false;
+                    PauseMenu::Open();
                     break;
                 }
                 if(event.key.key == SDLK_TAB) {
@@ -197,6 +221,9 @@ void Game::ProcessInput() {
                     break;
                 }
 #endif
+                if (PauseMenu::IsOpen()) {
+                    break;
+                }
                 
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP ||
                     event.key.key == SDLK_S || event.key.key == SDLK_DOWN ||
@@ -206,6 +233,13 @@ void Game::ProcessInput() {
                     GameStates::instance().SyncMovementFromKeyboard(fourDir);
                     break;
                 }
+            case SDL_EVENT_MOUSE_MOTION:
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+                if (PauseMenu::IsOpen()) {
+                    PauseMenu::HandleEvent(&event);
+                }
+                break;
             default:
                 break;
         }
@@ -238,6 +272,7 @@ void Game::Update() {
         }
     }
 
+    AudioSystem::Update();
     MapManager::Update(deltaTime);
     GameplayLogic::Update(deltaTime);
     GameplayLogic::UpdateCurrentGameAct();
@@ -261,5 +296,6 @@ void Game::Render() {
 #if ENABLE_CHEATS
     Cheats::UpdateAndRender();
 #endif
+    PauseMenu::UpdateAndRender();
     Renderer::EndRender();
 }

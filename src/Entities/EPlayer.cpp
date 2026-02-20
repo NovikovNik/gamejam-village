@@ -1,6 +1,7 @@
 #include "EPlayer.h"
 #include "EntityEventHandler.h"
 #include "../Game/GameStates.h"
+#include <Events/PlaySoundEvent.h>
 #include "../Game/GameFeatures.h"
 #include "Entities/EColliders.h"
 #include "Entities/EPit.h"
@@ -15,8 +16,14 @@
 #include <format>
 #include <optional>
 
+namespace
+{
+    constexpr float FOOTSTEP_INTERVAL = 0.35f;
+}
+
 World::EPlayer::EPlayer(const std::string& name, float x, float y) : name(name) {
     LoadData("player"_nnTex, x, y, 64, 64);
+    footstepTimer = FOOTSTEP_INTERVAL;
 }
 
 bool World::EPlayer::Update(float deltaTime) {
@@ -160,6 +167,9 @@ bool World::EPlayer::Update(float deltaTime) {
         if (impulse->x != 0.0f || impulse->y != 0.0f) {
             OnMoved(deltaTime);
         }
+     } else {
+         // Not moving — reset so the next step plays immediately when movement starts.
+         footstepTimer = FOOTSTEP_INTERVAL;
      }
 
      /* Вот эта проверка тяжелая, но без неё происходит сегфолт, т.к во время проверки мы можем удалить NPC и когда
@@ -197,6 +207,7 @@ bool World::EPlayer::Update(float deltaTime) {
     EInteractable* interactable = TryInteract();
     Logger::Log(std::format("[EPlayer] Interactable: {}", interactable ? "true" : "false"));
     if (interactable) {
+        EventBus::instance().EmitEvent<PlaySoundEvent>("interact");
         interactable->Interact();
     }
  }
@@ -213,6 +224,12 @@ void World::EPlayer::SetTooltipTexture(Renderer::TextureId texture, float w, flo
 }
 
 void World::EPlayer::OnMoved(float deltaTime) {
+    footstepTimer += deltaTime;
+    if (footstepTimer >= FOOTSTEP_INTERVAL) {
+        footstepTimer = 0.0f;
+        EventBus::instance().EmitEvent<PlaySoundEvent>("footstep");
+    }
+
     std::vector<World::EBox*> boxes;
     MapManager::GetEntitiesContainer().FindEntities(boxes);
     for (const auto& box : boxes) {

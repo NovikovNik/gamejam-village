@@ -7,6 +7,7 @@
 #include <Events/NextDialogLineEvent.h>
 #include <Events/ForceDialogStartEvent.h>
 #include <Events/DialogEndedEvent.h>
+#include <Events/PlaySoundEvent.h>
 #include <SDL3/SDL.h>
 #include <map>
 #include <fstream>
@@ -108,6 +109,7 @@ public:
             return;
         }
 
+        EventBus::instance().EmitEvent<PlaySoundEvent>("dialog_start");
         const DialogData& data = itDialog->second;
         dialogActive = true;
         currentCharacterId = characterId;
@@ -157,11 +159,15 @@ public:
     }
 
     void OnNextDialogLineEvent(NextDialogLineEvent&) {
-        if (!dialogActive) return;
+        if (!dialogActive) {
+            return;
+        }
 
         currentDialogIndex++;
         if (currentDialogIndex >= static_cast<int>(currentLines.size())) {
             EndDialog();
+        } else {
+            EventBus::instance().EmitEvent<PlaySoundEvent>("dialog_next");
         }
     }
 
