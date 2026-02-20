@@ -9,6 +9,7 @@
 #include <Events/InteractWithEntityEvent.h>
 #include <Events/GameShutdownEvent.h>
 #include <ProgressSystem/ProgressSystem.h>
+#include <DialogSystem/DialogSystem.h>
 #include <Map/Map.h>
 #include <memory>
 #include <format>
@@ -71,7 +72,12 @@ namespace {
             // Тут запускаем диалог после удаления старейшины
             Logger::Log(std::format("[Gameplay][Tutorial] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
             if (e.GetName() == "Elder") {
-                EventBus::instance().EmitEvent<ForceDialogStartEvent>("Elder", "dialog-after-deleted");
+                // На случай если игрок попробует удалить старейшину пока идет диалог с ним
+                // мы завершим диалог и запустим новый
+                if (DialogSystemManager::IsDialogActive()) {
+                    DialogSystemManager::EndDialog();
+                }
+                DialogSystemManager::StartDialog("Elder", "dialog-after-deleted");
             }
         }
 
@@ -83,7 +89,7 @@ namespace {
                     elderInteractionsCount++;
                 }
                 std::string dialogId = std::format("dialog-{}", std::to_string(elderInteractionsCount));
-                EventBus::instance().EmitEvent<ForceDialogStartEvent>("Elder", dialogId);
+                DialogSystemManager::StartDialog("Elder", dialogId);
             }
         }
 

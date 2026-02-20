@@ -73,9 +73,24 @@
             "description": "Elder of the village not happy with you at all.",
             "lines": [
                 {
-                    "text": "There are two ways to delete a file: right click on it, then press 'delete', or just press 'delete' on your keyboard."
+                    "name": "Narrator",
+                    "text": "There are two ways to delete a file: right click on it in file explorer, then press 'delete', or just press 'delete' on your keyboard."
                 },
                 {
+                    "name": "Consciousness",
+                    "text": "Deep down, you already know the truth. There is a door you have not yet opened.",
+                    "align": "right",
+                    "color": [255, 255, 210, 250]
+                },
+                {
+                    "name": "Consciousness",
+                    "text": "Press [O] to open File Explorer.",
+                    "size": 26,
+                    "color": [255, 255, 210, 250],
+                    "align": "right"
+                },
+                {
+                    "name": "Narrator",
                     "text": "Let's try a more direct approach. This is a tutorial level. We want you to learn that you can alter the game world by deleting files. So go and delete that file!"
                 }
             ],
@@ -137,6 +152,7 @@
             "textSize": 25
         },
         "dialog-after-deleted": {
+            "name": "Narrator",
             "description": "File deleted",
             "lines": [
                 {
