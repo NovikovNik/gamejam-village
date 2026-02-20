@@ -11,8 +11,10 @@
 #include <ProgressSystem/ProgressSystem.h>
 #include <DialogSystem/DialogSystem.h>
 #include <Map/Map.h>
+#include <Entities/EInteractable.h>
 #include <memory>
 #include <format>
+#include <cmath>
 
 namespace {
     class GameAct {
@@ -20,6 +22,8 @@ namespace {
         virtual ~GameAct() = default;
     
         virtual void Initialize() {};
+        // Апдейт для простых движений обьектов на карте
+        virtual void Update(float deltaTime) {};
     };
 
     class ActIntro: public GameAct {
@@ -31,6 +35,28 @@ namespace {
             }
             onDialogEnded = EventBus::instance().SubscribeToEvent<DialogEndedEvent>(this, &ActIntro::OnDialogEnded);
             EventBus::instance().EmitEvent<ForceDialogStartEvent>("Intro", "intro-1");
+            
+            penchamentEntity = MapManager::GetEntitiesContainer().FindEntity<World::EInteractable>();
+            if (penchamentEntity) {
+                baseBoxY = penchamentEntity->GetPosition().y;
+                timeAccumulator = 0.0f;
+            }
+        }
+
+        void Update(float deltaTime) override {
+            // В этом апдейте делаем просто красивое покачивание 
+            // письма по Y синусоиде
+            if (!penchamentEntity) {
+                return;
+            }
+            
+            // Apply sine wave movement to box Y position
+            const float amplitude = 5.0f;
+            const float frequency = 1.0f;
+            const float offsetY = std::sin(deltaTime * frequency) * amplitude;
+            
+            const auto currentPos = penchamentEntity->GetPosition();
+            penchamentEntity->SetPosition(currentPos.x, baseBoxY + offsetY);
         }
 
         void OnDialogEnded(DialogEndedEvent& e) {
@@ -43,6 +69,10 @@ namespace {
 
     private:
         Events::Handler onDialogEnded;
+
+        World::EInteractable* penchamentEntity = nullptr;
+        float baseBoxY = 0.0f;
+        float timeAccumulator = 0.0f;
     };
 
     // В этом акте мы первый раз идем в деревню и встречаем там старейшину
@@ -158,11 +188,17 @@ public:
         }
     }
 
-    void Update() {
+    void UpdateCurrentGameAct() {
         if (nextGameAct != nullptr) {
             gameAct = std::move(nextGameAct);
             gameAct->Initialize();
             nextGameAct = nullptr;
+        }
+    }
+
+    void Update(float deltaTime) {
+        if (gameAct != nullptr) {
+            gameAct->Update(deltaTime);
         }
     }
 
@@ -189,7 +225,11 @@ namespace GameplayLogic {
         GameplayLogicManager::instance().Destroy();
     }
 
-    void Update() {
-        GameplayLogicManager::instance().Update();
+    void UpdateCurrentGameAct() {
+        GameplayLogicManager::instance().UpdateCurrentGameAct();
+    }
+
+    void Update(float deltaTime) {
+        GameplayLogicManager::instance().Update(deltaTime);
     }
 }

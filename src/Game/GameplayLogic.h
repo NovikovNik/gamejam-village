@@ -19,5 +19,8 @@ namespace GameplayLogic {
     void LoadGameAct(GameActId id);
     std::string GetCurrentGameActId();
     void Destroy();
-    void Update();
+    // Для обновления событий внутри конкретного одного акта
+    void Update(float deltaTime);
+    // Для переходов на следующие акты
+    void UpdateCurrentGameAct();
 }

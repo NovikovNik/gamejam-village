@@ -1,11 +1,12 @@
 {
-    "tiles": [
+    "interactables": [
         {
             "x": 0.0,
             "y": -60.0,
+            "texture": "parchment",
+            "name": "parchment",
             "width": 336.0,
-            "height": 314.0,
-            "texture": "parchment"
+            "height": 314.0
         }
     ]
 }
