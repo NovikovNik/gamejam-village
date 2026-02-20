@@ -15,6 +15,7 @@
 #include <Events/WindowFocusedEvent.h>
 #include <Events/ClearWorldStateEvent.h>
 #include <Events/ChangeLocationEvent.h>
+#include <Events/LocationChangedEvent.h>
 #include <FileSystem/FileSystem.h>
 #include <ProgressSystem/ProgressSystem.h>
 #include <Gameplay/WorldState.h>
@@ -226,6 +227,8 @@ public:
 
         EventBus::instance().EmitEvent<ClearWorldStateEvent>();
         EventBus::instance().EmitEvent<WindowFocusedEvent>();
+
+        EventBus::instance().EmitEvent<LocationChangedEvent>(locationName);
 
         // HACK: Чтобы перезагрузить состояние мира после загрузки локации
         return true;

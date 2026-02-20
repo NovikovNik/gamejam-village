@@ -6,6 +6,8 @@
 #include <Events/ForceDialogStartEvent.h>
 #include <Events/DialogEndedEvent.h>
 #include <Events/ChangeLocationEvent.h>
+#include <Events/LocationChangedEvent.h>
+#include <Renderer/Camera.h>
 #include <Events/InteractWithEntityEvent.h>
 #include <Events/GameShutdownEvent.h>
 #include <ProgressSystem/ProgressSystem.h>
@@ -33,6 +35,10 @@ namespace {
                 Logger::Err("Intro act can only be loaded on intro map");
                 return;
             }
+            // Скейл 1 к 1, ибо это интро
+            World::Camera::instance().SetScaleFactor(1.0f);
+
+            onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &ActIntro::OnLocationChanged);
             onDialogEnded = EventBus::instance().SubscribeToEvent<DialogEndedEvent>(this, &ActIntro::OnDialogEnded);
             EventBus::instance().EmitEvent<ForceDialogStartEvent>("Intro", "intro-1");
             
@@ -64,13 +70,19 @@ namespace {
         void OnDialogEnded(DialogEndedEvent& e) {
             Logger::Log(std::format("[Gameplay][Intro] DialogEnded: {}", e.dialogId));
             if (e.characterId == "Intro" && e.dialogId == "intro-1") {
-                ::GameplayLogic::LoadGameAct(GameActIds::Tutorial);
                 EventBus::instance().EmitEvent<ChangeLocationEvent>("assets/maps/world-entry-2.json");
+            }
+        }
+
+        void OnLocationChanged(LocationChangedEvent& e) {
+            if (e.locationName == "world-entry-2") {
+                ::GameplayLogic::LoadGameAct(GameActIds::Tutorial);
             }
         }
 
     private:
         Events::Handler onDialogEnded;
+        Events::Handler onLocationChanged;
 
         World::EInteractable* penchamentEntity = nullptr;
         float baseBoxY = 0.0f;
@@ -85,6 +97,9 @@ namespace {
                 Logger::Err("Tutorial act can only be loaded on world-entry-2 map");
                 return;
             }
+            // Скейл такой выверен на глаз
+            World::Camera::instance().SetScaleFactor(1.7f);
+
             onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &ActTutorial::OnInteractWithEntity);
             onEntityCreated   = EventBus::instance().SubscribeToEvent<EntityCreatedEvent>(this, &ActTutorial::OnEntityCreated);
             onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &ActTutorial::OnEntityDestroyed);
