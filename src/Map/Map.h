@@ -16,4 +16,5 @@ namespace MapManager {
     void UnloadCurrentMap();
     void OpenCurrentLocationInExplorer();
     void SeedInstantSpawnEntitiesInFilesystem();
+    void SetPlayerPositionToSpawnPoint(const std::string& spawnPointName);
 };

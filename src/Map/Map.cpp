@@ -25,6 +25,7 @@
 #include <sstream>
 #include <string>
 #include <set>
+#include <map>
 #include <filesystem>
 #include <format>
 
@@ -177,10 +178,25 @@ public:
                 const float y = levelChangeTriggerJson["y"].get<float>();
                 const float width = levelChangeTriggerJson["width"].get<float>();
                 const float height = levelChangeTriggerJson["height"].get<float>();
-                World::ETriggerLocation* triggerLocation = entitiesManager.SpawnEntity<World::ETriggerLocation>(locationName);
+                const std::string spawnPointMatch = levelChangeTriggerJson["spawnPointMatch"].get<std::string>();
+                World::ETriggerLocation* triggerLocation = entitiesManager.SpawnEntity<World::ETriggerLocation>(locationName, spawnPointMatch);
                 // Возможно триггеру не нужна будет текстура в конце концов
                 // Хотя это может быть, например, обьект телепорт. Почему бы и нет
                 triggerLocation->LoadData(make_nnTex(levelChangeTriggerJson["texture"].get<std::string>()), x, y, width, height);
+            }
+        }
+
+        // Load spawn points from JSON (name -> position)
+        spawnPointsByName.clear();
+        if (mapData.contains("spawnPoints") && mapData["spawnPoints"].is_array()) {
+            for (const auto& spJson : mapData["spawnPoints"]) {
+                if (!spJson.is_object() || !spJson.contains("name") || !spJson.contains("x") || !spJson.contains("y")) {
+                    continue;
+                }
+                std::string name = spJson["name"].get<std::string>();
+                float x = spJson["x"].get<float>();
+                float y = spJson["y"].get<float>();
+                spawnPointsByName[name] = { x, y };
             }
         }
 
@@ -366,12 +382,30 @@ public:
         FileSystemManager::CreateDirectory(villageDir.string());
     }
 
+    void SetPlayerPositionToSpawnPoint(const std::string& spawnPointName) {
+        auto it = spawnPointsByName.find(spawnPointName);
+        if (it == spawnPointsByName.end()) {
+            Logger::Warn(std::format("[Map] Spawn point '{}' not found", spawnPointName));
+            return;
+        }
+        World::EPlayer* playerEntity = entitiesManager.GetEntitiesContainer().FindEntity<World::EPlayer>();
+        if (!playerEntity) {
+            Logger::Warn("[Map] Player not found, cannot set spawn point position");
+            return;
+        }
+        const float x = it->second.first;
+        const float y = it->second.second;
+        playerEntity->SetPosition(x, y);
+        World::Camera::instance().SetPosition(x, y);
+    }
+
 private:
     World::EntitiesManager entitiesManager;
     World::EPlayer* player = nullptr;
     std::string currentLevel;
 
     nlohmann::json mapData;
+    std::map<std::string, std::pair<float, float>> spawnPointsByName;
 
     // Структура для обозначения, что локация посечена в первый раз
     // При первом заходе на неё нужно создать все Entity с spawnOnStart=true
@@ -415,6 +449,10 @@ namespace MapManager {
 
     void DestroyEntity(const std::string& name, const std::string& type) {
         Map::instance().DestroyEntity(name, type);
+    }
+
+    void SetPlayerPositionToSpawnPoint(const std::string& spawnPointName) {
+        Map::instance().SetPlayerPositionToSpawnPoint(spawnPointName);
     }
 
     std::string GetCurrentMapName() {

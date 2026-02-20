@@ -10,5 +10,5 @@ void World::ETriggerLocation::Render(float deltaTime) {
 }
 
 void World::ETriggerLocation::ChangeLocation() {
-    EventBus::instance().EmitEvent<ChangeLocationEvent>(locationName);
+    EventBus::instance().EmitEvent<ChangeLocationEvent>(locationName, spawnPointMatch);
 }

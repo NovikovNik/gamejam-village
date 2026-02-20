@@ -6,11 +6,12 @@
 namespace World {
     class ETriggerLocation : public EMapObject {
     public:
-        ETriggerLocation(const std::string& locationName) : locationName(locationName) {}
+        ETriggerLocation(const std::string& locationName, const std::string& spawnPointMatch) : locationName(locationName), spawnPointMatch(spawnPointMatch) {}
         void Render(float deltaTime) override;
         void ChangeLocation();
 
     private:
         const std::string locationName;
+        const std::string spawnPointMatch;
     };
 }

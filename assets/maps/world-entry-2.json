@@ -60,6 +60,7 @@
             "name": "Player"
         }
     ],
+    "spawnPoints": [],
     "levelChangeTriggers": [
         {
             "name": "LevelChangeTriggers",
@@ -68,7 +69,8 @@
             "width": 110.53819274902344,
             "height": 114.27313995361328,
             "texture": "levelchange",
-            "location": "assets/maps/world-1.json"
+            "location": "assets/maps/crossroads.json",
+            "spawnPointMatch": "main"
         }
     ]
 }
