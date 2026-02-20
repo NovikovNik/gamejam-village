@@ -16,7 +16,8 @@ namespace Renderer {
     void Initialize(int32_t windowWidth, int32_t windowHeight);
     void Destroy();
     void SubscribeToEvents();
-    void DrawSprite(TextureId textureId, float x, float y, float width, float height);
+    void DrawSprite(TextureId textureId, float x, float y, float width, float height, bool horizontalFlip = false);
+    void DrawSprite(TextureId textureId, float x, float y, float width, float height, double angle, bool horizontalFlip = false);
     void DrawSprite(TextureId textureId, float x, float y, float width, float height, double angle);
     /// Спрайт в экранных координатах (без учёта камеры) — для UI
     void DrawSpriteScreen(TextureId textureId, float screenX, float screenY, float width, float height);

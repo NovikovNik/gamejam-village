@@ -32,7 +32,7 @@ cmake -S "${SCRIPT_DIR}" \
       -DENABLE_CHEATS="${ENABLE_CHEATS}"
 
 ########### Build ##############################
-cmake --build "${SCRIPT_DIR}"/build
+cmake --build "${SCRIPT_DIR}"/build -j 8
 
 echo "Build finished"
 

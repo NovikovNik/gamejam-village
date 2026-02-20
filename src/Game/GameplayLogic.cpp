@@ -14,6 +14,7 @@
 #include <DialogSystem/DialogSystem.h>
 #include <Map/Map.h>
 #include <Entities/EInteractable.h>
+#include <Entities/ENpc.h>
 #include <memory>
 #include <format>
 #include <cmath>
@@ -103,6 +104,12 @@ namespace {
             onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &ActTutorial::OnInteractWithEntity);
             onEntityCreated   = EventBus::instance().SubscribeToEvent<EntityCreatedEvent>(this, &ActTutorial::OnEntityCreated);
             onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &ActTutorial::OnEntityDestroyed);
+
+            // NPC должен быть на первой локации!
+            World::ENpc* elderNpc = dynamic_cast<World::ENpc*>(MapManager::GetEntitiesContainer().FindEntity<World::ENpc>());
+            if (elderNpc) {
+                elderNpc->SetHorizontalFlip(true);
+            }
         }
 
         void OnEntityCreated(EntityCreatedEvent& e) {

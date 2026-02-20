@@ -23,6 +23,7 @@ namespace World {
         // Pixels per frame
 
         glm::vec2 direction; // for normalization kinda
+        bool horizontalFlip = false;
         float basicSpeed = 140.0f;
         std::string name;
         bool bShowTooltip = false;

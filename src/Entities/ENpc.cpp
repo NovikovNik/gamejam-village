@@ -15,7 +15,7 @@ bool World::ENpc::Update(float deltaTime) {
 }
 
 void World::ENpc::Render(float deltaTime) {
-    EInteractable::Render(deltaTime);
+    Renderer::DrawSprite(texture, positionX, positionY, width, height, 0.0, horizontalFlip);
 }
 
 void World::ENpc::Interact() {

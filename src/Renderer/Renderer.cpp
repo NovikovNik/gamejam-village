@@ -129,7 +129,7 @@ public:
         return font;
     }
 
-    void DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height) {
+    void DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, bool horizontalFlip) {
         SDL_Texture* texture = textures[textureId];
         if (texture == nullptr) {
             return;
@@ -144,10 +144,14 @@ public:
         rect.w = width * scaleFactor;
         rect.h = height * scaleFactor;
 
-        SDL_RenderTexture(renderer, texture, NULL, &rect);
+        SDL_FlipMode flip = SDL_FLIP_NONE;
+        if (horizontalFlip) {
+            flip = SDL_FLIP_HORIZONTAL;
+        }
+        SDL_RenderTextureRotated(renderer, texture, NULL, &rect, 0, NULL, flip);
     }
 
-    void DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, double angle) {
+    void DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, double angle, bool horizontalFlip) {
         SDL_Texture* texture = textures[textureId];
         if (texture == nullptr) {
             return;
@@ -164,7 +168,12 @@ public:
         rect.h = height * scaleFactor;
 
         SDL_FPoint center = { width / 2.0f, height / 2.0f };
-        SDL_RenderTextureRotated(renderer, texture, NULL, &rect, angle, &center, SDL_FLIP_NONE);
+
+        SDL_FlipMode flip = SDL_FLIP_NONE;
+        if (horizontalFlip) {
+            flip = SDL_FLIP_HORIZONTAL;
+        }
+        SDL_RenderTextureRotated(renderer, texture, NULL, &rect, 0, NULL, flip);
     }
 
     void DrawSpriteScreen(Renderer::TextureId textureId, float screenX, float screenY, float width, float height) {
@@ -383,12 +392,12 @@ void Renderer::SubscribeToEvents() {
     RenderManager::instance().SubscribeToEvents();
 }
 
-void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height) {
-    RenderManager::instance().DrawSprite(textureId, x, y, width, height);
+void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, bool horizontalFlip) {
+    RenderManager::instance().DrawSprite(textureId, x, y, width, height, horizontalFlip);
 }
 
-void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, double angle) {
-    RenderManager::instance().DrawSprite(textureId, x, y, width, height, angle);
+void Renderer::DrawSprite(Renderer::TextureId textureId, float x, float y, float width, float height, double angle, bool horizontalFlip) {
+    RenderManager::instance().DrawSprite(textureId, x, y, width, height, angle, horizontalFlip);
 }
 
 void Renderer::DrawSpriteScreen(Renderer::TextureId textureId, float screenX, float screenY, float width, float height) {

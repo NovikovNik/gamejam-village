@@ -10,8 +10,10 @@ namespace World {
         void Render(float deltaTime) override;
 
         void Interact() override;
+        void SetHorizontalFlip(bool flip) { horizontalFlip = flip; }
 
     private:
+        bool horizontalFlip = false;
         std::string name;
     };
 }

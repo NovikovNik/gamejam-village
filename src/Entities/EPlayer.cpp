@@ -54,9 +54,11 @@ bool World::EPlayer::Update(float deltaTime) {
      }
      if (GameStates::instance().a) {
          direction.x -= 1.0f;
+         horizontalFlip = true;
      }
      if (GameStates::instance().d) {
          direction.x += 1.0f;
+         horizontalFlip = false;
      }
 
      if (glm::length(direction) > 0.0f) {
@@ -239,7 +241,8 @@ void World::EPlayer::OnMoved(float deltaTime) {
 }
 
 void World::EPlayer::Render(float deltaTime) {
-    EMovable::Render(deltaTime);
+    Renderer::DrawSprite(texture, positionX, positionY, width, height, 0.0, horizontalFlip);
+
     if (GameFeatures::isDebug) {
         const auto& pos = GetPosition();
         Renderer::DrawRectangle(pos.x, pos.y, GetWidth(), GetHeight(), 0.0);
