@@ -90,13 +90,6 @@
             "width": 192.33950805664062,
             "height": 192.33950805664062,
             "texture": "test-ground"
-        },
-        {
-            "x": 216.9456024169922,
-            "y": -217.3984832763672,
-            "width": 256.0,
-            "height": 137.871337890625,
-            "texture": "test-texture"
         }
     ],
     "npcs": [
@@ -168,6 +161,15 @@
             "texture": "levelchange",
             "location": "assets/maps/merchant.json",
             "spawnPointMatch": "main"
+        }
+    ],
+    "alwaysOnTop": [
+        {
+            "x": 216.9456024169922,
+            "y": -217.3984832763672,
+            "width": 256.0,
+            "height": 137.871337890625,
+            "texture": "test-texture"
         }
     ]
 }

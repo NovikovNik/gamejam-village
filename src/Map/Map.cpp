@@ -213,6 +213,23 @@ public:
             }
         }
 
+        // Load always on top tiles from JSON
+        World::ETiles* alwaysOnTopTiles = entitiesManager.SpawnEntity<World::ETiles>();
+        if (mapData.contains("alwaysOnTop") && mapData["alwaysOnTop"].is_array()) {
+            std::vector<World::ETiles::Tile> alwaysOnTopTilesData;
+            for (const auto& tileJson : mapData["alwaysOnTop"]) {
+                World::ETiles::Tile tile;
+                tile.x = tileJson["x"].get<float>();
+                tile.y = tileJson["y"].get<float>();
+                tile.width = tileJson["width"].get<float>();
+                tile.height = tileJson["height"].get<float>();
+                std::string textureName = tileJson["texture"].get<std::string>();
+                tile.texture = make_nnTex(textureName);
+                alwaysOnTopTilesData.push_back(tile);
+            }
+            alwaysOnTopTiles->LoadTiles(alwaysOnTopTilesData);
+        }
+
         // Тут первый раз создаем все Entity на локации при старте игры (в файлавой директории)
         const std::string locationName = GetCurrentMapName();
         RevealLocationInFilesystem(locationName);

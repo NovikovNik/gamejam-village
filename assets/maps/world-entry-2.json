@@ -9,7 +9,7 @@
         },
         {
             "x": 50.080841064453125,
-            "y": 94.07015991210938,
+            "y": 83.5230712890625,
             "width": 642.0277099609375,
             "height": 28.062366485595703
         },
@@ -41,13 +41,6 @@
             "width": 640.0,
             "height": 360.0,
             "texture": "entry-location-down"
-        },
-        {
-            "x": 45.0,
-            "y": -25.0,
-            "width": 640.0,
-            "height": 360.0,
-            "texture": "entry-location-up"
         }
     ],
     "npcs": [
@@ -85,6 +78,15 @@
             "texture": "levelchange",
             "location": "assets/maps/crossroads.json",
             "spawnPointMatch": "main"
+        }
+    ],
+    "alwaysOnTop": [
+        {
+            "x": 45.0,
+            "y": -25.0,
+            "width": 640.0,
+            "height": 360.0,
+            "texture": "entry-location-up"
         }
     ]
 }
