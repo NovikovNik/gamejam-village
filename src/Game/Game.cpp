@@ -241,6 +241,7 @@ void Game::Update() {
     MapManager::Update(deltaTime);
     GameplayLogic::Update(deltaTime);
     GameplayLogic::UpdateCurrentGameAct();
+    WorldState::Update();
 
     // Dispatch all events in the queue
 //    EventsQueue::instance().Dispatch();

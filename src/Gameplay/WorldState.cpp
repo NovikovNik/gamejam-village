@@ -32,6 +32,12 @@ struct WorldBlackboard
     VillagerElder villagerElder;
 };
 
+struct NextLocation
+{
+    std::string locationPath;
+    std::string spawnPoint;
+};
+
 class GameStateManager: public Singleton<GameStateManager>
 {
 public:
@@ -47,6 +53,26 @@ public:
         onWindowFocused.Destroy();
         onClearWorldState.Destroy();
         onChangeLocation.Destroy();
+    }
+
+    void Update()
+    {
+        if (!nextLocation.has_value())
+        {
+            return;
+        }
+
+        Logger::Log(std::format("[WorldState] Changing location to: {}", nextLocation->locationPath));
+        bool isLoaded = MapManager::LoadMap(nextLocation->locationPath);
+        if (isLoaded) {
+            if (!nextLocation->spawnPoint.empty()) {
+                MapManager::SetPlayerPositionToSpawnPoint(nextLocation->spawnPoint);
+            }
+            ProgressSystemManager::Player().lastLevel = nextLocation->locationPath;
+            ProgressSystemManager::SaveData();
+        }
+
+        nextLocation.reset();
     }
 
     void OnWindowFocused(WindowFocusedEvent&)
@@ -98,15 +124,10 @@ public:
     // Словно ему место не здесь и не в Map.cpp, но пока живет тут
     void OnChangeLocation(ChangeLocationEvent& event)
     {
-        Logger::Log(std::format("[WorldState] Changing location to: {}", event.locationPath));
-        bool isLoaded = MapManager::LoadMap(event.locationPath);
-        if (isLoaded) {
-            if (!event.spawnPoint.empty()) {
-                MapManager::SetPlayerPositionToSpawnPoint(event.spawnPoint);
-            }
-            ProgressSystemManager::Player().lastLevel = event.locationPath;
-            ProgressSystemManager::SaveData();
-        }
+        nextLocation = NextLocation{
+            .locationPath = event.locationPath,
+            .spawnPoint = event.spawnPoint,
+        };
     }
 
     [[nodiscard]] LocationsStates::LocationChanges SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName)
@@ -239,8 +260,8 @@ public:
     void AddToWorldState(const World::Entity::TagName& tagName) {
 
         const auto locationName = MapManager::GetCurrentMapName();
-        const auto locationObjects = currentState.find(locationName);
-        if (locationObjects == currentState.end()) {
+        const auto locationObjects = lastSeenState.find(locationName);
+        if (locationObjects == lastSeenState.end()) {
             return;
         }
 
@@ -292,6 +313,8 @@ private:
     Events::Handler onWindowFocused;
     Events::Handler onClearWorldState;
     Events::Handler onChangeLocation;
+
+    std::optional<NextLocation> nextLocation;
 };
 
 void WorldState::Initiate() {
@@ -320,4 +343,8 @@ void WorldState::AddToWorldState(const World::Entity::TagName& tagName) {
 
 void WorldState::RemoveFromWorldState(const World::Entity::TagName& tagName) {
     GameStateManager::instance().RemoveFromWorldState(tagName);
+}
+
+void WorldState::Update() {
+    GameStateManager::instance().Update();
 }

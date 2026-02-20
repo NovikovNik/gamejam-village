@@ -113,17 +113,20 @@ bool World::EPlayer::Update(float deltaTime) {
                 if (!box->IsValid()) { continue; }
                 const float w2 = box->GetWidth() * 0.5f, h2 = box->GetHeight() * 0.5f;
                 const glm::vec2 p = box->GetPosition();
+                bool isOverlaps = false;
                 if (overlaps(moveX, 0.0f, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
+                    isOverlaps = true;
                     if (!box->CanMove(moveX > 0.0f ? 1.0f : -1.0f, 0.0f, basicSpeed, deltaTime)) { 
                         blockedX = true; 
                     }
                 }
                 if (overlaps(0.0f, moveY, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
+                    isOverlaps = true;
                     if (!box->CanMove(0.0f, moveY > 0.0f ? 1.0f : -1.0f, basicSpeed, deltaTime)) { 
                         blockedY = true; 
                     }
                 }
-                if (blockedX || blockedY) {
+                if (isOverlaps) {
                     WorldState::AddToWorldState(box->GetTagName());
                 }
             }
