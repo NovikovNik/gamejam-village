@@ -29,11 +29,25 @@
     "boxes": [],
     "tiles": [
         {
-            "x": 45.63031768798828,
-            "y": -25.485525131225586,
-            "width": 1220.8129119873047,
-            "height": 686.7072629928589,
-            "texture": "rendered-tile"
+            "x": 0.0,
+            "y": 482.14727783203125,
+            "width": 32.0,
+            "height": 32.0,
+            "texture": "test-texture"
+        },
+        {
+            "x": 45.0,
+            "y": -25.0,
+            "width": 1190.4420166015625,
+            "height": 669.6240234375,
+            "texture": "entry-location-down"
+        },
+        {
+            "x": 45.0,
+            "y": -25.0,
+            "width": 1194.0556640625,
+            "height": 671.6560668945312,
+            "texture": "entry-location-up"
         }
     ],
     "npcs": [
