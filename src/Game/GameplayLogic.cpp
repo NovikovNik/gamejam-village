@@ -49,11 +49,13 @@ namespace {
             if (!penchamentEntity) {
                 return;
             }
+
+            timeAccumulator += deltaTime;
             
-            // Apply sine wave movement to box Y position
+            // само движение
             const float amplitude = 5.0f;
             const float frequency = 1.0f;
-            const float offsetY = std::sin(deltaTime * frequency) * amplitude;
+            const float offsetY = std::sin(timeAccumulator * frequency) * amplitude;
             
             const auto currentPos = penchamentEntity->GetPosition();
             penchamentEntity->SetPosition(currentPos.x, baseBoxY + offsetY);
