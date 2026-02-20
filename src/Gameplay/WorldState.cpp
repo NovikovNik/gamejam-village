@@ -123,6 +123,9 @@ public:
         return changes;
     }
 
+    [[nodiscard]] const LocationsStates::State& GetCurrentState() const { return currentState; }
+    [[nodiscard]] const LocationsStates::State& GetLastSeenState() const { return lastSeenState; }
+
     void LoadNewGameStateFromFilesystem()
     {
         namespace fs = std::filesystem;
@@ -292,6 +295,14 @@ void WorldState::Initiate() {
 
 LocationsStates::LocationChanges WorldState::SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName) { 
     return GameStateManager::instance().SyncLocationAndGetChanges(locationName);
+}
+
+const LocationsStates::State& WorldState::GetCurrentState() {
+    return GameStateManager::instance().GetCurrentState();
+}
+
+const LocationsStates::State& WorldState::GetLastSeenState() {
+    return GameStateManager::instance().GetLastSeenState();
 }
 
 void WorldState::Destroy() {

@@ -14,10 +14,14 @@
 #include <EventBus/EventBus.h>
 #include <Events/ForceDialogStartEvent.h>
 #include <Game/GameplayLogic.h>
+#include <Gameplay/WorldState.h>
+#include <Gameplay/LocationsStates.h>
 #include <string>
+#include <algorithm>
 #include <format>
 #include <filesystem>
 #include <vector>
+#include <set>
 #include <utility>
 
 class CheatsManger : public Singleton<CheatsManger>
@@ -36,8 +40,11 @@ public:
         ImGui::Begin("Cheats Menu", &isCheatsActive);
         ImGui::Text("Press ~ to close");
         ImGui::Separator();
-        
-        RefreshMapListIfNeeded();
+
+        if (ImGui::BeginTabBar("CheatsTabs")) {
+            if (ImGui::BeginTabItem("Main")) {
+                ImGui::Separator();
+                RefreshMapListIfNeeded();
         if (!mapNames.empty()) {
             const char* preview = selectedMapIndex >= 0 && selectedMapIndex < static_cast<int>(mapNames.size())
                 ? mapNames[selectedMapIndex].c_str() : "Select level...";
@@ -133,6 +140,67 @@ public:
 
             const auto cameraPos = World::Camera::instance().GetPosition();
             ImGui::Text("Camera Pos: X=%.1f Y=%.1f", cameraPos.x, cameraPos.y);
+        }
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("World State")) {
+                ImGui::Text("Objects by location (current vs last seen)");
+                ImGui::Separator();
+                const auto& current = WorldState::GetCurrentState();
+                const auto& lastSeen = WorldState::GetLastSeenState();
+                std::set<std::string> allLocations;
+                for (const auto& [loc, _] : current) allLocations.insert(loc);
+                for (const auto& [loc, _] : lastSeen) allLocations.insert(loc);
+                for (const auto& locationName : allLocations) {
+                    const auto& curObjs = current.count(locationName) ? current.at(locationName) : LocationsStates::LocationObjects{};
+                    const auto& lastObjs = lastSeen.count(locationName) ? lastSeen.at(locationName) : LocationsStates::LocationObjects{};
+                    LocationsStates::LocationObjects added, removed;
+                    for (const auto& o : curObjs) {
+                        if (std::find(lastObjs.begin(), lastObjs.end(), o) == lastObjs.end())
+                            added.push_back(o);
+                    }
+                    for (const auto& o : lastObjs) {
+                        if (std::find(curObjs.begin(), curObjs.end(), o) == curObjs.end())
+                            removed.push_back(o);
+                    }
+                    const bool hasChanges = !added.empty() || !removed.empty();
+                    const char* label = locationName.empty() ? "(root)" : locationName.c_str();
+                    if (hasChanges) {
+                        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.3f, 0.5f, 0.3f, 0.6f));
+                    }
+                    if (ImGui::TreeNode(label)) {
+                        if (hasChanges) ImGui::PopStyleColor();
+                        ImGui::Text("Current: %zu | Last seen: %zu", curObjs.size(), lastObjs.size());
+                        if (!added.empty()) {
+                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.8f, 0.2f, 1.f));
+                            ImGui::Text("Added (%zu):", added.size());
+                            ImGui::PopStyleColor();
+                            for (const auto& o : added)
+                                ImGui::BulletText("%s.%s", o.name.c_str(), o.type.c_str());
+                        }
+                        if (!removed.empty()) {
+                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.3f, 0.2f, 1.f));
+                            ImGui::Text("Removed (%zu):", removed.size());
+                            ImGui::PopStyleColor();
+                            for (const auto& o : removed)
+                                ImGui::BulletText("%s.%s", o.name.c_str(), o.type.c_str());
+                        }
+                        if (added.empty() && removed.empty()) {
+                            for (const auto& o : curObjs)
+                                ImGui::BulletText("%s.%s", o.name.c_str(), o.type.c_str());
+                        }
+                        ImGui::TreePop();
+                    } else if (hasChanges) {
+                        ImGui::PopStyleColor();
+                    }
+                }
+                if (allLocations.empty()) {
+                    ImGui::Text("No location data (focus window to refresh from village/)");
+                }
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
         }
         
         ImGui::End();

@@ -6,7 +6,7 @@ void World::EntitiesContainer::AddEntity(std::unique_ptr<World::Entity>&& entity
 
 void World::EntitiesContainer::RemoveInvalidEntities() {
     entities.erase(std::remove_if(entities.begin(), entities.end(), [](const std::unique_ptr<World::Entity>& e) {
-        return !e->IsValid();
+        return !e || !e->IsValid();
     }), entities.end());
 }
 

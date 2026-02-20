@@ -24,6 +24,9 @@ namespace World {
 
         void ForEachEntity(auto&& callback) const {
             for (auto& entity : entities) {
+                if (!entity) {
+                    continue;
+                }
                 callback(entity.get());
             }
         }
