@@ -2,10 +2,12 @@
 #include "BasicSaveData.h"
 #include <glm/glm.hpp>
 #include <string>
+#include "../Game/GameplayLogic.h"
 
 struct PlayerSaveData : public BasicSaveData {
     glm::vec2 position{0.f, 0.f};
     std::string lastLevel = "assets/maps/intro.json";
+    std::string lastGameAct = std::string(GameActIds::Intro);
 
     int GetVersion() const override {
         return 1;
@@ -14,6 +16,7 @@ struct PlayerSaveData : public BasicSaveData {
     void ResetToDefaults() override {
         position = {0.f, 0.f};
         lastLevel = "assets/maps/intro.json";
+        lastGameAct = std::string(GameActIds::Intro);
     }
 
     void ToJson(nlohmann::json& j) const override {
@@ -23,6 +26,7 @@ struct PlayerSaveData : public BasicSaveData {
             {"y", position.y}
         };
         j["lastLevel"] = lastLevel;
+        j["lastGameAct"] = lastGameAct;
     }
 
     void FromJson(const nlohmann::json& j) override {
@@ -43,6 +47,10 @@ struct PlayerSaveData : public BasicSaveData {
 
         if (j.contains("lastLevel") && j["lastLevel"].is_string()) {
             lastLevel = j["lastLevel"].get<std::string>();
+        }
+
+        if (j.contains("lastGameAct") && j["lastGameAct"].is_string()) {
+            lastGameAct = j["lastGameAct"].get<std::string>();
         }
 
         if (!Validate()) {

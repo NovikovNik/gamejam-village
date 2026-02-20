@@ -13,6 +13,7 @@
 #include <DialogSystem/DialogSystem.h>
 #include <EventBus/EventBus.h>
 #include <Events/ForceDialogStartEvent.h>
+#include <Game/GameplayLogic.h>
 #include <string>
 #include <format>
 #include <filesystem>
@@ -83,6 +84,29 @@ public:
             }
         } else {
             ImGui::Text("No dialogs loaded");
+        }
+
+        ImGui::Separator();
+        const auto actIds = GameActIds::GetAllGameActIds();
+        if (!actIds.empty()) {
+            const std::string currentAct = GameplayLogic::GetCurrentGameActId();
+            const char* actPreview = currentAct.c_str();
+            if (ImGui::BeginCombo("Game Act", actPreview)) {
+                for (size_t i = 0; i < actIds.size(); ++i) {
+                    const std::string actStr(actIds[i]);
+                    const bool isSelected = (currentAct == actStr);
+                    if (ImGui::Selectable(actStr.c_str(), isSelected)) {
+                        GameplayLogic::LoadGameAct(actIds[i]);
+                    }
+                    if (isSelected) {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetTooltip("Select act to load (saves and applies immediately)");
+            }
         }
 
         ImGui::Separator();

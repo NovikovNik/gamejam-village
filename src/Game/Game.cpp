@@ -42,10 +42,10 @@ Game::~Game() {
 void Game::Initialize() {
 
     Renderer::Initialize(windowWidth, windowHeight);
+    ProgressSystemManager::Initialize();
     GameplayLogic::Initialize();
     DialogSystemManager::Initialize();
     DialogSystemManager::LoadAllDialogs("assets/dialogs/");
-    ProgressSystemManager::Initialize();
     Renderer::LoadAllTextures("assets/textures/");
     Renderer::LoadAllFonts("assets/fonts/");
     // Стартовую локацию выставляем в сохранке!!!

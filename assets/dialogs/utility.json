@@ -1,0 +1,19 @@
+{
+    "id": "Utility",
+    "name": "Utility",
+    "description": "Some specific dialogs for utility entities.",
+    "dialogs": {
+        "roadside-info-1": {
+            "lines": [
+                {
+                    "name": "Road Sign",
+                    "text": "AAAB Village. Straight ahead, along the road.",
+                    "size": 24,
+                    "color": [255, 255, 255, 255],
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
+        }
+    }
+}

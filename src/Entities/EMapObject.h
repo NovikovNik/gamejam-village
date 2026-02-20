@@ -17,6 +17,9 @@ namespace World {
         float GetWidth() const { return width; }
         float GetHeight() const { return height; }
 
+    private:
+        const Renderer::TextureId testTextureId = make_nnTex("test-texture");
+
     protected:
         float positionX = 0.0f;
         float positionY = 0.0f;

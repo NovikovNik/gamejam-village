@@ -36,7 +36,7 @@ namespace {
         void OnDialogEnded(DialogEndedEvent& e) {
             Logger::Log(std::format("[Gameplay][Intro] DialogEnded: {}", e.dialogId));
             if (e.characterId == "Intro" && e.dialogId == "intro-1") {
-                ::GameplayLogic::LoadGameAct("tutorial");
+                ::GameplayLogic::LoadGameAct(GameActIds::Tutorial);
                 EventBus::instance().EmitEvent<ChangeLocationEvent>("assets/maps/world-entry-2.json");
             }
         }
@@ -91,6 +91,11 @@ namespace {
                 std::string dialogId = std::format("dialog-{}", std::to_string(elderInteractionsCount));
                 DialogSystemManager::StartDialog("Elder", dialogId);
             }
+
+            if (e.entityId == "InfoTrigger") {
+                Logger::Log("[Gameplay][Tutorial] InfoTrigger interacted");
+                DialogSystemManager::StartDialog("Utility", "roadside-info-1");
+            }
         }
 
     private:
@@ -101,11 +106,11 @@ namespace {
         int elderInteractionsCount = 0;
     };
     
-    [[nodiscard]] std::unique_ptr<GameAct> CreateGameAct(const std::string& gameActName) {
-        if (gameActName == "intro") {
+    [[nodiscard]] std::unique_ptr<GameAct> CreateGameAct(GameActId id) {
+        if (id == GameActIds::Intro) {
             return std::make_unique<ActIntro>();
         }
-        if (gameActName == "tutorial") {
+        if (id == GameActIds::Tutorial) {
             return std::make_unique<ActTutorial>();
         }
         return nullptr;
@@ -115,15 +120,31 @@ namespace {
 class GameplayLogicManager: public Singleton<GameplayLogicManager> {
 public:
     void Initialize() {
-        nextGameAct = CreateGameAct("intro");
+        const std::string& saved = ProgressSystemManager::Player().lastGameAct;
+        GameActId id = GameActIds::Intro; // По умолчанию стартуем с intro
+
+        // Если в сохранке есть другой акт, то загружаем его
+        if (saved == GameActIds::Tutorial) {
+            id = GameActIds::Tutorial;
+        }
+
+        nextGameAct = CreateGameAct(id);
+        currentGameActId = std::string(id);
     }
 
-    void LoadGameAct(const std::string& gameActName) {
-        nextGameAct = CreateGameAct(gameActName); // А правильно ли?
+    void LoadGameAct(GameActId id) {
+        nextGameAct = CreateGameAct(id);
+        currentGameActId = std::string(id);
+        ProgressSystemManager::Player().lastGameAct = currentGameActId;
+        ProgressSystemManager::SaveData();
+    }
+
+    std::string GetCurrentGameActId() const {
+        return currentGameActId;
     }
 
     void Destroy() {
-        if (gameAct != nullptr) {   
+        if (gameAct != nullptr) {
             gameAct.reset();
         }
         if (nextGameAct != nullptr) {
@@ -142,6 +163,7 @@ public:
 private:
     std::unique_ptr<GameAct> gameAct;
     std::unique_ptr<GameAct> nextGameAct;
+    std::string currentGameActId;
 };
 
 namespace GameplayLogic {
@@ -149,8 +171,12 @@ namespace GameplayLogic {
         GameplayLogicManager::instance().Initialize();
     }
 
-    void LoadGameAct(const std::string& gameActName) {
-        GameplayLogicManager::instance().LoadGameAct(gameActName);
+    void LoadGameAct(GameActId id) {
+        GameplayLogicManager::instance().LoadGameAct(id);
+    }
+
+    std::string GetCurrentGameActId() {
+        return GameplayLogicManager::instance().GetCurrentGameActId();
     }
 
     void Destroy() {

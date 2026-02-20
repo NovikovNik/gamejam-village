@@ -23,7 +23,7 @@ namespace World {
         // Pixels per frame
 
         glm::vec2 direction; // for normalization kinda
-        float basicSpeed = 125.0f;
+        float basicSpeed = 140.0f;
         std::string name;
         bool bShowTooltip = false;
         Renderer::TextureId tooltipTexture;
