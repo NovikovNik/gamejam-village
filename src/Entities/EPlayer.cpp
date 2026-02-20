@@ -156,9 +156,18 @@ bool World::EPlayer::Update(float deltaTime) {
         }
      }
 
-     if (currentInteractable && !currentInteractable->IsValid()) {
-        currentInteractable = nullptr;
-        bShowTooltip = false;
+     /* Вот эта проверка тяжелая, но без неё происходит сегфолт, т.к во время проверки мы можем удалить NPC и когда
+     дело дойдет сюда, то мы попытаемся вызвать IsValid() на уже удаленном NPC. По идее, т.к у нас не так много обьектов
+     эта проверка будет не так затратна, но концептуально выглядит плохо */
+     if (currentInteractable) {
+        const auto& container = MapManager::GetEntitiesContainer();
+        if (!container.Contains(currentInteractable)) {
+            currentInteractable = nullptr;
+            bShowTooltip = false;
+        } else if (!currentInteractable->IsValid()) {
+            currentInteractable = nullptr;
+            bShowTooltip = false;
+        }
      }
      EInteractable* interactable = TryInteract();
      if (interactable != currentInteractable) {
