@@ -104,6 +104,7 @@ namespace {
             onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &ActTutorial::OnInteractWithEntity);
             onEntityCreated   = EventBus::instance().SubscribeToEvent<EntityCreatedEvent>(this, &ActTutorial::OnEntityCreated);
             onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &ActTutorial::OnEntityDestroyed);
+            onDialogEnded = EventBus::instance().SubscribeToEvent<DialogEndedEvent>(this, &ActTutorial::OnDialogEnded);
 
             // NPC должен быть на первой локации!
             World::ENpc* elderNpc = dynamic_cast<World::ENpc*>(MapManager::GetEntitiesContainer().FindEntity<World::ENpc>());
@@ -141,6 +142,14 @@ namespace {
             }
         }
 
+        void OnDialogEnded(DialogEndedEvent& e) {
+            Logger::Log(std::format("[Gameplay][Intro] DialogEnded: {}", e.dialogId));
+            if (e.characterId == "Elder" && e.dialogId == "dialog-1") {
+                ProgressSystemManager::Player().fileSystemIconVisible = true;
+                ProgressSystemManager::SaveData();
+            }
+        }
+
         // Последний диалог dialog-8 (про kick-my-ass)
         void OnInteractWithEntity(InteractWithEntityEvent& e) {
             Logger::Log(std::format("[Gameplay][Tutorial] InteractWithEntity: {}", e.entityId));
@@ -162,6 +171,7 @@ namespace {
         Events::Handler onInteractWithEntity;
         Events::Handler onEntityCreated;
         Events::Handler onEntityDestroyed;
+        Events::Handler onDialogEnded;
 
         int elderInteractionsCount = 0;
     };

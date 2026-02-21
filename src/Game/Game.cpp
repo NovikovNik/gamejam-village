@@ -2,6 +2,7 @@
 
 #include <Map/Map.h>
 #include <Renderer/Renderer.h>
+#include <Renderer/UISystem.h>
 #include <FileSystem/FileSystem.h>
 #include <ProgressSystem/ProgressSystem.h>
 #include <DialogSystem/DialogSystem.h>
@@ -46,6 +47,7 @@ Game::~Game() {
 void Game::Initialize() {
     MapManager::Initialize();
     Renderer::Initialize(windowWidth, windowHeight);
+    UISystem::Initialize();
     AudioSystem::Initialize();
     AudioSystem::LoadAllSounds("assets/audio/");
     ProgressSystemManager::Initialize();
@@ -293,6 +295,7 @@ void Game::Render() {
     // Но мб будем что-то двигать? И тогда будет нужна,
     // Но пока пофиг
     DialogSystemManager::RenderDialog();
+    UISystem::Render();
 
 #if ENABLE_CHEATS
     Cheats::UpdateAndRender();
