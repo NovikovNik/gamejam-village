@@ -12,6 +12,7 @@
 #include <Entities/EInteractable.h>
 #include <DialogSystem/DialogSystem.h>
 #include <Logger/Logger.h>
+#include <ProgressSystem/ProgressSystem.h>
 #include <Gameplay/WorldState.h>
 #include <format>
 #include <optional>
@@ -188,6 +189,7 @@ bool World::EPlayer::Update(float deltaTime) {
 
         if (velocityX != 0.0f || velocityY != 0.0f) {
             Physics::AddImpulse(physicsObjectId, velocityX, velocityY);
+            OnMoved(deltaTime);
         }
     } else {
         direction = glm::vec2(0.0f);
@@ -261,6 +263,8 @@ void World::EPlayer::OnMoved(float deltaTime) {
     if (footstepTimer >= FOOTSTEP_INTERVAL) {
         footstepTimer = 0.0f;
         EventBus::instance().EmitEvent<PlaySoundEvent>("footstep");
+        // Сохраняем позицию игрока в сохранке только кодва двигаемся!
+        ProgressSystemManager::Player().position = GetPosition();
     }
 
     std::vector<World::EBox*> boxes;

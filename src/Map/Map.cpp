@@ -299,7 +299,11 @@ public:
     }
 
     [[nodiscard]] bool LoadLastLoadedLevel() {
-        return LoadMap(ProgressSystemManager::Player().lastLevel);
+        bool result = LoadMap(ProgressSystemManager::Player().lastLevel);
+        if (result) {
+            entitiesManager.GetEntitiesContainer().FindEntity<World::EPlayer>()->SetPosition(ProgressSystemManager::Player().position.x, ProgressSystemManager::Player().position.y);
+        }
+        return result;
     }
 
     void ReloadMap() {
