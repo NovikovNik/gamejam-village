@@ -7,6 +7,7 @@
 #include "PlayerSaveData.h"
 #include "AudioSaveData.h"
 #include "WorldSaveData.h"
+#include "InventarySaveData.h"
 #include <AudioSystem/AudioSystem.h>
 #include <Gameplay/WorldState.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
@@ -43,6 +44,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             playerSaveData.ToJson(j);
             audioSaveData.ToJson(j["audio"]);
             worldSaveData.ToJson(j["world"]);
+            inventorySaveData.ToJson(j["inventory"]);
             AppDataSaveHelper::SaveGameJson(j);
             dirty = false;
             Logger::Log("[ProgressSystem] Data saved");
@@ -55,11 +57,13 @@ class ProgressSystem: public Singleton<ProgressSystem> {
                 playerSaveData.ResetToDefaults();
                 audioSaveData.ResetToDefaults();
                 worldSaveData.ResetToDefaults();
+                inventorySaveData.ResetToDefaults();
                 return;
             }
             playerSaveData.FromJson(j);
             audioSaveData.FromJson(j.value("audio", nlohmann::json::object()));
             worldSaveData.FromJson(j.value("world", nlohmann::json::object()));
+            inventorySaveData.FromJson(j.value("inventory", nlohmann::json::object()));
             Logger::Log("[ProgressSystem] Data loaded");
         }
 
@@ -79,11 +83,17 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             return worldSaveData;
         }
 
+        InventarySaveData& Inventory() {
+            dirty = true;
+            return inventorySaveData;
+        }
+
     private:
         bool dirty = false;
         PlayerSaveData playerSaveData;
         AudioSaveData  audioSaveData;
         WorldSaveData  worldSaveData;
+        InventarySaveData inventorySaveData;
 };
 
 void ProgressSystemManager::Initialize() {
@@ -108,4 +118,8 @@ AudioSaveData& ProgressSystemManager::Audio() {
 
 WorldSaveData& ProgressSystemManager::World() {
     return ProgressSystem::instance().World();
+}
+
+InventarySaveData& ProgressSystemManager::Inventory() {
+    return ProgressSystem::instance().Inventory();
 }

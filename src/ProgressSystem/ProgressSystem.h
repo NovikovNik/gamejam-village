@@ -3,6 +3,7 @@
 #include "PlayerSaveData.h"
 #include "AudioSaveData.h"
 #include "WorldSaveData.h"
+#include "InventarySaveData.h"
 
 namespace ProgressSystemManager {
     void Initialize();
@@ -12,4 +13,5 @@ namespace ProgressSystemManager {
     PlayerSaveData& Player();
     AudioSaveData&  Audio();
     WorldSaveData&  World();
+    InventarySaveData& Inventory();
 }

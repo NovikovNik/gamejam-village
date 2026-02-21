@@ -48,6 +48,9 @@ namespace {
                 baseBoxY = penchamentEntity->GetPosition().y;
                 timeAccumulator = 0.0f;
             }
+
+            // Здесь мы добавляем письмо (сюжетный обьект) в инвентарь!!!
+            ProgressSystemManager::Inventory().AddItem(World::message);
         }
 
         void Update(float deltaTime) override {
@@ -76,6 +79,7 @@ namespace {
         }
 
         void OnLocationChanged(LocationChangedEvent& e) {
+            penchamentEntity = nullptr;
             if (e.locationName == "world-entry-2") {
                 ::GameplayLogic::LoadGameAct(GameActIds::Tutorial);
             }
