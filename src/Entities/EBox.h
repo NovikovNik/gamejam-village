@@ -2,6 +2,7 @@
 #include "EMovable.h"
 #include "BoxName.h"
 #include <Physics/PhysicsEngine.h>
+#include <Events/PitEvent.h>
 
 namespace World {
     class EBox : public EMovable {
@@ -18,8 +19,12 @@ namespace World {
         [[nodiscard]] bool CanMove(float dirX, float dirY, float speed, float deltaTime) const;
 
         [[nodiscard]] BoxName GetBoxName() const { return boxName; }
+
+
+        void OnPitBoxOverlap(PitBoxOverlapEvent& event);
     private:
         BoxName boxName;
         Physics::ObjectId physicsObjectId{};
+        Events::Handler pitBoxOverlapHandler{};
     };
 }

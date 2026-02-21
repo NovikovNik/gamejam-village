@@ -196,7 +196,7 @@ public:
                         .objectId2 = objects2Ids[object2Index],
                     };
                     std::visit([this, &obj1, justTest, &overlapInfo, &overlapInfosSet](auto& obj2) {
-                        if (obj1.filter & obj2.filter == 0) {
+                        if ((obj1.filter & obj2.filter) == 0) {
                             return;
                         }
                         using TObject1 = std::decay_t<decltype(obj1)>;
@@ -239,7 +239,7 @@ public:
                     .objectId2 = objectsIds[j],
                 };
                 std::visit([&](auto& object1, auto& object2) {
-                    if (object1.filter & object2.filter == 0) {
+                    if ((object1.filter & object2.filter) == 0) {
                         return;
                     }
                     using TObject1 = std::decay_t<decltype(object1)>;

@@ -4,12 +4,22 @@
 #include <Physics/PhysicsEngine.h>
 #include <Entities/EPit.h>
 #include <Gameplay/WorldState.h>
+#include <EventBus/EventBus.h>
 
 void World::EBox::OnSpawn(float x, float y, float w, float h) {
     EMovable::OnSpawn(x, y, w, h);
     const auto textureId = Renderer::TextureId("box"_nnTex);
     LoadData(textureId, 64, 64);
-    physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth(), GetHeight());
+    physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth(), GetHeight(), 1, (1 << 0) | (1 << 4));
+
+    pitBoxOverlapHandler = EventBus::instance().SubscribeToEvent<PitBoxOverlapEvent>(this, &EBox::OnPitBoxOverlap);
+}
+
+void World::EBox::OnPitBoxOverlap(PitBoxOverlapEvent& event) {
+    if (event.boxName == GetBoxName()) {
+        MapManager::DestroyEntity(event.pitTagName.name, event.pitTagName.type);
+        MapManager::DestroyEntity(GetTagName().name, GetTagName().type);
+    }
 }
 
 void World::EBox::OnDestroy() {

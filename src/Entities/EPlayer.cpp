@@ -233,7 +233,7 @@ bool World::EPlayer::Update(float deltaTime) {
     onInterectButtonPressed = EventBus::instance().SubscribeToEvent<InterectButtonPressedEvent>(this, &EPlayer::OnInterectButtonPressed);
     tooltipTexture = make_nnTex("f_button");
 
-    physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth() * 0.5f, GetHeight() * 0.9f, 10.f, 0x03);
+    physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth() * 0.5f, GetHeight() * 0.9f, 10.f, (1 << 0) | (1 << 1) | (1 << 2));
 }
 
 void World::EPlayer::SetTooltipTexture(Renderer::TextureId texture, float w, float h) {

@@ -1,6 +1,7 @@
 #pragma once
 #include "EMovable.h"
 #include "BoxName.h"
+#include <Physics/PhysicsEngine.h>
 
 namespace World {
     class EPit : public EMovable {
@@ -10,8 +11,14 @@ namespace World {
         bool Update(float deltaTime) override;
         void Render(float deltaTime) override;
 
+        void OnDestroy() override;
+
         [[nodiscard]] bool IsBoxNameMatch(BoxName boxName) const;
     private:
         BoxName matchBoxName;
+
+        Physics::ObjectId physicsPlayerColliderId{};
+        Physics::ObjectId physicsTriggerId{};
+
     };
 }
