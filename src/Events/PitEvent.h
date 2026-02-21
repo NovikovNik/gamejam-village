@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.h"
-#include "BoxName.h"
+#include <Entities/BoxName.h>
 
 class PitBoxOverlapEvent : public Event {
 public:

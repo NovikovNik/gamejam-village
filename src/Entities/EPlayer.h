@@ -37,6 +37,7 @@ namespace World {
 
         Events::Handler onInterectButtonPressed;
         Renderer::AnimationHandle animationIdle;
+        Renderer::AnimationHandle animationMoving;
 
         class EInteractable* currentInteractable = nullptr;
 

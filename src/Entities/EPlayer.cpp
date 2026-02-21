@@ -30,6 +30,12 @@ World::EPlayer::EPlayer(const std::string& name) : name(name) {
     animationIdle.maxElementsPerRow = 5;
     animationIdle.frameSize = 64;
     animationIdle.frameDelay = 0.15f;
+
+    animationMoving.textureId = make_nnTex("player_moving");
+    animationMoving.numOfFrames = 7;
+    animationMoving.maxElementsPerRow = 7;
+    animationMoving.frameSize = 64;
+    animationMoving.frameDelay = 0.1f;
 }
 
 bool World::EPlayer::Update(float deltaTime) {
@@ -65,25 +71,25 @@ bool World::EPlayer::Update(float deltaTime) {
     std::vector<World::ETriggerLocation*> levelChangeTriggers;
     MapManager::GetEntitiesContainer().FindEntities(levelChangeTriggers);
 
-    glm::vec2 direction(0.0f);
+    glm::vec2 inputDir(0.0f);
 
     if (GameStates::instance().w) {
-        direction.y -= 1.0f;
+        inputDir.y -= 1.0f;
     }
     if (GameStates::instance().s) {
-        direction.y += 1.0f;
+        inputDir.y += 1.0f;
     }
     if (GameStates::instance().a) {
-        direction.x -= 1.0f;
+        inputDir.x -= 1.0f;
         horizontalFlip = true;
     }
     if (GameStates::instance().d) {
-        direction.x += 1.0f;
+        inputDir.x += 1.0f;
         horizontalFlip = false;
     }
 
-    if (glm::length(direction) > 0.0f) {
-        direction = glm::normalize(direction);
+    if (glm::length(inputDir) > 0.0f) {
+        direction = glm::normalize(inputDir);
 
         glm::vec2 pos = GetPosition();
         const float velocityX = direction.x * basicSpeed;
@@ -184,6 +190,7 @@ bool World::EPlayer::Update(float deltaTime) {
             Physics::AddImpulse(physicsObjectId, velocityX, velocityY);
         }
     } else {
+        direction = glm::vec2(0.0f);
         // Not moving — reset so the next step plays immediately when movement starts.
         footstepTimer = FOOTSTEP_INTERVAL;
     }
@@ -277,7 +284,13 @@ void World::EPlayer::OnMoved(float deltaTime) {
 }
 
 void World::EPlayer::Render(float deltaTime) {
-    Renderer::RenderAnimation(animationIdle, deltaTime, positionX, positionY, width, height, horizontalFlip);
+    // Система определения движения: direction обновляется в Update(); при вводе — длина > 0, иначе 0.
+    const bool isMoving = glm::length(direction) > 0.0f;
+    if (isMoving) {
+        Renderer::RenderAnimation(animationMoving, deltaTime, positionX, positionY, width, height, horizontalFlip);
+    } else {
+        Renderer::RenderAnimation(animationIdle, deltaTime, positionX, positionY, width, height, horizontalFlip);
+    }
 
 //    if (GameFeatures::isDebug) {
 //        const auto& pos = GetPosition();
