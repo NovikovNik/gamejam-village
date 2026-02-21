@@ -94,33 +94,16 @@ public:
     {
         Logger::Log("[WorldState] Window focused");
         LoadNewGameStateFromFilesystem();
+
+        const auto currentLocation = MapManager::GetCurrentMapName();
+        if (currentState.registeredLocations.contains(currentLocation) && !currentState.registeredLocations.at(currentLocation)) {
+            nextLocation = NextLocation{
+                .locationPath = "assets/maps/world-void.json",
+                .spawnPoint = "",
+            };
+        }
+
         EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
-
-//        bool isChanged = false;
-
-//        for (const auto& locationName : currentState.activeLocations) {
-//            const auto& changes = SyncLocationAndGetChanges(locationName);
-//            for (const auto& change : changes.added) {
-//                if (change.type.empty()) {
-//                    Logger::Warn(std::format("[WorldState] Skipping object '{}': empty type (use name.type -> Spaghetti.villager)", change.name));
-//                    continue;
-//                }
-//                const auto key = std::format("{}.{}", change.name, change.type);
-//                currentState.registeredEntities[key].insert(locationName);
-//                isChanged = true;
-//            }
-//            for (const auto& change : changes.removed) {
-//                const auto key = std::format("{}.{}", change.name, change.type);
-//
-//                if (currentState.registeredEntities.contains(key)) {
-//                    currentState.registeredEntities[key].erase(locationName);
-//                    isChanged = true;
-//                }
-//            }
-//        }
-//        if (isChanged) {
-//            EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
-//        }
     }
 
     void OnClearWorldState(ClearWorldStateEvent&)
@@ -136,25 +119,6 @@ public:
             .spawnPoint = event.spawnPoint,
         };
     }
-
-//    [[nodiscard]] LocationsStates::LocationChanges SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName)
-//    {
-//        LocationsStates::LocationChanges changes;
-//        const auto& currentLocationObjects = currentState[locationName];
-//        const auto& lastSeenLocationObjects = lastSeenState[locationName];
-//        for (const auto& object : currentLocationObjects) {
-//            if (std::find(lastSeenLocationObjects.begin(), lastSeenLocationObjects.end(), object) == lastSeenLocationObjects.end()) {
-//                changes.added.push_back(object);
-//            }
-//        }
-//        for (const auto& object : lastSeenLocationObjects) {
-//            if (std::find(currentLocationObjects.begin(), currentLocationObjects.end(), object) == currentLocationObjects.end()) {
-//                changes.removed.push_back(object);
-//            }
-//        }
-//        lastSeenState[locationName] = currentLocationObjects;
-//        return changes;
-//    }
 
     const LocationsStates::State& GetCurrentState() const { return currentState; }
     void SetCurrentState(const LocationsStates::State& state) { currentState = state; }
