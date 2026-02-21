@@ -409,6 +409,9 @@ public:
 
     void OpenCurrentLocationInExplorer() {
         const auto locationName = GetCurrentMapName();
+        if (locationName == "intro") {
+            return;
+        }
         const auto fullPath = std::filesystem::path("village") / locationName;
         FileSystemManager::OpenSystemExplorer(fullPath.string());
     }
@@ -445,6 +448,9 @@ public:
     }
 
     void RevealLocationInFilesystem(const std::string& locationName) {
+        if (locationName == "world-void" || locationName == "intro") {
+            return;
+        }
         const auto villageDir = std::filesystem::path("village") / locationName;
         FileSystemManager::CreateDirectory(villageDir.string());
     }

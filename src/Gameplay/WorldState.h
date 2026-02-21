@@ -17,5 +17,8 @@ namespace WorldState {
 
     void SetCurrentState(const LocationsStates::State& state);
     [[nodiscard]] const LocationsStates::State& GetCurrentState();
+    void SetBackupLocationPath(const std::string& locationPath);
+    [[nodiscard]] const std::string& GetBackupLocationPath();
     [[nodiscard]] const std::map<std::string, std::set<std::string>>& GetRegisteredEntities();
+
 }

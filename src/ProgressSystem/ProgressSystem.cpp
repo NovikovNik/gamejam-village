@@ -37,6 +37,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
 
             // Snapshot current world state before writing.
             worldSaveData.state = WorldState::GetCurrentState();
+            worldSaveData.backupLocationPath = WorldState::GetBackupLocationPath();
 
             nlohmann::json j;
             playerSaveData.ToJson(j);

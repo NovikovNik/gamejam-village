@@ -96,11 +96,20 @@ public:
         LoadNewGameStateFromFilesystem();
 
         const auto currentLocation = MapManager::GetCurrentMapName();
-        if (currentState.registeredLocations.contains(currentLocation) && !currentState.registeredLocations.at(currentLocation)) {
+        if (currentLocation == "world-void" && currentState.registeredLocations.contains(backupLocationPath) && currentState.registeredLocations.at(backupLocationPath)) {
+            nextLocation = NextLocation{
+                .locationPath = std::format("assets/maps/{}.json", backupLocationPath),
+                .spawnPoint = "",
+            };
+            backupLocationPath.clear();
+            return;
+        }
+        if ((currentLocation != "world-void" && currentLocation != "intro") && currentState.registeredLocations.contains(currentLocation) && !currentState.registeredLocations.at(currentLocation)) {
             nextLocation = NextLocation{
                 .locationPath = "assets/maps/world-void.json",
                 .spawnPoint = "",
             };
+            backupLocationPath = currentLocation;
         }
 
         EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
@@ -265,8 +274,15 @@ public:
         }
     }
 
+    void SetBackupLocationPath(const std::string& locationPath) {
+        backupLocationPath = locationPath;
+    }
+
+    const std::string& GetBackupLocationPath() const { return backupLocationPath; }
+
 private:
     LocationsStates::State currentState;
+    std::string backupLocationPath;
 
     Events::Handler onWindowFocused;
     Events::Handler onClearWorldState;
@@ -295,6 +311,14 @@ void WorldState::Update() {
 
 const LocationsStates::State& WorldState::GetCurrentState() {
     return GameStateManager::instance().GetCurrentState();
+}
+
+const std::string& WorldState::GetBackupLocationPath() {
+    return GameStateManager::instance().GetBackupLocationPath();
+}
+
+void WorldState::SetBackupLocationPath(const std::string& locationPath) {
+    GameStateManager::instance().SetBackupLocationPath(locationPath);
 }
 
 void WorldState::SetCurrentState(const LocationsStates::State& state) {
