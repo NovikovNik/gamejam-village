@@ -63,7 +63,7 @@ protected:
 TEST_F(EntitiesManagerTest, SpawnEntity_CallsOnSpawn) {
     manager.Update(0.1f);
 
-    auto* entityPtr1 = manager.SpawnEntity<World::TestEntity>();
+    auto* entityPtr1 = manager.SpawnEntity<World::TestEntity>( 0.0f, 0.0f, 0.0f, 0.0f );
 
     ASSERT_NE(entityPtr1, nullptr);
     EXPECT_EQ(entityPtr1->onSpawnCalled, 1);
@@ -88,7 +88,7 @@ TEST_F(EntitiesManagerTest, SpawnEntity_CallsOnSpawn) {
     EXPECT_EQ(entityPtr1->renderCalled, 2);
     EXPECT_EQ(entityPtr1->onSpawnCalled, 1);
     
-    auto* entityPtr2 = manager.SpawnEntity<World::TestEntity>();
+    auto* entityPtr2 = manager.SpawnEntity<World::TestEntity>( 0.0f, 0.0f, 0.0f, 0.0f );
 
     ASSERT_NE(entityPtr2, nullptr);
     EXPECT_EQ(entityPtr2->onSpawnCalled, 1);
@@ -115,7 +115,7 @@ TEST_F(EntitiesManagerTest, SpawnEntity_CallsOnSpawn) {
 TEST_F(EntitiesManagerTest, SpawnEntity_CallsOnDestroy) {
     manager.Update(0.1f);
 
-    auto* entityPtr1 = manager.SpawnEntity<World::TestEntity>();
+    auto* entityPtr1 = manager.SpawnEntity<World::TestEntity>( 0.0f, 0.0f, 0.0f, 0.0f );
     TestsUtils::OnDestroyProvider onDestroy1Provider;
     entityPtr1->onDestroyCallback = onDestroy1Provider;
     
@@ -133,19 +133,19 @@ TEST_F(EntitiesManagerTest, SpawnEntity_CallsOnDestroy) {
     manager.Render(0.1f);
 
 
-    auto* entityPtr2 = manager.SpawnEntity<World::TestEntity>();
+    auto* entityPtr2 = manager.SpawnEntity<World::TestEntity>( 0.0f, 0.0f, 0.0f, 0.0f );
     TestsUtils::OnDestroyProvider onDestroy2Provider;
     entityPtr2->onDestroyCallback = onDestroy2Provider;
     
-    auto* entityPtr3 = manager.SpawnEntity<World::TestEntity>();
+    auto* entityPtr3 = manager.SpawnEntity<World::TestEntity>( 0.0f, 0.0f, 0.0f, 0.0f );
     TestsUtils::OnDestroyProvider onDestroy3Provider;
     entityPtr3->onDestroyCallback = onDestroy3Provider;
 
-    auto* entityPtr4 = manager.SpawnEntity<World::TestEntity>();
+    auto* entityPtr4 = manager.SpawnEntity<World::TestEntity>( 0.0f, 0.0f, 0.0f, 0.0f );
     TestsUtils::OnDestroyProvider onDestroy4Provider;
     entityPtr4->onDestroyCallback = onDestroy4Provider;
 
-    auto* entityPtr5 = manager.SpawnEntity<World::TestEntity>();
+    auto* entityPtr5 = manager.SpawnEntity<World::TestEntity>( 0.0f, 0.0f, 0.0f, 0.0f );
     TestsUtils::OnDestroyProvider onDestroy5Provider;
     entityPtr5->onDestroyCallback = onDestroy5Provider;
 
