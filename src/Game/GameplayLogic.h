@@ -9,9 +9,9 @@ using GameActId = std::string_view;
 namespace GameActIds {
     constexpr GameActId Intro    = "intro";
     constexpr GameActId Tutorial = "tutorial";
-    constexpr GameActId Act1     = "act1";
+    constexpr GameActId Main     = "main";
 
-    inline std::vector<GameActId> GetAllGameActIds() { return {Intro, Tutorial, Act1}; };
+    inline std::vector<GameActId> GetAllGameActIds() { return {Intro, Tutorial, Main}; };
 }
 
 namespace GameplayLogic {

@@ -101,6 +101,7 @@ namespace {
             // Скейл такой выверен на глаз
             World::Camera::instance().SetScaleFactor(1.7f);
 
+            onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &ActTutorial::OnLocationChanged);
             onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &ActTutorial::OnInteractWithEntity);
             onEntityCreated   = EventBus::instance().SubscribeToEvent<EntityCreatedEvent>(this, &ActTutorial::OnEntityCreated);
             onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &ActTutorial::OnEntityDestroyed);
@@ -166,14 +167,63 @@ namespace {
                 DialogSystemManager::StartDialog("Utility", "roadside-info-1");
             }
         }
+    
+        void OnLocationChanged(LocationChangedEvent& e) {
+            Logger::Log(std::format("[Gameplay][Tutorial] LocationChanged: {}", e.locationName));
+            if (e.locationName == "crossroads") {
+                ::GameplayLogic::LoadGameAct(GameActIds::Main);
+            }
+        }
 
     private:
         Events::Handler onInteractWithEntity;
         Events::Handler onEntityCreated;
         Events::Handler onEntityDestroyed;
         Events::Handler onDialogEnded;
+        Events::Handler onLocationChanged;
 
         int elderInteractionsCount = 0;
+    };
+
+    /* Основной акт, который может быть запущен несколько раз. В основном работает в хабе игры */
+    class MainAct: public GameAct {
+    public:
+        void Initialize() {
+            onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &MainAct::OnLocationChanged);
+            onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &MainAct::OnInteractWithEntity);
+            onEntityCreated = EventBus::instance().SubscribeToEvent<EntityCreatedEvent>(this, &MainAct::OnEntityCreated);
+            onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &MainAct::OnEntityDestroyed);
+            onDialogEnded = EventBus::instance().SubscribeToEvent<DialogEndedEvent>(this, &MainAct::OnDialogEnded);
+        }
+        
+        void Update(float deltaTime) override {}
+
+        void OnLocationChanged(LocationChangedEvent& e) {
+            Logger::Log(std::format("[Gameplay][Main] LocationChanged: {}", e.locationName));
+        }
+
+        void OnInteractWithEntity(InteractWithEntityEvent& e) {
+            Logger::Log(std::format("[Gameplay][Main] InteractWithEntity: {}", e.entityId));
+        }
+
+        void OnEntityCreated(EntityCreatedEvent& e) {
+            Logger::Log(std::format("[Gameplay][Main] EntityCreated: {} {}", e.GetName(), e.GetType()));
+        }
+
+        void OnEntityDestroyed(EntityDestroyedEvent& e) {
+            Logger::Log(std::format("[Gameplay][Main] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
+        }
+
+        void OnDialogEnded(DialogEndedEvent& e) {
+            Logger::Log(std::format("[Gameplay][Main] DialogEnded: {}", e.dialogId));
+        }
+
+        private:
+        Events::Handler onLocationChanged;
+        Events::Handler onInteractWithEntity;
+        Events::Handler onEntityCreated;
+        Events::Handler onEntityDestroyed;
+        Events::Handler onDialogEnded;
     };
     
     [[nodiscard]] std::unique_ptr<GameAct> CreateGameAct(GameActId id) {
@@ -182,6 +232,9 @@ namespace {
         }
         if (id == GameActIds::Tutorial) {
             return std::make_unique<ActTutorial>();
+        }
+        if (id == GameActIds::Main) {
+            return std::make_unique<MainAct>();
         }
         return nullptr;
     }
