@@ -3,7 +3,7 @@
 #include "../Game/GameStates.h"
 #include <Events/PlaySoundEvent.h>
 #include "../Game/GameFeatures.h"
-#include "Entities/EColliders.h"
+//#include "Entities/EColliders.h"
 #include "Entities/EPit.h"
 #include "Entities/ETriggerLocation.h"
 #include <Renderer/Camera.h>
@@ -21,8 +21,8 @@ namespace
     constexpr float FOOTSTEP_INTERVAL = 0.35f;
 }
 
-World::EPlayer::EPlayer(const std::string& name, float x, float y) : name(name) {
-    LoadData("player"_nnTex, x, y, 64, 64);
+World::EPlayer::EPlayer(const std::string& name) : name(name) {
+    LoadData("player"_nnTex, 64, 64);
     footstepTimer = FOOTSTEP_INTERVAL;
 
     animationIdle.textureId = make_nnTex("player_idle");
@@ -38,12 +38,20 @@ bool World::EPlayer::Update(float deltaTime) {
         return false;
     }
 
+    const auto& movableObjectPositions = Physics::GetMovableObjectPositions();
+    for (const auto& movableObjectPosition : movableObjectPositions) {
+        if (movableObjectPosition.id == physicsObjectId) {
+            SetPosition(movableObjectPosition.x, movableObjectPosition.y);
+            break;
+        }
+    }
+
     if (DialogSystemManager::IsDialogActive()) {
         return false;
     }
 
-    std::vector<World::EColliders*> colliders;
-    MapManager::GetEntitiesContainer().FindEntities(colliders);
+//    std::vector<World::EColliders*> colliders;
+//    MapManager::GetEntitiesContainer().FindEntities(colliders);
 
     std::vector<World::EBox*> boxes;
     MapManager::GetEntitiesContainer().FindEntities(boxes);
@@ -59,124 +67,126 @@ bool World::EPlayer::Update(float deltaTime) {
 
     glm::vec2 direction(0.0f);
 
-     if (GameStates::instance().w) {
-         direction.y -= 1.0f;
-     }
-     if (GameStates::instance().s) {
-         direction.y += 1.0f;
-     }
-     if (GameStates::instance().a) {
-         direction.x -= 1.0f;
-         horizontalFlip = true;
-     }
-     if (GameStates::instance().d) {
-         direction.x += 1.0f;
-         horizontalFlip = false;
-     }
+    if (GameStates::instance().w) {
+        direction.y -= 1.0f;
+    }
+    if (GameStates::instance().s) {
+        direction.y += 1.0f;
+    }
+    if (GameStates::instance().a) {
+        direction.x -= 1.0f;
+        horizontalFlip = true;
+    }
+    if (GameStates::instance().d) {
+        direction.x += 1.0f;
+        horizontalFlip = false;
+    }
 
-     if (glm::length(direction) > 0.0f) {
-         direction = glm::normalize(direction);
+    if (glm::length(direction) > 0.0f) {
+        direction = glm::normalize(direction);
 
-         glm::vec2 pos = GetPosition();
-         float moveX = direction.x * basicSpeed * deltaTime;
-         float moveY = direction.y * basicSpeed * deltaTime;
+        glm::vec2 pos = GetPosition();
+        const float velocityX = direction.x * basicSpeed;
+        const float velocityY = direction.y * basicSpeed;
 
-         const float halfW = GetWidth() * 0.5f;
-         const float halfH = GetHeight() * 0.5f;
+//        const float halfW = GetWidth() * 0.5f;
+//        const float halfH = GetHeight() * 0.5f;
 
-        auto overlaps = [&](float dx, float dy, float l, float r, float t, float b) {
-            const float pl = pos.x + dx - halfW;
-            const float pr = pos.x + dx + halfW;
-            const float pt = pos.y + dy - halfH;
-            const float pb = pos.y + dy + halfH;
-            return pl < r && pr > l && pt < b && pb > t;
-        };
+//        auto overlaps = [&](float dx, float dy, float l, float r, float t, float b) {
+//            const float pl = pos.x + dx - halfW;
+//            const float pr = pos.x + dx + halfW;
+//            const float pt = pos.y + dy - halfH;
+//            const float pb = pos.y + dy + halfH;
+//            return pl < r && pr > l && pt < b && pb > t;
+//        };
 
-        auto ComputeImpulse = [&]() -> std::optional<glm::vec2> {
-            bool blockedX = false;
-            bool blockedY = false;
+//        auto ComputeImpulse = [&]() -> std::optional<glm::vec2> {
+//            bool blockedX = false;
+//            bool blockedY = false;
+//
+//            auto checkBoth = [&](float l, float r, float t, float b) {
+//                if (overlaps(moveX, 0.0f, l, r, t, b)) { blockedX = true; }
+//                if (overlaps(0.0f, moveY, l, r, t, b)) { blockedY = true; }
+//            };
+//
+//            for (auto* collider : colliders) {
+//                for (const auto& c : collider->GetColliders()) {
+//                    checkBoth(c.x - c.width * 0.5f, c.x + c.width * 0.5f, c.y - c.height * 0.5f, c.y + c.height * 0.5f);
+//                }
+//            }
+//
+//            for (auto* e : interactibles) {
+//                if (!e->IsValid()) { 
+//                    continue; 
+//                }
+//                const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
+//                const glm::vec2 p = e->GetPosition();
+//                checkBoth(p.x - w2, p.x + w2, p.y - h2, p.y + h2);
+//            }
+//
+//            for (auto* e : pits) {
+//                if (!e->IsValid()) { 
+//                    continue;
+//                }
+//                const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
+//                const glm::vec2 p = e->GetPosition();
+//                checkBoth(p.x - w2, p.x + w2, p.y - h2, p.y + h2);
+//            }
+//
+//            for (auto* box : boxes) {
+//                if (!box->IsValid()) { continue; }
+//                const float w2 = box->GetWidth() * 0.5f, h2 = box->GetHeight() * 0.5f;
+//                const glm::vec2 p = box->GetPosition();
+//                bool isOverlaps = false;
+//                if (overlaps(moveX, 0.0f, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
+//                    isOverlaps = true;
+//                    if (!box->CanMove(moveX > 0.0f ? 1.0f : -1.0f, 0.0f, basicSpeed, deltaTime)) { 
+//                        blockedX = true; 
+//                    }
+//                }
+//                if (overlaps(0.0f, moveY, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
+//                    isOverlaps = true;
+//                    if (!box->CanMove(0.0f, moveY > 0.0f ? 1.0f : -1.0f, basicSpeed, deltaTime)) { 
+//                        blockedY = true; 
+//                    }
+//                }
+//                if (isOverlaps) {
+//                    WorldState::RegisterInWorldState(box->GetTagName());
+//                }
+//            }
+//
+//            for (auto* e : levelChangeTriggers) {
+//                if (!e->IsValid()) { 
+//                    continue; 
+//                }
+//                const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
+//                const glm::vec2 p = e->GetPosition();
+//                if (overlaps(moveX, 0.0f, p.x - w2, p.x + w2, p.y - h2, p.y + h2) ||
+//                    overlaps(0.0f, moveY, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
+//                    e->ChangeLocation();
+//                    return std::nullopt;
+//                }
+//            }
+//
+//            return glm::vec2{
+//                blockedX ? 0.0f : direction.x * basicSpeed,
+//                blockedY ? 0.0f : direction.y * basicSpeed
+//            };
+//        };
+//
+//        const auto impulse = ComputeImpulse();
+//        if (!impulse) { return true; }
 
-            auto checkBoth = [&](float l, float r, float t, float b) {
-                if (overlaps(moveX, 0.0f, l, r, t, b)) { blockedX = true; }
-                if (overlaps(0.0f, moveY, l, r, t, b)) { blockedY = true; }
-            };
+//        AddImpulse(impulse->x, impulse->y);
 
-            for (auto* collider : colliders) {
-                for (const auto& c : collider->GetColliders()) {
-                    checkBoth(c.x - c.width * 0.5f, c.x + c.width * 0.5f, c.y - c.height * 0.5f, c.y + c.height * 0.5f);
-                }
-            }
 
-            for (auto* e : interactibles) {
-                if (!e->IsValid()) { 
-                    continue; 
-                }
-                const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
-                const glm::vec2 p = e->GetPosition();
-                checkBoth(p.x - w2, p.x + w2, p.y - h2, p.y + h2);
-            }
-
-            for (auto* e : pits) {
-                if (!e->IsValid()) { 
-                    continue;
-                }
-                const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
-                const glm::vec2 p = e->GetPosition();
-                checkBoth(p.x - w2, p.x + w2, p.y - h2, p.y + h2);
-            }
-
-            for (auto* box : boxes) {
-                if (!box->IsValid()) { continue; }
-                const float w2 = box->GetWidth() * 0.5f, h2 = box->GetHeight() * 0.5f;
-                const glm::vec2 p = box->GetPosition();
-                bool isOverlaps = false;
-                if (overlaps(moveX, 0.0f, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
-                    isOverlaps = true;
-                    if (!box->CanMove(moveX > 0.0f ? 1.0f : -1.0f, 0.0f, basicSpeed, deltaTime)) { 
-                        blockedX = true; 
-                    }
-                }
-                if (overlaps(0.0f, moveY, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
-                    isOverlaps = true;
-                    if (!box->CanMove(0.0f, moveY > 0.0f ? 1.0f : -1.0f, basicSpeed, deltaTime)) { 
-                        blockedY = true; 
-                    }
-                }
-                if (isOverlaps) {
-                    WorldState::RegisterInWorldState(box->GetTagName());
-                }
-            }
-
-            for (auto* e : levelChangeTriggers) {
-                if (!e->IsValid()) { 
-                    continue; 
-                }
-                const float w2 = e->GetWidth() * 0.5f, h2 = e->GetHeight() * 0.5f;
-                const glm::vec2 p = e->GetPosition();
-                if (overlaps(moveX, 0.0f, p.x - w2, p.x + w2, p.y - h2, p.y + h2) ||
-                    overlaps(0.0f, moveY, p.x - w2, p.x + w2, p.y - h2, p.y + h2)) {
-                    e->ChangeLocation();
-                    return std::nullopt;
-                }
-            }
-
-            return glm::vec2{
-                blockedX ? 0.0f : direction.x * basicSpeed,
-                blockedY ? 0.0f : direction.y * basicSpeed
-            };
-        };
-
-        const auto impulse = ComputeImpulse();
-        if (!impulse) { return true; }
-
-        AddImpulse(impulse->x, impulse->y);
-        if (impulse->x != 0.0f || impulse->y != 0.0f) {
-            OnMoved(deltaTime);
+        if (velocityX != 0.0f || velocityY != 0.0f) {
+            Physics::AddImpulse(physicsObjectId, velocityX, velocityY);
         }
-     } else {
-         // Not moving — reset so the next step plays immediately when movement starts.
-         footstepTimer = FOOTSTEP_INTERVAL;
-     }
+    } else {
+        // Not moving — reset so the next step plays immediately when movement starts.
+        footstepTimer = FOOTSTEP_INTERVAL;
+    }
 
      /* Вот эта проверка тяжелая, но без неё происходит сегфолт, т.к во время проверки мы можем удалить NPC и когда
      дело дойдет сюда, то мы попытаемся вызвать IsValid() на уже удаленном NPC. По идее, т.к у нас не так много обьектов
@@ -218,9 +228,12 @@ bool World::EPlayer::Update(float deltaTime) {
     }
  }
 
- void World::EPlayer::OnSpawn() {
+ void World::EPlayer::OnSpawn(float x, float y, float w, float h) {
+    EMovable::OnSpawn(x, y, w, h);
     onInterectButtonPressed = EventBus::instance().SubscribeToEvent<InterectButtonPressedEvent>(this, &EPlayer::OnInterectButtonPressed);
     tooltipTexture = make_nnTex("f_button");
+
+    physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth() * 0.5f, GetHeight() * 0.9f, 10.f, 0x03);
 }
 
 void World::EPlayer::SetTooltipTexture(Renderer::TextureId texture, float w, float h) {
@@ -266,10 +279,10 @@ void World::EPlayer::OnMoved(float deltaTime) {
 void World::EPlayer::Render(float deltaTime) {
     Renderer::RenderAnimation(animationIdle, deltaTime, positionX, positionY, width, height, horizontalFlip);
 
-    if (GameFeatures::isDebug) {
-        const auto& pos = GetPosition();
-        Renderer::DrawRectangle(pos.x, pos.y, GetWidth(), GetHeight(), 0.0);
-    }
+//    if (GameFeatures::isDebug) {
+//        const auto& pos = GetPosition();
+//        Renderer::DrawRectangle(pos.x, pos.y, GetWidth(), GetHeight(), 0.0);
+//    }
     if (bShowTooltip && !DialogSystemManager::IsDialogActive()) {
         const auto& pos = GetPosition();
         Renderer::DrawSprite(tooltipTexture, pos.x, pos.y - tooltipHeight - 16.0f, tooltipWidth, tooltipHeight);
@@ -277,16 +290,25 @@ void World::EPlayer::Render(float deltaTime) {
 }
 
 World::EInteractable* World::EPlayer::TryInteract() const {
-    std::vector<World::EInteractable*> interactables;
-    MapManager::GetEntitiesContainer().FindEntities(interactables);
-    for (const auto& interactable : interactables) {
-        const auto interactablePosition = interactable->GetPosition();
-        const auto interactableWidthWithOffset = interactable->GetWidth() + 20.0f; // 20.0f то оффсет велью вывереный на глаз
-        const auto playerPosition = GetPosition();
-        const auto distance = glm::distance(interactablePosition, playerPosition);
-        if (distance < interactableWidthWithOffset) {
-            return interactable;
+
+    const auto& interactedEntities = MapManager::GetInteractedEntities();
+    for (const auto& interactedEntityData : interactedEntities) {
+        auto entity = MapManager::GetEntitiesContainer().FindEntity(interactedEntityData);
+        if (entity) {
+            return dynamic_cast<World::EInteractable*>(entity);
         }
     }
+
+//    std::vector<World::EInteractable*> interactables;
+//    MapManager::GetEntitiesContainer().FindEntities(interactables);
+//    for (const auto& interactable : interactables) {
+//        const auto interactablePosition = interactable->GetPosition();
+//        const auto interactableWidthWithOffset = interactable->GetWidth() + 20.0f; // 20.0f то оффсет велью вывереный на глаз
+//        const auto playerPosition = GetPosition();
+//        const auto distance = glm::distance(interactablePosition, playerPosition);
+//        if (distance < interactableWidthWithOffset) {
+//            return interactable;
+//        }
+//    }
     return nullptr;
 }

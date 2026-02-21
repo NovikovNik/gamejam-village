@@ -265,6 +265,27 @@ public:
         SDL_RenderLines(renderer, pts, 5);
     }
 
+    void DrawCircle(float x, float y, float radius) {
+        glm::vec2 cameraPos = World::Camera::instance().GetPosition();
+        float scaleFactor = World::Camera::instance().GetScaleFactor();
+
+        const float cx = renderOutputSizeW * 0.5f + (x - cameraPos.x) * scaleFactor;
+        const float cy = renderOutputSizeH * 0.5f + (y - cameraPos.y) * scaleFactor;
+        const float r  = radius * scaleFactor;
+
+        SDL_SetRenderDrawColor(renderer, 244, 0, 180, 255);
+
+        constexpr float TAU = 6.28318530718f;
+        constexpr int segments = 32;
+        for (int i = 0; i < segments; ++i) {
+            const float a0 = (static_cast<float>(i)     / segments) * TAU;
+            const float a1 = (static_cast<float>(i + 1) / segments) * TAU;
+            SDL_RenderLine(renderer,
+                cx + std::cos(a0) * r, cy + std::sin(a0) * r,
+                cx + std::cos(a1) * r, cy + std::sin(a1) * r);
+        }
+    }
+
     void DrawText(Renderer::TextId fontId, const std::string& text, float x, float y, int fontSize, const SDL_Color* color, int maxLineWidth) {
         TTF_Font* font = GetOrCreateFont(fontId, fontSize);
         if (!font || text.empty()) return;
@@ -466,6 +487,10 @@ void Renderer::DrawSpriteScreen(Renderer::TextureId textureId, float screenX, fl
 
 void Renderer::DrawRectangle(float x, float y, float w, float h, float angle = 0.0) {
     RenderManager::instance().DrawRectangle(x, y, w, h, angle);
+}
+
+void Renderer::DrawCircle(float x, float y, float radius) {
+    RenderManager::instance().DrawCircle(x, y, radius);
 }
 
 void Renderer::DrawFilledRectScreen(float x, float y, float w, float h, SDL_Color color) {

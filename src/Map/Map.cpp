@@ -6,6 +6,7 @@
 #include "../Renderer/Camera.h"
 #include "Logger/Logger.h"
 #include <Entities/EColliders.h>
+#include <Physics/PhysicsEngine.h>
 #include <Entities/EPit.h>
 #include <Entities/EBox.h>
 #include <Entities/ENpc.h>
@@ -84,6 +85,7 @@ public:
             return false;
         }
 
+        Physics::Reset();
         UnloadCurrentMap();
         currentLevel = filename;
 
@@ -94,7 +96,7 @@ public:
         mapData = nlohmann::json::parse(buffer.str());
 
         // Load tiles from JSON
-        World::ETiles* tiles = entitiesManager.SpawnEntity<World::ETiles>();
+        World::ETiles* tiles = entitiesManager.SpawnEntity<World::ETiles>(0, 0, 0, 0);
         if (mapData.contains("tiles") && mapData["tiles"].is_array()) {
             std::vector<World::ETiles::Tile> tilesData;
             for (const auto& tileJson : mapData["tiles"]) {
@@ -111,19 +113,29 @@ public:
         }
 
         // Load colliders from JSON
-        World::EColliders* colliders = entitiesManager.SpawnEntity<World::EColliders>();
+//        World::EColliders* colliders = entitiesManager.SpawnEntity<World::EColliders>();
+//        if (mapData.contains("colliders") && mapData["colliders"].is_array()) {
+//            std::vector<World::EColliders::Collider> collidersData;
+//            for (const auto& colliderJson : mapData["colliders"]) {
+//                World::EColliders::Collider collider;
+//                collider.x = colliderJson["x"].get<float>();
+//                collider.y = colliderJson["y"].get<float>();
+//                collider.width = colliderJson["width"].get<float>();
+//                collider.height = colliderJson["height"].get<float>();
+//                collidersData.push_back(collider);
+//            }
+//            colliders->LoadColliders(collidersData);
+//            colliders->EnableRender();
+//        }
+
         if (mapData.contains("colliders") && mapData["colliders"].is_array()) {
-            std::vector<World::EColliders::Collider> collidersData;
             for (const auto& colliderJson : mapData["colliders"]) {
-                World::EColliders::Collider collider;
-                collider.x = colliderJson["x"].get<float>();
-                collider.y = colliderJson["y"].get<float>();
-                collider.width = colliderJson["width"].get<float>();
-                collider.height = colliderJson["height"].get<float>();
-                collidersData.push_back(collider);
+                const float x = colliderJson["x"].get<float>();
+                const float y = colliderJson["y"].get<float>();
+                const float width = colliderJson["width"].get<float>();
+                const float height = colliderJson["height"].get<float>();
+                Physics::CreateStaticRectangle(x, y, width, height);
             }
-            colliders->LoadColliders(collidersData);
-            colliders->EnableRender();
         }
 
         std::vector<World::ESpawners::Spawner> spawners;
@@ -197,7 +209,7 @@ public:
             }
         }
 
-        World::ESpawners* spawnersEntity = entitiesManager.SpawnEntity<World::ESpawners>();
+        World::ESpawners* spawnersEntity = entitiesManager.SpawnEntity<World::ESpawners>(0, 0, 0, 0);
         spawnersEntity->LoadSpawners(spawners);
         
         // Load interactables from JSON (direct spawn, not via spawners)
@@ -208,8 +220,8 @@ public:
                 const float y = interactableJson["y"].get<float>();
                 const float width = interactableJson["width"].get<float>();
                 const float height = interactableJson["height"].get<float>();
-                World::EInteractable* interactable = entitiesManager.SpawnEntity<World::EInteractable>(make_nnInteractId(interactableName));
-                interactable->LoadData(make_nnTex(interactableJson["texture"].get<std::string>()), x, y, width, height);
+                World::EInteractable* interactable = entitiesManager.SpawnEntity<World::EInteractable>(x, y, width, height, make_nnInteractId(interactableName));
+                interactable->LoadData(make_nnTex(interactableJson["texture"].get<std::string>()), width, height);
             }
         }
 
@@ -222,10 +234,10 @@ public:
                 const float width = levelChangeTriggerJson["width"].get<float>();
                 const float height = levelChangeTriggerJson["height"].get<float>();
                 const std::string spawnPointMatch = levelChangeTriggerJson["spawnPointMatch"].get<std::string>();
-                World::ETriggerLocation* triggerLocation = entitiesManager.SpawnEntity<World::ETriggerLocation>(locationName, spawnPointMatch);
+                World::ETriggerLocation* triggerLocation = entitiesManager.SpawnEntity<World::ETriggerLocation>(x, y, width, height, locationName, spawnPointMatch);
                 // Возможно триггеру не нужна будет текстура в конце концов
                 // Хотя это может быть, например, обьект телепорт. Почему бы и нет
-                triggerLocation->LoadData(make_nnTex(levelChangeTriggerJson["texture"].get<std::string>()), x, y, width, height);
+                triggerLocation->LoadData(make_nnTex(levelChangeTriggerJson["texture"].get<std::string>()), width, height);
             }
         }
 
@@ -249,14 +261,14 @@ public:
                 const std::string playerName = playerJson["name"].get<std::string>();
                 const float x = playerJson["x"].get<float>();
                 const float y = playerJson["y"].get<float>();
-                World::EPlayer* player = entitiesManager.SpawnEntity<World::EPlayer>(playerName, x, y);
+                World::EPlayer* player = entitiesManager.SpawnEntity<World::EPlayer>(x, y, 0, 0, playerName);
                 World::Camera::instance().Follow(player);
                 World::Camera::instance().SetPosition(x, y); // Нужно чтобы не было небольшого смещения камеры при старте уровня
             }
         }
 
         // Load always on top tiles from JSON
-        World::ETiles* alwaysOnTopTiles = entitiesManager.SpawnEntity<World::ETiles>();
+        World::ETiles* alwaysOnTopTiles = entitiesManager.SpawnEntity<World::ETiles>(0, 0, 0, 0);
         if (mapData.contains("alwaysOnTop") && mapData["alwaysOnTop"].is_array()) {
             std::vector<World::ETiles::Tile> alwaysOnTopTilesData;
             for (const auto& tileJson : mapData["alwaysOnTop"]) {
@@ -301,6 +313,8 @@ public:
     }
 
     void Update(float deltaTime) {
+        prevInteractedEntities = newInteractedEntities;
+        newInteractedEntities.clear();
         entitiesManager.Update(deltaTime);
         World::Camera::instance().Update(deltaTime);
     }
@@ -339,26 +353,24 @@ public:
             //objectsLocations[GetCurrentMapName()].insert({ { name, type } });
             const auto position = optPosition.value();
             if (type == "villager") {
-                auto npc = entitiesManager.SpawnEntity<World::ENpc>(name, position.x, position.y);
+                auto npc = entitiesManager.SpawnEntity<World::ENpc>(position.x, position.y, 0, 0, name);
                 npc->SetTagName({ name, type });
                 Logger::Log(std::format("[Map] Spawned NPC: {} of type {}", name, type));
                 return npc;
             }
             if (type == "object") {
-                auto obj = entitiesManager.SpawnEntity<World::EInteractableObject>(name, position.x, position.y);
+                auto obj = entitiesManager.SpawnEntity<World::EInteractableObject>(position.x, position.y, 0, 0, name);
                 obj->SetTagName({ name, type });
                 Logger::Log(std::format("[Map] Spawned interactable object: {} of type {}", name, type));
                 return obj;
             }
             if (type == "box") {
-                auto box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(name));
-                box->SetPosition(position.x, position.y);
+                auto box = entitiesManager.SpawnEntity<World::EBox>(position.x, position.y, 0, 0, make_nnBoxName(name));
                 box->SetTagName({ name, type });
                 return box;
             }
             if (type == "pit") {
-                auto pit = entitiesManager.SpawnEntity<World::EPit>(make_nnBoxName(name));
-                pit->SetPosition(position.x, position.y);
+                auto pit = entitiesManager.SpawnEntity<World::EPit>(position.x, position.y, 0, 0, make_nnBoxName(name));
                 pit->SetTagName({ name, type });
                 return pit;
             }
@@ -453,6 +465,14 @@ public:
         World::Camera::instance().SetPosition(x, y);
     }
 
+    void MarkAsInteracted(const World::Entity::TagName& tagName) {
+        newInteractedEntities.insert(tagName);
+    }
+
+    const std::set<World::Entity::TagName>& GetInteractedEntities() {
+        return prevInteractedEntities;
+    }   
+
 private:
     World::EntitiesManager entitiesManager;
     World::EPlayer* player = nullptr;
@@ -462,6 +482,8 @@ private:
     std::map<std::string, std::pair<float, float>> spawnPointsByName;
 
     Events::Handler onWorldStateUpdated;
+    std::set<World::Entity::TagName> newInteractedEntities;
+    std::set<World::Entity::TagName> prevInteractedEntities;
 };
 
 namespace MapManager {
@@ -523,6 +545,14 @@ namespace MapManager {
 
     void Destroy() {
         Map::instance().Destroy();
+    }
+
+    void MarkAsInteracted(const World::Entity::TagName& tagName) {
+        Map::instance().MarkAsInteracted(tagName);
+    }
+
+    const std::set<World::Entity::TagName>& GetInteractedEntities() {
+        return Map::instance().GetInteractedEntities();
     }
 
 };

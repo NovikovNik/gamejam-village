@@ -1,6 +1,7 @@
 #pragma once
 #include <Renderer/Renderer.h>
 #include <string>
+#include <Physics/PhysicsEngine.h>
 #include "EMapObject.h"
 
 namespace World {
@@ -10,8 +11,15 @@ namespace World {
         void Render(float deltaTime) override;
         void ChangeLocation();
 
+        void OnSpawn(float x, float y, float w, float h) override;
+        void OnDestroy() override;
+
+        bool Update(float deltaTime) override;
+
     private:
         const std::string locationName;
         const std::string spawnPointMatch;
+
+        Physics::ObjectId physicsTriggerId{};
     };
 }

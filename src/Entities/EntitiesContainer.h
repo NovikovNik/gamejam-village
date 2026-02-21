@@ -9,6 +9,7 @@
 namespace World {
     class EntitiesContainer {
     public:
+        EntitiesContainer();
         void AddEntity(std::unique_ptr<Entity>&& entity);
         void RemoveInvalidEntities();
         void Clear();

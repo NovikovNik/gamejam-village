@@ -14,6 +14,7 @@
 #include "Game/GameStates.h"
 #include "GameFeatures.h"
 #include <EventBus/EventBus.h>
+#include <Physics/PhysicsEngine.h>
 #include "../Events/WindowResizedEvent.h"
 #include "../Events/WindowFocusedEvent.h"
 #include "../Events/WindowUnfocusedEvent.h"
@@ -45,6 +46,7 @@ Game::~Game() {
 }
 
 void Game::Initialize() {
+    Physics::Initialize();
     MapManager::Initialize();
     Renderer::Initialize(windowWidth, windowHeight);
     UISystem::Initialize();
@@ -110,6 +112,7 @@ void Game::Destroy() {
     DialogSystemManager::Destroy();
     GameplayLogic::Destroy();
     MapManager::Destroy();
+    Physics::Destroy();
 }
 
 void Game::ProcessInput() {
@@ -282,6 +285,7 @@ void Game::Update() {
     GameplayLogic::Update(deltaTime);
     GameplayLogic::UpdateCurrentGameAct();
     WorldState::Update();
+    Physics::Update(deltaTime);
 
     // Dispatch all events in the queue
 //    EventsQueue::instance().Dispatch();
@@ -293,6 +297,7 @@ void Game::Render() {
     
     // Render game content
     MapManager::Render(deltaTime);
+    Physics::Render();
     // Тут точно дельта не нужна
     // Но мб будем что-то двигать? И тогда будет нужна,
     // Но пока пофиг

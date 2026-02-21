@@ -12,9 +12,9 @@ namespace World {
             void Clear();
 
             template <typename T, typename... Args>
-            T* SpawnEntity(Args&&... args) {
+            T* SpawnEntity(float x, float y, float w, float h, Args&&... args) {
                 auto entity = std::make_unique<T>(std::forward<Args>(args)...);
-                entity->OnSpawn();
+                entity->OnSpawn(x, y, w, h);
                 auto* entityPtr = entity.get();
                 entities.AddEntity(std::move(entity));
                 return entityPtr;

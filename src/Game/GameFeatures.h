@@ -10,5 +10,5 @@ struct GameFeatures {
     inline static bool isDebug = true;
     inline static bool isFullscreen = false;
     inline static bool isResizeble = false;
-    inline static MovementDirection movementDirection = MovementDirection::FOUR_DIRECTIONS;
+    inline static MovementDirection movementDirection = MovementDirection::EIGHT_DIRECTIONS;
 };

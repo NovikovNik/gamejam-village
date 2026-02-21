@@ -4,15 +4,16 @@
 #include <glm/glm.hpp>
 #include <Events/InterectButtonPressedEvent.h>
 #include <Renderer/Renderer.h>
+#include <Physics/PhysicsEngine.h>
 
 namespace World {
     class EPlayer : public EMovable {
     public:
-        EPlayer(const std::string& name, float x, float y);
+        EPlayer(const std::string& name);
         bool Update(float deltaTime) override;
         void Render(float deltaTime) override;
 
-        void OnSpawn() override;
+        void OnSpawn(float x, float y, float w, float h) override;
         void OnMoved(float deltaTime);
 
         virtual void SetTooltipTexture(Renderer::TextureId texture, float w, float h);
@@ -36,7 +37,9 @@ namespace World {
 
         Events::Handler onInterectButtonPressed;
         Renderer::AnimationHandle animationIdle;
-        
+
         class EInteractable* currentInteractable = nullptr;
+
+        Physics::ObjectId physicsObjectId{};
     };
 }

@@ -24,6 +24,7 @@ namespace Renderer {
     void DrawSpriteScreen(TextureId textureId, float screenX, float screenY, float width, float height, double angle);
     // Debug render
     void DrawRectangle(float x, float y, float w, float h, float angle);
+    void DrawCircle(float x, float y, float radius);
     /// Draw an axis-aligned filled rectangle in screen-space (UI / overlay).
     void DrawFilledRectScreen(float x, float y, float w, float h, SDL_Color color);
     void SetCameraPosition(float x, float y);

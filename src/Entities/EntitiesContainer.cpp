@@ -1,5 +1,11 @@
 #include "EntitiesContainer.h"
 
+World::EntitiesContainer::EntitiesContainer()
+{
+    // To avoid crashes on resize 
+    entities.reserve(100);
+}
+
 void World::EntitiesContainer::AddEntity(std::unique_ptr<World::Entity>&& entity) {
     entities.push_back(std::move(entity));
 }

@@ -40,7 +40,7 @@ namespace World {
             }
         }
 
-        void OnSpawn() override {
+        void OnSpawn(float x, float y, float w, float h) override {
             onSpawnCalled++;
         }
     };

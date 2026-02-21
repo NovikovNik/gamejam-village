@@ -10,7 +10,7 @@ namespace World {
         bool Update(float deltaTime) override;
         void Render(float deltaTime) override;
 
-        void LoadData(Renderer::TextureId texture, float x, float y, float width, float height);
+        void LoadData(Renderer::TextureId texture, float width, float height);
 
         void SetPosition(float x, float y);
         glm::vec2 GetPosition() const;
@@ -21,11 +21,6 @@ namespace World {
         const Renderer::TextureId testTextureId = make_nnTex("test-texture");
 
     protected:
-        float positionX = 0.0f;
-        float positionY = 0.0f;
-
         Renderer::TextureId texture;
-        float width = 0.0f;
-        float height = 0.0f;
     };
 }

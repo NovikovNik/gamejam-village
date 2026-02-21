@@ -10,9 +10,9 @@ void World::EMapObject::Render(float deltaTime) {
         // Хак, чтобы не рисовать для Interactible без текстуры (триггеры) тестовую текстуру
         Renderer::DrawSprite(texture, positionX, positionY, width, height);
     }
-    if (GameFeatures::isDebug) {
-        Renderer::DrawRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), 0.0);
-    }
+//    if (GameFeatures::isDebug) {
+//        Renderer::DrawRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), 0.0);
+//    }
 }
 
 void World::EMapObject::SetPosition(float x, float y) {
@@ -24,10 +24,8 @@ glm::vec2 World::EMapObject::GetPosition() const {
     return glm::vec2(positionX, positionY);
 }
 
-void World::EMapObject::LoadData(Renderer::TextureId texture, float x, float y, float width, float height) {
+void World::EMapObject::LoadData(Renderer::TextureId texture, float width, float height) {
     this->texture = texture;
-    this->positionX = x;
-    this->positionY = y;
     this->width = width;
     this->height = height;
 }

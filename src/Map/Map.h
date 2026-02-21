@@ -1,6 +1,7 @@
 #pragma once
 #include <Entities/EntitiesManager.h>
 #include <string>
+#include <set>
 
 namespace MapManager {
     [[nodiscard]] bool LoadMap(const std::string& filename);
@@ -9,6 +10,8 @@ namespace MapManager {
     [[nodiscard]] World::Entity* SpawnEntity(const std::string& name, const std::string& type);
     [[nodiscard]] bool LoadLastLoadedLevel();
     void DestroyEntity(const std::string& name, const std::string& type);
+    void MarkAsInteracted(const World::Entity::TagName& tagName);
+    [[nodiscard]] const std::set<World::Entity::TagName>& GetInteractedEntities();
 
     void Initialize();
     void Destroy();

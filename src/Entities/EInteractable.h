@@ -2,6 +2,7 @@
 
 #include "EMapObject.h"
 #include "InteractName.h"
+#include <Physics/PhysicsEngine.h>
 
 namespace World {
     class EInteractable : public EMapObject {
@@ -12,8 +13,15 @@ namespace World {
         virtual void Interact();
 
         [[nodiscard]] InteractId GetInteractId() const { return interactId; }
+        virtual void CreatePhysicsObjects();
+        virtual void RemovePhysicsObjects();
 
-    private:
+        virtual void OnDestroy();
+
+        void OnSpawn(float x, float y, float w, float h) override;
+
+    protected:
         InteractId interactId;
+        Physics::ObjectId physicsTriggerId{};
     };
 }

@@ -1,8 +1,9 @@
 #include "EPit.h"
 
-void World::EPit::OnSpawn() {
+void World::EPit::OnSpawn(float x, float y, float w, float h) {
+    EMovable::OnSpawn(x, y, w, h);
     const auto textureId = Renderer::TextureId("pit"_nnTex);
-    LoadData(textureId, 0, 0, 64, 64);
+    LoadData(textureId, 64, 64);
 }
 
 bool World::EPit::Update(float deltaTime) {

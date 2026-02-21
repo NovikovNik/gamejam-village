@@ -1,16 +1,21 @@
 #include "EInteractableObject.h"
 #include <Logger/Logger.h>
 #include <Events/InteractWithEntityEvent.h>
+#include <Map/Map.h>
 #include <format>
 
-World::EInteractableObject::EInteractableObject(const std::string& name, float x, float y)
+World::EInteractableObject::EInteractableObject(const std::string& name)
     : EInteractable(make_nnInteractId(name)) {
     const auto textureId = make_nnTex(std::format("object_{}", name));
-    LoadData(textureId, x, y, 64, 64);
+    LoadData(textureId, 64, 64);
 }
 
 bool World::EInteractableObject::Update(float deltaTime) {
-    return EInteractable::Update(deltaTime);
+    if (!EInteractable::Update(deltaTime)) {
+        return false;
+    }
+
+    return true;
 }
 
 void World::EInteractableObject::Render(float deltaTime) {

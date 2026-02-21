@@ -19,7 +19,7 @@ namespace World
             [[nodiscard]] virtual bool Update(float deltaTime);
             virtual void Render(float deltaTime) = 0;
             virtual void OnDestroy() {};
-            virtual void OnSpawn() {};
+            virtual void OnSpawn(float x, float y, float w, float h);
 
             void Destroy() { isValid = false; }
 
@@ -30,5 +30,10 @@ namespace World
         protected:
             uint8_t isValid : 1 = true;
             TagName tagName;
+
+            float positionX = 0.0f;
+            float positionY = 0.0f;
+            float width = 0.0f;
+            float height = 0.0f;
     };
 }
