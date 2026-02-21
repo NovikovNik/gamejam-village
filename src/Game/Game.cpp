@@ -173,7 +173,7 @@ void Game::ProcessInput() {
                     Logger::Debug("Debug state changed to: " + std::to_string(GameFeatures::isDebug));
                     break;
                 }
-                if (event.key.key == SDLK_O) { // Open current location
+                if (event.key.key == SDLK_V) { // Open current location
                     MapManager::OpenCurrentLocationInExplorer();
                     break;
                 }

@@ -306,7 +306,9 @@ public:
     [[nodiscard]] bool LoadLastLoadedLevel() {
         bool result = LoadMap(ProgressSystemManager::Player().lastLevel);
         if (result) {
-            entitiesManager.GetEntitiesContainer().FindEntity<World::EPlayer>()->SetPosition(ProgressSystemManager::Player().position.x, ProgressSystemManager::Player().position.y);
+            if (World::EPlayer* player = entitiesManager.GetEntitiesContainer().FindEntity<World::EPlayer>(); player != nullptr) {
+                player->SetPosition(ProgressSystemManager::Player().position.x, ProgressSystemManager::Player().position.y);
+            }
         }
         return result;
     }

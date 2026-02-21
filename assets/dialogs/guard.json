@@ -84,7 +84,7 @@
                 },
                 {
                     "name": "Consciousness",
-                    "text": "Press [O] to open File Explorer.",
+                    "text": "Press [V] to open File Explorer.",
                     "size": 26,
                     "color": [255, 255, 210, 250],
                     "align": "right"
