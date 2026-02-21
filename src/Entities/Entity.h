@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <cstdint>
 #include <string>
 
@@ -24,6 +25,9 @@ namespace World
             void Destroy() { isValid = false; }
 
             [[nodiscard]] virtual bool IsValid() const { return isValid; }
+
+            virtual void SetPosition(float x, float y) { positionX = x; positionY = y; }
+            [[nodiscard]] glm::vec2 GetPosition() const { return glm::vec2{ positionX, positionY }; };
 
             void SetTagName(const TagName& newTagName) { this->tagName = newTagName; }
             [[nodiscard]] const TagName& GetTagName() const { return tagName; }

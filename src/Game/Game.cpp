@@ -69,6 +69,10 @@ void Game::Initialize() {
     DialogSystemManager::LoadAllDialogs("assets/dialogs/");
     Renderer::LoadAllTextures("assets/textures/");
     Renderer::LoadAllFonts("assets/fonts/");
+    WorldState::Initiate();
+    // Restore world state from save file (overrides the filesystem scan on first frame).
+    WorldState::SetCurrentState(ProgressSystemManager::World().state);
+    WorldState::SetBackupLocationPath(ProgressSystemManager::World().backupLocationPath);
     // Стартовую локацию выставляем в сохранке!!!
     bool isLoaded = MapManager::LoadLastLoadedLevel();
     if (!isLoaded) {
@@ -77,10 +81,6 @@ void Game::Initialize() {
     } else {
         isRunning = true;
     }
-    WorldState::Initiate();
-    // Restore world state from save file (overrides the filesystem scan on first frame).
-    WorldState::SetCurrentState(ProgressSystemManager::World().state);
-    WorldState::SetBackupLocationPath(ProgressSystemManager::World().backupLocationPath);
 
     // В редких ситуациях из игрового процесса придет сигнал на выход из игры
     // Например, если игрок создаст файл kick-my.ass в world-entry-2 локации

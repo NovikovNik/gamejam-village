@@ -13,6 +13,7 @@
 #include <Entities/EInteractableObject.h>
 #include <Entities/ESpawners.h>
 #include <Entities/ETriggerLocation.h>
+#include <Entities/EEffect.h>
 #include <Events/WindowFocusedEvent.h>
 #include <Events/ClearWorldStateEvent.h>
 #include <Events/ChangeLocationEvent.h>
@@ -64,14 +65,34 @@ public:
         });
 
         for (const auto& [name, type] : entitiesToDestroy) {
-            DestroyEntity(name, type, true);
+            Renderer::AnimationHandle animation = Renderer::AnimationHandle{
+                .numOfFrames = 16,
+                .maxElementsPerRow = 4,
+                .frameSize = 64,
+                .frameDelay = 0.1f,
+                .textureId = make_nnTex("animation-template"),
+            };
+            const auto entity = DestroyEntity(name, type, true);
+            if (entity != nullptr) {
+               entitiesManager.SpawnEntity<World::Effect>(entity->GetPosition().x, entity->GetPosition().y, 64, 64, animation);
+            }
         }
 
         for (const auto& [entityKey, locations] : state.registeredEntities) {
             const auto name = entityKey.substr(0, entityKey.find('.'));
             const auto type = entityKey.substr(entityKey.find('.') + 1);
             if (locations.contains(locationName)) {
-                SpawnEntity(name, type, true);
+                Renderer::AnimationHandle animation = Renderer::AnimationHandle{
+                    .numOfFrames = 16,
+                    .maxElementsPerRow = 4,
+                    .frameSize = 64,
+                    .frameDelay = 0.1f,
+                    .textureId = make_nnTex("animation-template"),
+                };
+                const auto entity = SpawnEntity(name, type, true); 
+                if (entity != nullptr) {
+                    entitiesManager.SpawnEntity<World::Effect>(entity->GetPosition().x, entity->GetPosition().y, 64, 64, animation);
+                }
             }
         }
     }
@@ -111,22 +132,6 @@ public:
             }
             tiles->LoadTiles(tilesData);
         }
-
-        // Load colliders from JSON
-//        World::EColliders* colliders = entitiesManager.SpawnEntity<World::EColliders>();
-//        if (mapData.contains("colliders") && mapData["colliders"].is_array()) {
-//            std::vector<World::EColliders::Collider> collidersData;
-//            for (const auto& colliderJson : mapData["colliders"]) {
-//                World::EColliders::Collider collider;
-//                collider.x = colliderJson["x"].get<float>();
-//                collider.y = colliderJson["y"].get<float>();
-//                collider.width = colliderJson["width"].get<float>();
-//                collider.height = colliderJson["height"].get<float>();
-//                collidersData.push_back(collider);
-//            }
-//            colliders->LoadColliders(collidersData);
-//            colliders->EnableRender();
-//        }
 
         if (mapData.contains("colliders") && mapData["colliders"].is_array()) {
             for (const auto& colliderJson : mapData["colliders"]) {
@@ -398,7 +403,7 @@ public:
         return nullptr;
     }
 
-    void DestroyEntity(const std::string& name, const std::string& type, bool fromWorldState) {
+    World::Entity* DestroyEntity(const std::string& name, const std::string& type, bool fromWorldState) {
         if (!type.empty() && !name.empty()) {
             auto entity = entitiesManager.GetEntitiesContainer().FindEntity({ name, type });
             if (entity) {
@@ -406,9 +411,11 @@ public:
                     EventBus::instance().EmitEvent<EntityDestroyedEvent>(name, type);
                 }
                 entity->Destroy();
+
+                return entity;
             }
         }
-        //objectsLocations[GetCurrentMapName()].erase({ name, type });
+        return nullptr;
     }
 
     void OpenCurrentLocationInExplorer() {
