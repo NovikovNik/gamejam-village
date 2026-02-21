@@ -16,6 +16,7 @@
 #include <Events/ClearWorldStateEvent.h>
 #include <Events/ChangeLocationEvent.h>
 #include <Events/LocationChangedEvent.h>
+#include <Events/WorldStateEvents.h>
 #include <FileSystem/FileSystem.h>
 #include <ProgressSystem/ProgressSystem.h>
 #include <Gameplay/WorldState.h>
@@ -33,6 +34,47 @@
 class Map : public Singleton<Map> {
 
 public:
+
+    void Initialize() {
+        onWorldStateUpdated = EventBus::instance().SubscribeToEvent<WorldStateUpdatedEvent>(this, &Map::OnWorldStateUpdated);
+    }
+
+    void Destroy() {
+        onWorldStateUpdated.Destroy();
+        entitiesManager.Clear();
+    }
+
+    void OnWorldStateUpdated(WorldStateUpdatedEvent& event) {
+        const auto& state = WorldState::GetCurrentState();
+
+        const auto locationName = GetCurrentMapName();
+        std::vector<std::pair<std::string, std::string>> entitiesToDestroy;
+        entitiesManager.GetEntitiesContainer().ForEachEntity([&](const World::Entity* entity) {
+            const auto name = entity->GetTagName().name;
+            const auto type = entity->GetTagName().type;
+            const auto key = std::format("{}.{}", name, type);
+            if (!state.registeredEntities.contains(key)) {
+                return;
+            }
+            if (state.registeredEntities.at(key).contains(locationName)) {
+                return;
+            }
+            entitiesToDestroy.push_back({ name, type });
+        });
+
+        for (const auto& [name, type] : entitiesToDestroy) {
+            DestroyEntity(name, type, true);
+        }
+
+        for (const auto& [entityKey, locations] : state.registeredEntities) {
+            const auto name = entityKey.substr(0, entityKey.find('.'));
+            const auto type = entityKey.substr(entityKey.find('.') + 1);
+            if (locations.contains(locationName)) {
+                SpawnEntity(name, type, true);
+            }
+        }
+    }
+
     [[nodiscard]] bool LoadMap(const std::string& filename) {
         // Load JSON map data
         std::string filepath = filename;
@@ -233,15 +275,7 @@ public:
         // Тут первый раз создаем все Entity на локации при старте игры (в файлавой директории)
         const std::string locationName = GetCurrentMapName();
         RevealLocationInFilesystem(locationName);
-        if (!IsLocationProcessed(locationName)) {
-            SeedInstantSpawnEntitiesInFilesystem();
-            MarkLocationProcessed(locationName);
-        }
-        const auto& objects = objectsLocations[locationName];
-        for (const auto& object : objects) {
-            SpawnEntity(object.name, object.type, true);
-        }
-
+        SeedInstantSpawnEntitiesInFilesystem();
         EventBus::instance().EmitEvent<ClearWorldStateEvent>();
         EventBus::instance().EmitEvent<WindowFocusedEvent>();
 
@@ -302,7 +336,7 @@ public:
                 EventBus::instance().EmitEvent<EntityCreatedEvent>(name, type);
             }
 
-            objectsLocations[GetCurrentMapName()].insert({ { name, type } });
+            //objectsLocations[GetCurrentMapName()].insert({ { name, type } });
             const auto position = optPosition.value();
             if (type == "villager") {
                 auto npc = entitiesManager.SpawnEntity<World::ENpc>(name, position.x, position.y);
@@ -347,16 +381,17 @@ public:
         return nullptr;
     }
 
-    void DestroyEntity(const std::string& name, const std::string& type) {
+    void DestroyEntity(const std::string& name, const std::string& type, bool fromWorldState) {
         if (!type.empty() && !name.empty()) {
             auto entity = entitiesManager.GetEntitiesContainer().FindEntity({ name, type });
             if (entity) {
-                EventBus::instance().EmitEvent<EntityDestroyedEvent>(name, type);
+                if (fromWorldState) {
+                    EventBus::instance().EmitEvent<EntityDestroyedEvent>(name, type);
+                }
                 entity->Destroy();
-                WorldState::RemoveFromWorldState({ name, type });
             }
         }
-        objectsLocations[GetCurrentMapName()].erase({ name, type });
+        //objectsLocations[GetCurrentMapName()].erase({ name, type });
     }
 
     void OpenCurrentLocationInExplorer() {
@@ -377,24 +412,23 @@ public:
             return;
         }
         
+        const auto& state = WorldState::GetCurrentState();
         for (const auto& [name, type] : instantSpawns) {
-            objectsLocations[locationName].insert({ { name, type } });\
+            const auto key = std::format("{}.{}", name, type);
+            if (state.registeredEntities.contains(key)) {
+                if (state.registeredLocations.contains(locationName)) {
+                    continue;
+                }
+                WorldState::RegisterInWorldState({ name, type });
+                continue;
+            }
+            SpawnEntity(name, type, true);
         }
         Logger::Log(std::format("Seeded {} instant-spawn entities in village/{}", instantSpawns.size(), locationName));
     }
 
     std::string GetCurrentMapName() const {
         return std::filesystem::path(currentLevel).filename().stem().string();
-    }
-
-    // Проверка была ли локация уже посещена или это первый запуск игры
-    [[nodiscard]] bool IsLocationProcessed(const std::string& locationId) const {
-        return processedLocations.contains(locationId);
-    }
-
-    // При первом заходе на локацию (aka новая локация или первый старт игры)
-    void MarkLocationProcessed(const std::string& locationId) {
-        processedLocations.insert(locationId);
     }
 
     void RevealLocationInFilesystem(const std::string& locationName) {
@@ -427,11 +461,7 @@ private:
     nlohmann::json mapData;
     std::map<std::string, std::pair<float, float>> spawnPointsByName;
 
-    // Структура для обозначения, что локация посечена в первый раз
-    // При первом заходе на неё нужно создать все Entity с spawnOnStart=true
-
-    std::set<std::string> processedLocations;
-    std::map<std::string, std::set<World::Entity::TagName>> objectsLocations;
+    Events::Handler onWorldStateUpdated;
 };
 
 namespace MapManager {
@@ -468,7 +498,7 @@ namespace MapManager {
     }
 
     void DestroyEntity(const std::string& name, const std::string& type) {
-        Map::instance().DestroyEntity(name, type);
+        Map::instance().DestroyEntity(name, type, true);
     }
 
     void SetPlayerPositionToSpawnPoint(const std::string& spawnPointName) {
@@ -485,6 +515,14 @@ namespace MapManager {
 
     void SeedInstantSpawnEntitiesInFilesystem() {
         Map::instance().SeedInstantSpawnEntitiesInFilesystem();
+    }
+
+    void Initialize() {
+        Map::instance().Initialize();
+    }
+
+    void Destroy() {
+        Map::instance().Destroy();
     }
 
 };

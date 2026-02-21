@@ -137,7 +137,7 @@ bool World::EPlayer::Update(float deltaTime) {
                     }
                 }
                 if (isOverlaps) {
-                    WorldState::AddToWorldState(box->GetTagName());
+                    WorldState::RegisterInWorldState(box->GetTagName());
                 }
             }
 
@@ -190,7 +190,7 @@ bool World::EPlayer::Update(float deltaTime) {
         currentInteractable = interactable;
         if (currentInteractable) {
             bShowTooltip = true;
-            WorldState::AddToWorldState(currentInteractable->GetTagName());
+            WorldState::RegisterInWorldState(currentInteractable->GetTagName());
         } else {
             bShowTooltip = false;
         }

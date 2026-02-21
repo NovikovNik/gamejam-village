@@ -4,6 +4,9 @@
 #include <Events/WindowFocusedEvent.h>
 #include <Events/ClearWorldStateEvent.h>
 #include <Events/ChangeLocationEvent.h>
+#include <Events/WorldStateEvents.h>
+#include <Events/EntitiesEvent.h>
+#include <Events/LocationChangedEvent.h>
 #include <ProgressSystem/ProgressSystem.h>
 #include <Logger/Logger.h>
 #include <Map/Map.h>
@@ -14,12 +17,6 @@
 #include <vector>
 #include <filesystem>
 #include <format>
-
-struct PersistentState
-{
-    std::map<std::string, std::string> mapObjectsLocations;
-    std::set<std::string> existingLevels;
-};
 
 struct WorldBlackboard
 {
@@ -46,6 +43,8 @@ public:
         onWindowFocused = EventBus::instance().SubscribeToEvent<WindowFocusedEvent>(this, &GameStateManager::OnWindowFocused);
         onClearWorldState = EventBus::instance().SubscribeToEvent<ClearWorldStateEvent>(this, &GameStateManager::OnClearWorldState);
         onChangeLocation = EventBus::instance().SubscribeToEvent<ChangeLocationEvent>(this, &GameStateManager::OnChangeLocation);
+        onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &GameStateManager::OnEntityDestroyed);
+        onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &GameStateManager::OnLocationChanged);
     }
 
     void Destroy()
@@ -53,6 +52,19 @@ public:
         onWindowFocused.Destroy();
         onClearWorldState.Destroy();
         onChangeLocation.Destroy();
+        onEntityDestroyed.Destroy();
+        onLocationChanged.Destroy();
+    }
+
+    void OnEntityDestroyed(EntityDestroyedEvent& event)
+    {
+        RemoveFromWorldState(World::Entity::TagName{event.GetName(), event.GetType()});
+    }
+
+    void OnLocationChanged(LocationChangedEvent& event)
+    {
+        LoadNewGameStateFromFilesystem();
+        EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
     }
 
     void Update()
@@ -63,6 +75,8 @@ public:
         }
 
         Logger::Log(std::format("[WorldState] Changing location to: {}", nextLocation->locationPath));
+        
+        LoadNewGameStateFromFilesystem();
         bool isLoaded = MapManager::LoadMap(nextLocation->locationPath);
         if (isLoaded) {
             if (!nextLocation->spawnPoint.empty()) {
@@ -72,6 +86,7 @@ public:
             ProgressSystemManager::SaveData();
         }
 
+
         nextLocation.reset();
     }
 
@@ -79,45 +94,37 @@ public:
     {
         Logger::Log("[WorldState] Window focused");
         LoadNewGameStateFromFilesystem();
+        EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
 
-        const auto locationName = MapManager::GetCurrentMapName();
-        const auto& changes = SyncLocationAndGetChanges(locationName);
-        for (const auto& change : changes.added) {
-            if (change.type.empty()) {
-                Logger::Warn(std::format("[WorldState] Skipping object '{}': empty type (use name.type -> Spaghetti.villager)", change.name));
-                continue;
-            }
-            const auto key = std::format("{}.{}", change.name, change.type);
-            persistentState.mapObjectsLocations[key] = locationName;
-            const auto entity = MapManager::SpawnEntity(change.name, change.type);
-            if (entity != nullptr) {
-                Logger::Log(std::format("[WorldState] Added object: {} of type {}", change.name, change.type));
-            }
-            else {
-                Logger::Warn(std::format("[WorldState] Failed to spawn object: {} of type {}", change.name, change.type));
-            }
-        }
-        for (const auto& change : changes.removed) {
-            const auto key = std::format("{}.{}", change.name, change.type);
-            if (persistentState.mapObjectsLocations.contains(key)) {
-                persistentState.mapObjectsLocations.erase(key);
-            }
+//        bool isChanged = false;
 
-            MapManager::DestroyEntity(change.name, change.type);
-
-//            const auto entity = MapManager::GetEntitiesContainer().FindEntity(std::format("{}.{}", change.name, change.type));
-//            if (entity) {
-//                entity->Destroy();
+//        for (const auto& locationName : currentState.activeLocations) {
+//            const auto& changes = SyncLocationAndGetChanges(locationName);
+//            for (const auto& change : changes.added) {
+//                if (change.type.empty()) {
+//                    Logger::Warn(std::format("[WorldState] Skipping object '{}': empty type (use name.type -> Spaghetti.villager)", change.name));
+//                    continue;
+//                }
+//                const auto key = std::format("{}.{}", change.name, change.type);
+//                currentState.registeredEntities[key].insert(locationName);
+//                isChanged = true;
 //            }
-            Logger::Log(std::format("[WorldState] Removed object: {} of type {}", change.name, change.type));
-        }
+//            for (const auto& change : changes.removed) {
+//                const auto key = std::format("{}.{}", change.name, change.type);
+//
+//                if (currentState.registeredEntities.contains(key)) {
+//                    currentState.registeredEntities[key].erase(locationName);
+//                    isChanged = true;
+//                }
+//            }
+//        }
+//        if (isChanged) {
+//            EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
+//        }
     }
 
     void OnClearWorldState(ClearWorldStateEvent&)
     {
-        Logger::Log("[WorldState] Clearing world state");
-        currentState.clear();
-        lastSeenState.clear();
     }
 
     // Обработчик перехода на новый уровень
@@ -130,27 +137,26 @@ public:
         };
     }
 
-    [[nodiscard]] LocationsStates::LocationChanges SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName)
-    {
-        LocationsStates::LocationChanges changes;
-        const auto& currentLocationObjects = currentState[locationName];
-        const auto& lastSeenLocationObjects = lastSeenState[locationName];
-        for (const auto& object : currentLocationObjects) {
-            if (std::find(lastSeenLocationObjects.begin(), lastSeenLocationObjects.end(), object) == lastSeenLocationObjects.end()) {
-                changes.added.push_back(object);
-            }
-        }
-        for (const auto& object : lastSeenLocationObjects) {
-            if (std::find(currentLocationObjects.begin(), currentLocationObjects.end(), object) == currentLocationObjects.end()) {
-                changes.removed.push_back(object);
-            }
-        }
-        lastSeenState[locationName] = currentLocationObjects;
-        return changes;
-    }
+//    [[nodiscard]] LocationsStates::LocationChanges SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName)
+//    {
+//        LocationsStates::LocationChanges changes;
+//        const auto& currentLocationObjects = currentState[locationName];
+//        const auto& lastSeenLocationObjects = lastSeenState[locationName];
+//        for (const auto& object : currentLocationObjects) {
+//            if (std::find(lastSeenLocationObjects.begin(), lastSeenLocationObjects.end(), object) == lastSeenLocationObjects.end()) {
+//                changes.added.push_back(object);
+//            }
+//        }
+//        for (const auto& object : lastSeenLocationObjects) {
+//            if (std::find(currentLocationObjects.begin(), currentLocationObjects.end(), object) == currentLocationObjects.end()) {
+//                changes.removed.push_back(object);
+//            }
+//        }
+//        lastSeenState[locationName] = currentLocationObjects;
+//        return changes;
+//    }
 
-    [[nodiscard]] const LocationsStates::State& GetCurrentState() const { return currentState; }
-    [[nodiscard]] const LocationsStates::State& GetLastSeenState() const { return lastSeenState; }
+    const LocationsStates::State& GetCurrentState() const { return currentState; }
 
     void LoadNewGameStateFromFilesystem()
     {
@@ -164,32 +170,22 @@ public:
             return;
         }
         
-        // Clear current state
-        currentState.clear();
-        
-        // Process root village folder files
-        LocationsStates::LocationObjects rootObjects;
-        for (const auto& entry : fs::directory_iterator(villagePath)) {
-            if (entry.is_regular_file()) {
-                LocationsStates::Object obj;
-                obj.name = entry.path().stem().string();  // filename without extension
-                obj.type = entry.path().extension().string();
-                // Remove the leading dot from extension
-                if (!obj.type.empty() && obj.type[0] == '.') {
-                    obj.type = obj.type.substr(1);
-                }
-                if (!obj.type.empty()) {
-                    rootObjects.push_back(obj);
-                }
-            }
+        std::set<std::string> registeredLocations;
+        for (const auto& [locationName, isRegistered] : currentState.registeredLocations) {
+            registeredLocations.insert(locationName);
         }
-        currentState[""] = rootObjects;
-        
+
+        std::set<std::string> registeredEntities;
+        for (const auto& [entityKey, locations] : currentState.registeredEntities) {
+            registeredEntities.insert(entityKey);
+        }
+
+        // Clear current state
+        currentState = {};
         // Process subfolders (depth 1)
         for (const auto& entry : fs::directory_iterator(villagePath)) {
             if (entry.is_directory()) {
                 std::string subfolderName = entry.path().filename().string();
-                LocationsStates::LocationObjects subfolderObjects;
                 
                 // Scan files inside this subfolder
                 for (const auto& fileEntry : fs::directory_iterator(entry.path())) {
@@ -245,33 +241,35 @@ public:
                                 }
                             }
                             
-                            subfolderObjects.push_back(obj);
+                            currentState.registeredEntities[std::format("{}.{}", obj.name, obj.type)].insert(subfolderName);
                         }
                     }
                 }
-                
-                currentState[subfolderName] = subfolderObjects;
+                currentState.registeredLocations[subfolderName] = true;
             }
+        }
+
+        for (const auto& entityKey : registeredEntities) {
+            currentState.registeredEntities.try_emplace(entityKey, std::set<std::string>{});
+        }
+
+        for (const auto& locationName : registeredLocations) {
+            currentState.registeredLocations.try_emplace(locationName, false);
         }
         
         Logger::Log("Loaded game state from village folder");
     }
 
-    void AddToWorldState(const World::Entity::TagName& tagName) {
+    void RegisterInWorldState(const World::Entity::TagName& tagName) {
+        const auto key = std::format("{}.{}", tagName.name, tagName.type);
 
         const auto locationName = MapManager::GetCurrentMapName();
-        const auto locationObjects = lastSeenState.find(locationName);
-        if (locationObjects == lastSeenState.end()) {
+        auto& entity = currentState.registeredEntities[key];
+        if (entity.contains(locationName)) {
             return;
         }
+        entity.insert(locationName);
 
-        const auto object = std::find_if(locationObjects->second.begin(), locationObjects->second.end(), [&tagName](const LocationsStates::Object& object) {
-            return object.name == tagName.name && object.type == tagName.type;
-        });
-        if (object != locationObjects->second.end()) {
-            return;
-        }
-        
         const auto villageDir = std::filesystem::path("village") / locationName;
         const auto filename = std::format("{}.{}", tagName.name, tagName.type);
         
@@ -281,11 +279,7 @@ public:
         
         // Create new file without .txt extension
         FileSystemManager::CreateKeyFile(villageDir.string(), filename);
-
-        lastSeenState[locationName].push_back(LocationsStates::Object{
-            .name = tagName.name,
-            .type = tagName.type,
-        });
+        EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
     }
 
     void RemoveFromWorldState(const World::Entity::TagName& tagName) {
@@ -299,20 +293,20 @@ public:
         FileSystemManager::DeleteKeyFile(villageDir.string(), oldFilenameWithTxt);
         FileSystemManager::DeleteKeyFile(villageDir.string(), filename);
         
-        lastSeenState[locationName].erase(std::remove_if(lastSeenState[locationName].begin(), lastSeenState[locationName].end(), [&tagName](const LocationsStates::Object& object) {
-            return object.name == tagName.name && object.type == tagName.type;
-        }), lastSeenState[locationName].end());
+        const auto key = std::format("{}.{}", tagName.name, tagName.type);
+        if (currentState.registeredEntities.contains(key)) {
+            currentState.registeredEntities[key].erase(locationName);
+        }
     }
 
 private:
     LocationsStates::State currentState;
-    LocationsStates::State lastSeenState;
-
-    PersistentState persistentState;
 
     Events::Handler onWindowFocused;
     Events::Handler onClearWorldState;
     Events::Handler onChangeLocation;
+    Events::Handler onEntityDestroyed;
+    Events::Handler onLocationChanged;
 
     std::optional<NextLocation> nextLocation;
 };
@@ -321,30 +315,19 @@ void WorldState::Initiate() {
     GameStateManager::instance().Initiate();
 }
 
-LocationsStates::LocationChanges WorldState::SyncLocationAndGetChanges(const LocationsStates::LocationName& locationName) { 
-    return GameStateManager::instance().SyncLocationAndGetChanges(locationName);
+void WorldState::Destroy() {
+    GameStateManager::instance().Destroy();
+}
+
+void WorldState::RegisterInWorldState(const World::Entity::TagName& tagName) {
+    GameStateManager::instance().RegisterInWorldState(tagName);
+}
+
+void WorldState::Update() {
+    GameStateManager::instance().Update();
 }
 
 const LocationsStates::State& WorldState::GetCurrentState() {
     return GameStateManager::instance().GetCurrentState();
 }
 
-const LocationsStates::State& WorldState::GetLastSeenState() {
-    return GameStateManager::instance().GetLastSeenState();
-}
-
-void WorldState::Destroy() {
-    GameStateManager::instance().Destroy();
-}
-
-void WorldState::AddToWorldState(const World::Entity::TagName& tagName) {
-    GameStateManager::instance().AddToWorldState(tagName);
-}
-
-void WorldState::RemoveFromWorldState(const World::Entity::TagName& tagName) {
-    GameStateManager::instance().RemoveFromWorldState(tagName);
-}
-
-void WorldState::Update() {
-    GameStateManager::instance().Update();
-}

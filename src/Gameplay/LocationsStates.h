@@ -2,10 +2,11 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <set>
+#include <map>
 
 namespace LocationsStates {
-    using LocationName = std::string;
+//    using LocationName = std::string;
     struct Object
     {
         std::string name;
@@ -13,12 +14,19 @@ namespace LocationsStates {
 
         auto operator<=>(const Object&) const = default;
     };
-    using LocationObjects = std::vector<Object>;
-    using State = std::unordered_map<LocationName, LocationObjects>;
+//    struct LocationChanges
+//    {
+//        LocationObjects added;
+//        LocationObjects removed;
+//    };
+//    
+//    using LocationObjects = std::vector<Object>;
+//    using State = std::unordered_map<LocationName, LocationObjects>;
 
-    struct LocationChanges
+    struct State
     {
-        LocationObjects added;
-        LocationObjects removed;
+        std::map<std::string, bool> registeredLocations;
+        std::map<std::string, std::set<std::string>> registeredEntities;
     };
+
 }

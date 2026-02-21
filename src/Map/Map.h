@@ -10,6 +10,8 @@ namespace MapManager {
     [[nodiscard]] bool LoadLastLoadedLevel();
     void DestroyEntity(const std::string& name, const std::string& type);
 
+    void Initialize();
+    void Destroy();
     void Update(float deltaTime);
     void Render(float deltaTime);
     void ReloadMap();

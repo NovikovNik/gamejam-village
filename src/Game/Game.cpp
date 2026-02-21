@@ -44,7 +44,7 @@ Game::~Game() {
 }
 
 void Game::Initialize() {
-
+    MapManager::Initialize();
     Renderer::Initialize(windowWidth, windowHeight);
     AudioSystem::Initialize();
     AudioSystem::LoadAllSounds("assets/audio/");
@@ -105,6 +105,7 @@ void Game::Destroy() {
     WorldState::Destroy();
     DialogSystemManager::Destroy();
     GameplayLogic::Destroy();
+    MapManager::Destroy();
 }
 
 void Game::ProcessInput() {

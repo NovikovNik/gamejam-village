@@ -152,58 +152,32 @@ public:
             }
 
             if (ImGui::BeginTabItem("World State")) {
-                ImGui::Text("Objects by location (current vs last seen)");
-                ImGui::Separator();
-                const auto& current = WorldState::GetCurrentState();
-                const auto& lastSeen = WorldState::GetLastSeenState();
-                std::set<std::string> allLocations;
-                for (const auto& [loc, _] : current) allLocations.insert(loc);
-                for (const auto& [loc, _] : lastSeen) allLocations.insert(loc);
-                for (const auto& locationName : allLocations) {
-                    const auto& curObjs = current.count(locationName) ? current.at(locationName) : LocationsStates::LocationObjects{};
-                    const auto& lastObjs = lastSeen.count(locationName) ? lastSeen.at(locationName) : LocationsStates::LocationObjects{};
-                    LocationsStates::LocationObjects added, removed;
-                    for (const auto& o : curObjs) {
-                        if (std::find(lastObjs.begin(), lastObjs.end(), o) == lastObjs.end())
-                            added.push_back(o);
-                    }
-                    for (const auto& o : lastObjs) {
-                        if (std::find(curObjs.begin(), curObjs.end(), o) == curObjs.end())
-                            removed.push_back(o);
-                    }
-                    const bool hasChanges = !added.empty() || !removed.empty();
-                    const char* label = locationName.empty() ? "(root)" : locationName.c_str();
-                    if (hasChanges) {
-                        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.3f, 0.5f, 0.3f, 0.6f));
-                    }
-                    if (ImGui::TreeNode(label)) {
-                        if (hasChanges) ImGui::PopStyleColor();
-                        ImGui::Text("Current: %zu | Last seen: %zu", curObjs.size(), lastObjs.size());
-                        if (!added.empty()) {
-                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.8f, 0.2f, 1.f));
-                            ImGui::Text("Added (%zu):", added.size());
-                            ImGui::PopStyleColor();
-                            for (const auto& o : added)
-                                ImGui::BulletText("%s.%s", o.name.c_str(), o.type.c_str());
-                        }
-                        if (!removed.empty()) {
-                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.3f, 0.2f, 1.f));
-                            ImGui::Text("Removed (%zu):", removed.size());
-                            ImGui::PopStyleColor();
-                            for (const auto& o : removed)
-                                ImGui::BulletText("%s.%s", o.name.c_str(), o.type.c_str());
-                        }
-                        if (added.empty() && removed.empty()) {
-                            for (const auto& o : curObjs)
-                                ImGui::BulletText("%s.%s", o.name.c_str(), o.type.c_str());
-                        }
-                        ImGui::TreePop();
-                    } else if (hasChanges) {
+                const auto& state = WorldState::GetCurrentState();
+                if (state.registeredEntities.empty()) {
+                    ImGui::TextDisabled("(no entities registered)");
+                } else {
+                    ImGui::Text("Registered Entities");
+                    ImGui::Separator();
+                    for (const auto& [entityKey, locations] : state.registeredEntities) {
+                        const char* label = entityKey.empty() ? "(root)" : entityKey.c_str();
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.4f, 1.f));
+                        ImGui::Text("%s (%zu)", label, locations.size());
                         ImGui::PopStyleColor();
+                        for (const auto& location : locations) {
+                            ImGui::BulletText("%s", location.c_str());
+                        }
                     }
-                }
-                if (allLocations.empty()) {
-                    ImGui::Text("No location data (focus window to refresh from village/)");
+                    ImGui::Separator();
+                    ImGui::Text("Active Locations");
+                    ImGui::Separator();
+                    for (const auto& location : state.registeredLocations) {
+                        ImGui::BulletText("%s", location.first.c_str());
+                        if (location.second) {
+                            ImGui::Text("Active");
+                        } else {
+                            ImGui::Text("Not active");
+                        }
+                    }
                 }
                 ImGui::EndTabItem();
             }
