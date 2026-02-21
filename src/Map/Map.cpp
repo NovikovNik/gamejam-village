@@ -46,7 +46,7 @@ public:
         entitiesManager.Clear();
     }
 
-    void OnWorldStateUpdated(WorldStateUpdatedEvent& event) {
+    void Sync() {
         const auto& state = WorldState::GetCurrentState();
 
         const auto locationName = GetCurrentMapName();
@@ -73,7 +73,7 @@ public:
                 .textureId = make_nnTex("animation-template"),
             };
             const auto entity = DestroyEntity(name, type, true);
-            if (entity != nullptr) {
+            if (entity != nullptr && !isInitialSync) {
                entitiesManager.SpawnEntity<World::Effect>(entity->GetPosition().x, entity->GetPosition().y, 64, 64, animation);
             }
         }
@@ -82,7 +82,7 @@ public:
             const auto name = entityKey.substr(0, entityKey.find('.'));
             const auto type = entityKey.substr(entityKey.find('.') + 1);
             if (locations.contains(locationName)) {
-                Renderer::AnimationHandle animation = Renderer::AnimationHandle{
+                Renderer::AnimationHandle animation = Renderer::AnimationHandle {
                     .numOfFrames = 16,
                     .maxElementsPerRow = 4,
                     .frameSize = 64,
@@ -90,11 +90,18 @@ public:
                     .textureId = make_nnTex("animation-template"),
                 };
                 const auto entity = SpawnEntity(name, type, true); 
-                if (entity != nullptr) {
+                if (entity != nullptr && !isInitialSync) {
                     entitiesManager.SpawnEntity<World::Effect>(entity->GetPosition().x, entity->GetPosition().y, 64, 64, animation);
                 }
             }
         }
+
+        isInitialSync = false;
+
+    }
+
+    void OnWorldStateUpdated(WorldStateUpdatedEvent& event) {
+        Sync();
     }
 
     [[nodiscard]] bool LoadMap(const std::string& filename) {
@@ -504,6 +511,8 @@ private:
     Events::Handler onWorldStateUpdated;
     std::set<World::Entity::TagName> newInteractedEntities;
     std::set<World::Entity::TagName> prevInteractedEntities;
+
+    bool isInitialSync = true;
 };
 
 namespace MapManager {

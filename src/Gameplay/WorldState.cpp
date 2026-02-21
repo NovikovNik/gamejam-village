@@ -40,6 +40,7 @@ class GameStateManager: public Singleton<GameStateManager>
 public:
     void Initiate()
     {
+        Sync();
         onWindowFocused = EventBus::instance().SubscribeToEvent<WindowFocusedEvent>(this, &GameStateManager::OnWindowFocused);
         onClearWorldState = EventBus::instance().SubscribeToEvent<ClearWorldStateEvent>(this, &GameStateManager::OnClearWorldState);
         onChangeLocation = EventBus::instance().SubscribeToEvent<ChangeLocationEvent>(this, &GameStateManager::OnChangeLocation);
@@ -91,7 +92,7 @@ public:
         nextLocation.reset();
     }
 
-    void OnWindowFocused(WindowFocusedEvent&)
+    void Sync()
     {
         Logger::Log("[WorldState] Window focused");
         LoadNewGameStateFromFilesystem();
@@ -112,7 +113,11 @@ public:
             };
             backupLocationPath = currentLocation;
         }
+    }
 
+    void OnWindowFocused(WindowFocusedEvent&)
+    {
+        Sync();
         EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
     }
 
