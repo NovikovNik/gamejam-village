@@ -6,7 +6,7 @@ bool World::ETiles::Update(float deltaTime) {
 
 void World::ETiles::Render(float deltaTime) {
     for (const auto& tile : tiles) {
-        Renderer::DrawSprite(tile.texture, tile.x, tile.y, tile.width, tile.height);
+        Renderer::DrawSprite(tile.texture, tile.x, tile.y, tile.width, tile.height, false, tile.tiled);
     }
 }
 

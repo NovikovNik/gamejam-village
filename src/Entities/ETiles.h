@@ -14,6 +14,7 @@ namespace World {
             float width;
             float height;
             Renderer::TextureId texture;
+            bool tiled;
         };
     public:
         bool Update(float deltaTime) override;

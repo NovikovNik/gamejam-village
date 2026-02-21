@@ -279,6 +279,7 @@ public:
                 tile.height = tileJson["height"].get<float>();
                 std::string textureName = tileJson["texture"].get<std::string>();
                 tile.texture = make_nnTex(textureName);
+                tile.tiled = tileJson.contains("tiled") ? tileJson["tiled"].get<bool>() : false;
                 alwaysOnTopTilesData.push_back(tile);
             }
             alwaysOnTopTiles->LoadTiles(alwaysOnTopTilesData);
