@@ -65,7 +65,7 @@ void World::Camera::Update(float dt) {
     // Временная система ограничений камеры на уровень
     std::string currentLocationName = MapManager::GetCurrentMapName();
     if (!currentLocationName.empty()) {
-        if (currentLocationName == "world-entry-2") {
+        if (currentLocationName == "backroad") {
             if (positionY > -25.0) {
                 positionY = -25.0;
             }

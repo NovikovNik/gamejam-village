@@ -74,13 +74,13 @@ namespace {
         void OnDialogEnded(DialogEndedEvent& e) {
             Logger::Log(std::format("[Gameplay][Intro] DialogEnded: {}", e.dialogId));
             if (e.characterId == "Intro" && e.dialogId == "intro-1") {
-                EventBus::instance().EmitEvent<ChangeLocationEvent>("assets/maps/world-entry-2.json");
+                EventBus::instance().EmitEvent<ChangeLocationEvent>("assets/maps/backroad.json");
             }
         }
 
         void OnLocationChanged(LocationChangedEvent& e) {
             penchamentEntity = nullptr;
-            if (e.locationName == "world-entry-2") {
+            if (e.locationName == "backroad") {
                 ::GameplayLogic::LoadGameAct(GameActIds::Tutorial);
             }
         }
@@ -98,8 +98,8 @@ namespace {
     class ActTutorial: public GameAct {
     public:
         void Initialize() {
-            if (MapManager::GetCurrentMapName() != "world-entry-2") {
-                Logger::Err("Tutorial act can only be loaded on world-entry-2 map");
+            if (MapManager::GetCurrentMapName() != "backroad") {
+                Logger::Err("Tutorial act can only be loaded on backroad map");
                 return;
             }
             // Скейл такой выверен на глаз

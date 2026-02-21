@@ -83,7 +83,7 @@ void Game::Initialize() {
     }
 
     // В редких ситуациях из игрового процесса придет сигнал на выход из игры
-    // Например, если игрок создаст файл kick-my.ass в world-entry-2 локации
+    // Например, если игрок создаст файл kick-my.ass в backroad локации
     onGameShutdown = EventBus::instance().SubscribeToEvent<GameShutdownEvent>(this, &Game::OnGameShutdown);
 }
 
