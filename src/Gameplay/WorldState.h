@@ -13,6 +13,9 @@ namespace WorldState {
     void Update();
 
     void RegisterInWorldState(const World::Entity::TagName& tagName);
+    void RemoveFromWorldState(const World::Entity::TagName& tagName);
 
+    void SetCurrentState(const LocationsStates::State& state);
     [[nodiscard]] const LocationsStates::State& GetCurrentState();
+    [[nodiscard]] const std::map<std::string, std::set<std::string>>& GetRegisteredEntities();
 }

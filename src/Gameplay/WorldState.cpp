@@ -157,6 +157,8 @@ public:
 //    }
 
     const LocationsStates::State& GetCurrentState() const { return currentState; }
+    void SetCurrentState(const LocationsStates::State& state) { currentState = state; }
+    const std::map<std::string, std::set<std::string>>& GetRegisteredEntities() const { return currentState.registeredEntities; }
 
     void LoadNewGameStateFromFilesystem()
     {
@@ -329,5 +331,17 @@ void WorldState::Update() {
 
 const LocationsStates::State& WorldState::GetCurrentState() {
     return GameStateManager::instance().GetCurrentState();
+}
+
+void WorldState::SetCurrentState(const LocationsStates::State& state) {
+    GameStateManager::instance().SetCurrentState(state);
+}
+
+const std::map<std::string, std::set<std::string>>& WorldState::GetRegisteredEntities() {
+    return GameStateManager::instance().GetRegisteredEntities();
+}
+
+void WorldState::RemoveFromWorldState(const World::Entity::TagName& tagName) {
+    GameStateManager::instance().RemoveFromWorldState(tagName);
 }
 

@@ -6,7 +6,9 @@
 #include <glm/glm.hpp>
 #include "PlayerSaveData.h"
 #include "AudioSaveData.h"
+#include "WorldSaveData.h"
 #include <AudioSystem/AudioSystem.h>
+#include <Gameplay/WorldState.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
 
 class ProgressSystem: public Singleton<ProgressSystem> {
@@ -33,9 +35,13 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             audioSaveData.sfxVolume    = AudioSystem::GetSfxVolume();
             audioSaveData.muted        = AudioSystem::IsMuted();
 
+            // Snapshot current world state before writing.
+            worldSaveData.state = WorldState::GetCurrentState();
+
             nlohmann::json j;
             playerSaveData.ToJson(j);
             audioSaveData.ToJson(j["audio"]);
+            worldSaveData.ToJson(j["world"]);
             AppDataSaveHelper::SaveGameJson(j);
             dirty = false;
             Logger::Log("[ProgressSystem] Data saved");
@@ -47,10 +53,12 @@ class ProgressSystem: public Singleton<ProgressSystem> {
                 Logger::Warn("[ProgressSystem] Failed to load save file, using defaults");
                 playerSaveData.ResetToDefaults();
                 audioSaveData.ResetToDefaults();
+                worldSaveData.ResetToDefaults();
                 return;
             }
             playerSaveData.FromJson(j);
             audioSaveData.FromJson(j.value("audio", nlohmann::json::object()));
+            worldSaveData.FromJson(j.value("world", nlohmann::json::object()));
             Logger::Log("[ProgressSystem] Data loaded");
         }
 
@@ -65,10 +73,16 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             return audioSaveData;
         }
 
+        WorldSaveData& World() {
+            dirty = true;
+            return worldSaveData;
+        }
+
     private:
         bool dirty = false;
         PlayerSaveData playerSaveData;
         AudioSaveData  audioSaveData;
+        WorldSaveData  worldSaveData;
 };
 
 void ProgressSystemManager::Initialize() {
@@ -89,4 +103,8 @@ PlayerSaveData& ProgressSystemManager::Player() {
 
 AudioSaveData& ProgressSystemManager::Audio() {
     return ProgressSystem::instance().Audio();
+}
+
+WorldSaveData& ProgressSystemManager::World() {
+    return ProgressSystem::instance().World();
 }

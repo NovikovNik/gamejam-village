@@ -76,6 +76,8 @@ void Game::Initialize() {
         isRunning = true;
     }
     WorldState::Initiate();
+    // Restore world state from save file (overrides the filesystem scan on first frame).
+    WorldState::SetCurrentState(ProgressSystemManager::World().state);
 
     // В редких ситуациях из игрового процесса придет сигнал на выход из игры
     // Например, если игрок создаст файл kick-my.ass в world-entry-2 локации
