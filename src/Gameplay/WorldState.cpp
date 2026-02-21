@@ -80,6 +80,7 @@ public:
         bool isLoaded = MapManager::LoadMap(nextLocation->locationPath);
         if (isLoaded) {
             if (!nextLocation->spawnPoint.empty()) {
+                Logger::Log(std::format("[WorldState] Setting player position to spawn point: {}", nextLocation->spawnPoint));
                 MapManager::SetPlayerPositionToSpawnPoint(nextLocation->spawnPoint);
             }
             ProgressSystemManager::Player().lastLevel = nextLocation->locationPath;

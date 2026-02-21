@@ -12,7 +12,7 @@ namespace World {
 
         void LoadData(Renderer::TextureId texture, float width, float height);
 
-        void SetPosition(float x, float y);
+        virtual void SetPosition(float x, float y);
         glm::vec2 GetPosition() const;
         float GetWidth() const { return width; }
         float GetHeight() const { return height; }

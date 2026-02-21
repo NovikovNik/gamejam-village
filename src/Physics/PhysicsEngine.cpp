@@ -434,6 +434,30 @@ public:
         }, dynamicObjects[index]);
     }
 
+    void SetObjectPosition(Physics::ObjectId objectId, float x, float y) {
+        auto setPos = [x, y](auto& obj) {
+            obj.x = x;
+            obj.y = y;
+            obj.velocityX = 0.f;
+            obj.velocityY = 0.f;
+        };
+        {
+            auto it = std::find(dynamicObjectsIds.begin(), dynamicObjectsIds.end(), objectId);
+            if (it != dynamicObjectsIds.end()) {
+                const auto index = std::distance(dynamicObjectsIds.begin(), it);
+                std::visit(setPos, dynamicObjects[index]);
+                return;
+            }
+        }
+        {
+            auto it = std::find(kinematicObjectsIds.begin(), kinematicObjectsIds.end(), objectId);
+            if (it != kinematicObjectsIds.end()) {
+                const auto index = std::distance(kinematicObjectsIds.begin(), it);
+                std::visit(setPos, kinematicObjects[index]);
+            }
+        }
+    }
+
     [[nodiscard]] bool TryRemoveDynamicObject(Physics::ObjectId objectId) {
         auto it = std::find(dynamicObjectsIds.begin(), dynamicObjectsIds.end(), objectId);
         if (it == dynamicObjectsIds.end()) {
@@ -560,6 +584,10 @@ namespace Physics {
 
     void AddImpulse(ObjectId objectId, float x, float y) {
         PhysicsManager::instance().AddImpulse(objectId, x, y);
+    }
+
+    void SetObjectPosition(ObjectId objectId, float x, float y) {
+        PhysicsManager::instance().SetObjectPosition(objectId, x, y);
     }
 
     void RemoveObject(ObjectId objectId) {

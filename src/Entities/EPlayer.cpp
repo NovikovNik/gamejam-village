@@ -243,6 +243,13 @@ bool World::EPlayer::Update(float deltaTime) {
     physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth() * 0.5f, GetHeight() * 0.9f, 10.f, (1 << 0) | (1 << 1) | (1 << 2));
 }
 
+void World::EPlayer::SetPosition(float x, float y) {
+    EMovable::SetPosition(x, y);
+    if (physicsObjectId != Physics::ObjectId{}) {
+        Physics::SetObjectPosition(physicsObjectId, x, y);
+    }
+}
+
 void World::EPlayer::SetTooltipTexture(Renderer::TextureId texture, float w, float h) {
     tooltipTexture = texture;
     tooltipWidth = w;

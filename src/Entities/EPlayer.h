@@ -14,6 +14,7 @@ namespace World {
         void Render(float deltaTime) override;
 
         void OnSpawn(float x, float y, float w, float h) override;
+        void SetPosition(float x, float y) override;
         void OnMoved(float deltaTime);
 
         virtual void SetTooltipTexture(Renderer::TextureId texture, float w, float h);

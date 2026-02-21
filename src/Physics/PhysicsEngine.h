@@ -21,6 +21,7 @@ namespace Physics {
     [[nodiscard]] ObjectId CreateKinematicRectangle(float x, float y, float width, float height);
 
     void AddImpulse(ObjectId objectId, float x, float y);
+    void SetObjectPosition(ObjectId objectId, float x, float y);
     void RemoveObject(ObjectId objectId);
 
     void TraceCircle(ObjectId objectId, float radius);
