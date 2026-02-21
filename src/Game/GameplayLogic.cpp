@@ -127,13 +127,13 @@ namespace {
         void OnEntityDestroyed(EntityDestroyedEvent& e) {
             // Тут запускаем диалог после удаления старейшины
             Logger::Log(std::format("[Gameplay][Tutorial] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
-            if (e.GetName() == "Elder") {
+            if (e.GetName() == "Guard") {
                 // На случай если игрок попробует удалить старейшину пока идет диалог с ним
                 // мы завершим диалог и запустим новый
                 if (DialogSystemManager::IsDialogActive()) {
                     DialogSystemManager::EndDialog();
                 }
-                DialogSystemManager::StartDialog("Elder", "dialog-after-deleted");
+                DialogSystemManager::StartDialog("Guard", "dialog-after-deleted");
             }
             if (e.GetName() == "Road_Sign") {
                 // Игрок может удалить дорожный знак — он останется на карте, но это будет
@@ -145,7 +145,7 @@ namespace {
 
         void OnDialogEnded(DialogEndedEvent& e) {
             Logger::Log(std::format("[Gameplay][Intro] DialogEnded: {}", e.dialogId));
-            if (e.characterId == "Elder" && e.dialogId == "dialog-1") {
+            if (e.characterId == "Guard" && e.dialogId == "dialog-1") {
                 ProgressSystemManager::Player().fileSystemIconVisible = true;
                 ProgressSystemManager::SaveData();
             }
@@ -154,12 +154,12 @@ namespace {
         // Последний диалог dialog-8 (про kick-my-ass)
         void OnInteractWithEntity(InteractWithEntityEvent& e) {
             Logger::Log(std::format("[Gameplay][Tutorial] InteractWithEntity: {}", e.entityId));
-            if (e.entityId == "Elder") {
-                if (elderInteractionsCount < 8) {
-                    elderInteractionsCount++;
+            if (e.entityId == "Guard") {
+                if (guardInteractionsCount < 8) {
+                    guardInteractionsCount++;
                 }
-                std::string dialogId = std::format("dialog-{}", std::to_string(elderInteractionsCount));
-                DialogSystemManager::StartDialog("Elder", dialogId);
+                std::string dialogId = std::format("dialog-{}", std::to_string(guardInteractionsCount));
+                DialogSystemManager::StartDialog("Guard", dialogId);
             }
 
             if (e.entityId == "Road_Sign") {
@@ -182,7 +182,7 @@ namespace {
         Events::Handler onDialogEnded;
         Events::Handler onLocationChanged;
 
-        int elderInteractionsCount = 0;
+        int guardInteractionsCount = 0;
     };
 
     /* Основной акт, который может быть запущен несколько раз. В основном работает в хабе игры */
@@ -249,6 +249,9 @@ public:
         // Если в сохранке есть другой акт, то загружаем его
         if (saved == GameActIds::Tutorial) {
             id = GameActIds::Tutorial;
+        }
+        if (saved == GameActIds::Main) {
+            id = GameActIds::Main;
         }
 
         nextGameAct = CreateGameAct(id);

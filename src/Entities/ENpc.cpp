@@ -7,6 +7,12 @@
 World::ENpc::ENpc(const std::string& name) : EInteractable(make_nnInteractId(name)) {
     const auto textureId = make_nnTex(std::format("npc_{}", name));
     LoadData(textureId, 64, 64);
+
+    animationIdle.textureId = make_nnTex(std::format("npc_{}_idle", name));
+    animationIdle.numOfFrames = 6;
+    animationIdle.maxElementsPerRow = 6;
+    animationIdle.frameSize = 64;
+    animationIdle.frameDelay = 0.15f;
 }
 
 bool World::ENpc::Update(float deltaTime) {
@@ -14,7 +20,11 @@ bool World::ENpc::Update(float deltaTime) {
 }
 
 void World::ENpc::Render(float deltaTime) {
-    Renderer::DrawSprite(texture, positionX, positionY, width, height, 0.0, horizontalFlip);
+    if (Renderer::HasTexture(animationIdle.textureId)) {
+        Renderer::RenderAnimation(animationIdle, deltaTime, positionX, positionY, width, height, horizontalFlip);
+    } else {
+        Renderer::DrawSprite(texture, positionX, positionY, width, height, 0.0, horizontalFlip);
+    }
 }
 
 void World::ENpc::Interact() {

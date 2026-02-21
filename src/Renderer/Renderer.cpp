@@ -92,6 +92,11 @@ public:
         }
     }
 
+    bool HasTexture(const Renderer::TextureId textureId) const {
+        const auto it = textures.find(textureId);
+        return it != textures.end() && it->second != nullptr;
+    }
+
     void LoadFont(const std::filesystem::path& fontPath) {
         std::string path = fontPath.string();
         std::string id = fontPath.filename().stem().string();
@@ -509,6 +514,10 @@ void Renderer::LoadAllTextures(const std::string& directory) {
 
 void Renderer::LoadAllFonts(const std::string& directory) {
     RenderManager::instance().LoadAllFonts(directory);
+}
+
+bool Renderer::HasTexture(const Renderer::TextureId textureId) {
+    return RenderManager::instance().HasTexture(textureId);
 }
 
 void Renderer::DrawText(Renderer::TextId fontId, const std::string& text, float x, float y, int fontSize, const SDL_Color* color, int maxLineWidth) {

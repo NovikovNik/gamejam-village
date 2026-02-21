@@ -30,6 +30,8 @@ namespace Renderer {
     void SetCameraPosition(float x, float y);
     void LoadAllTextures(const std::string& directory);
     void LoadAllFonts(const std::string& directory);
+    /// Проверяет, загружена ли текстура (существует ли анимация/спрайт с таким id).
+    [[nodiscard]] bool HasTexture(const TextureId textureId);
     /// maxLineWidth: 0 = без переноса; >0 = макс. ширина строки в пикселях (перенос по словам)
     void DrawText(TextId fontId, const std::string& text, float x, float y, int fontSize = 16, const SDL_Color* color = nullptr, int maxLineWidth = 0);
     /// Текст в экранных координатах (без учёта камеры) — для UI. maxLineWidth: 0 = без переноса; >0 = перенос по словам

@@ -29,13 +29,6 @@
     "boxes": [],
     "tiles": [
         {
-            "x": 0.0,
-            "y": 482.14727783203125,
-            "width": 32.0,
-            "height": 32.0,
-            "texture": "test-texture"
-        },
-        {
             "x": 45.0,
             "y": -25.0,
             "width": 640.0,
@@ -45,9 +38,9 @@
     ],
     "npcs": [
         {
-            "x": 300.01416015625,
-            "y": -7.539287567138672,
-            "name": "Elder",
+            "x": 290.4095764160156,
+            "y": 0.041107177734375,
+            "name": "Guard",
             "spawnOnStart": true
         }
     ],
@@ -67,7 +60,13 @@
             "name": "Player"
         }
     ],
-    "spawnPoints": [],
+    "spawnPoints": [
+        {
+            "x": 273.1788330078125,
+            "y": -2.851778030395508,
+            "name": "main"
+        }
+    ],
     "levelChangeTriggers": [
         {
             "name": "LevelChangeTriggers",

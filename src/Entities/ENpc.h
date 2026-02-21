@@ -2,6 +2,7 @@
 
 #include "EInteractable.h"
 #include <Physics/PhysicsEngine.h>
+#include <Renderer/Renderer.h>
 
 namespace World {
     class ENpc : public EInteractable {
@@ -23,5 +24,7 @@ namespace World {
         std::string name;
 
         Physics::ObjectId physicsColliderId;
+
+        Renderer::AnimationHandle animationIdle;
     };
 }
