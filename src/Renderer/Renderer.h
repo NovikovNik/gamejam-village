@@ -42,4 +42,17 @@ namespace Renderer {
     void ProcessImGuiEvent(SDL_Event* event);
     void BeginImGuiFrame();
     void EndImGuiFrame();
+
+    struct AnimationHandle{
+        int numOfFrames{};
+        int maxElementsPerRow{};
+        int frameSize{};
+        float frameDelay{};
+        int currentFrameId{};
+        float currentFrameTime{};
+
+        TextureId textureId{};
+    };
+
+    bool RenderAnimation(AnimationHandle& animationHandle, float deltaTime, float x, float y, float width, float height, bool horizontalFlip = false);
 }

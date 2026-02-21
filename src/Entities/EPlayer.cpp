@@ -24,6 +24,12 @@ namespace
 World::EPlayer::EPlayer(const std::string& name, float x, float y) : name(name) {
     LoadData("player"_nnTex, x, y, 64, 64);
     footstepTimer = FOOTSTEP_INTERVAL;
+
+    animationIdle.textureId = make_nnTex("player_idle");
+    animationIdle.numOfFrames = 5;
+    animationIdle.maxElementsPerRow = 5;
+    animationIdle.frameSize = 64;
+    animationIdle.frameDelay = 0.25f;
 }
 
 bool World::EPlayer::Update(float deltaTime) {
@@ -258,7 +264,7 @@ void World::EPlayer::OnMoved(float deltaTime) {
 }
 
 void World::EPlayer::Render(float deltaTime) {
-    Renderer::DrawSprite(texture, positionX, positionY, width, height, 0.0, horizontalFlip);
+    Renderer::RenderAnimation(animationIdle, deltaTime, positionX, positionY, width, height, horizontalFlip);
 
     if (GameFeatures::isDebug) {
         const auto& pos = GetPosition();

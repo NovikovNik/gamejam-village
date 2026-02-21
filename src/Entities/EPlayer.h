@@ -3,6 +3,7 @@
 #include "EMovable.h"
 #include <glm/glm.hpp>
 #include <Events/InterectButtonPressedEvent.h>
+#include <Renderer/Renderer.h>
 
 namespace World {
     class EPlayer : public EMovable {
@@ -34,7 +35,8 @@ namespace World {
         float tooltipHeight = 32.0f;
 
         Events::Handler onInterectButtonPressed;
-
+        Renderer::AnimationHandle animationIdle;
+        
         class EInteractable* currentInteractable = nullptr;
     };
 }
