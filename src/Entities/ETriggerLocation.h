@@ -21,5 +21,8 @@ namespace World {
         const std::string spawnPointMatch;
 
         Physics::ObjectId physicsTriggerId{};
+        Renderer::TextureId voidTextureId{};
+
+        bool isLocationAvailable = true;
     };
 }
