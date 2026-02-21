@@ -3,8 +3,6 @@
 #include <SDL3/SDL.h>
 #include <Logger/Logger.h>
 #include <EventBus/EventBus.h>
-#include <Events/WindowFocusedEvent.h>
-#include <Events/WindowUnfocusedEvent.h>
 #include <Events/PlaySoundEvent.h>
 #include <Events/PlayMusicEvent.h>
 
@@ -39,8 +37,6 @@ float g_sfxVolume    = 1.0f;
 float g_musicVolume  = 0.8f;
 bool  g_muted        = false;
 
-Events::Handler g_onFocused;
-Events::Handler g_onUnfocused;
 Events::Handler g_onPlaySound;
 Events::Handler g_onPlayMusic;
 
@@ -99,16 +95,6 @@ void Initialize() {
     SDL_SetAudioDeviceGain(g_device, g_masterVolume);
     Logger::Log("[AudioSystem] Initialized");
 
-    g_onFocused = EventBus::instance().SubscribeToEvent<WindowFocusedEvent>(
-        [](WindowFocusedEvent&) {
-            if (g_device) SDL_ResumeAudioDevice(g_device);
-        });
-
-    g_onUnfocused = EventBus::instance().SubscribeToEvent<WindowUnfocusedEvent>(
-        [](WindowUnfocusedEvent&) {
-            if (g_device) SDL_PauseAudioDevice(g_device);
-        });
-
     g_onPlaySound = EventBus::instance().SubscribeToEvent<PlaySoundEvent>(
         [](PlaySoundEvent& e) { PlaySound(e.soundId, e.volume); });
 
@@ -117,8 +103,6 @@ void Initialize() {
 }
 
 void Destroy() {
-    g_onFocused.Destroy();
-    g_onUnfocused.Destroy();
     g_onPlaySound.Destroy();
     g_onPlayMusic.Destroy();
 
