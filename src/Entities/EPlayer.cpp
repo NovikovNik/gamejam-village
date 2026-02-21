@@ -29,7 +29,7 @@ World::EPlayer::EPlayer(const std::string& name, float x, float y) : name(name) 
     animationIdle.numOfFrames = 5;
     animationIdle.maxElementsPerRow = 5;
     animationIdle.frameSize = 64;
-    animationIdle.frameDelay = 0.25f;
+    animationIdle.frameDelay = 0.15f;
 }
 
 bool World::EPlayer::Update(float deltaTime) {
