@@ -1,0 +1,58 @@
+{
+    "id": "Elder",
+    "name": "Elder",
+    "description": "",
+    "dialogs": {
+        "dialog-welcome": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "Greetings, traveler. I’m surprised you managed to enter our village. It is said to be closed to outsiders.",
+                    "size": 20,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "align": "left"
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "Thank you for delivering the letter, but I’m afraid you may be in trouble now. Everyone who has ever entered this village has become trapped here."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "Try continuing down the road to the west. Perhaps you’ll manage to leave the village. If not… come back to me again."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-go-through-location": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "I’ve already told you — head west from here. May God bless you, so that you do not fall into the trap we ourselves have fallen into."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-quest": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "Hmm. It seems you, too, have fallen into this time loop. No one can leave our village. All roads lead back to it."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "I know there is knowledge in the books in my house that could help us find an answer to our problem. But mice have infested my home, and I cannot enter it."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "Ah, if only someone like cat.vil lived in my house… Can you think of something?"
+                }
+            ],
+            "textSize": 20
+        }
+    }
+}

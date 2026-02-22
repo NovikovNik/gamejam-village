@@ -197,16 +197,38 @@ namespace {
             onEntityCreated = EventBus::instance().SubscribeToEvent<EntityCreatedEvent>(this, &MainAct::OnEntityCreated);
             onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &MainAct::OnEntityDestroyed);
             onDialogEnded = EventBus::instance().SubscribeToEvent<DialogEndedEvent>(this, &MainAct::OnDialogEnded);
+            onLocationChangedEvent = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &MainAct::OnLocationChanged);
         }
         
         void Update(float deltaTime) override {}
 
         void OnLocationChanged(LocationChangedEvent& e) {
             Logger::Log(std::format("[Gameplay][Main] LocationChanged: {}", e.locationName));
+            if (e.locationName == "backroad") {
+                locationChanged = true;
+            }
         }
 
         void OnInteractWithEntity(InteractWithEntityEvent& e) {
             Logger::Log(std::format("[Gameplay][Main] InteractWithEntity: {}", e.entityId));
+
+            if (e.entityId == "Elder") {
+                // Первый диалог со старейшиной в деревне. Он заберет письмо и попросит пройтись через деревню
+                if (!elderAskedForGoThroughLocation) {
+                    DialogSystemManager::StartDialog("Elder", "dialog-welcome");
+                    if (ProgressSystemManager::Inventory().HasItem(World::message)) {
+                        ProgressSystemManager::Inventory().RemoveItem(World::message);
+                    }
+                    elderAskedForGoThroughLocation = true;
+                } else {
+                    // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
+                    if (!locationChanged) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
+                    } else {
+                        DialogSystemManager::StartDialog("Elder", "dialog-cat-quest");
+                    }
+                }
+            }
         }
 
         void OnEntityCreated(EntityCreatedEvent& e) {
@@ -222,6 +244,11 @@ namespace {
         }
 
         private:
+        int elderInteractionsCount = 0;
+        bool locationChanged = false;
+        bool elderAskedForGoThroughLocation = false;
+
+        Events::Handler onLocationChangedEvent;
         Events::Handler onLocationChanged;
         Events::Handler onInteractWithEntity;
         Events::Handler onEntityCreated;
