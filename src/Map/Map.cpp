@@ -307,7 +307,8 @@ public:
         // Тут первый раз создаем все Entity на локации при старте игры (в файлавой директории)
         const std::string locationName = GetCurrentMapName();
         RevealLocationInFilesystem(locationName);
-        SeedInstantSpawnEntitiesInFilesystem();
+        const bool isFirstTimeVisitingLocation = !visitedLocations.contains(locationName);
+        SeedInstantSpawnEntitiesInFilesystem(isFirstTimeVisitingLocation);
         EventBus::instance().EmitEvent<ClearWorldStateEvent>();
         EventBus::instance().EmitEvent<WindowFocusedEvent>();
 
@@ -471,7 +472,7 @@ public:
         FileSystemManager::OpenSystemExplorer(fullPath.string());
     }
 
-    void SeedInstantSpawnEntitiesInFilesystem() {
+    void SeedInstantSpawnEntitiesInFilesystem(bool isFirstTimeVisitingLocation) {
         const auto* spawnersEntity = entitiesManager.GetEntitiesContainer().FindEntity<World::ESpawners>();
         if (!spawnersEntity) {
             return;
@@ -488,7 +489,9 @@ public:
             const auto key = std::format("{}.{}", name, type);
             if (state.registeredEntities.contains(key)) {
                 if (state.registeredLocations.contains(locationName)) {
-                    continue;
+                    if (!isFirstTimeVisitingLocation) {
+                        continue;
+                    }
                 }
                 WorldState::RegisterInWorldState({ name, type });
                 continue;
@@ -552,8 +555,17 @@ public:
         registrationHintTimeLeft = 0.8f;
     }
 
+    void SetVisitedLocations(const std::set<std::string>& visitedLocations) {
+        this->visitedLocations = visitedLocations;
+    }
+
+    const std::set<std::string>& GetVisitedLocations() {
+        return this->visitedLocations;
+    }
+
 private:
     std::set<std::string> removedEntities;
+    std::set<std::string> visitedLocations;
     World::EntitiesManager entitiesManager;
     World::EPlayer* player = nullptr;
     std::string currentLevel;
@@ -621,8 +633,12 @@ namespace MapManager {
         Map::instance().OpenCurrentLocationInExplorer();
     }
 
-    void SeedInstantSpawnEntitiesInFilesystem() {
-        Map::instance().SeedInstantSpawnEntitiesInFilesystem();
+    void SetVisitedLocations(const std::set<std::string>& visitedLocations) {
+        Map::instance().SetVisitedLocations(visitedLocations);
+    }
+
+    const std::set<std::string>& GetVisitedLocations() {
+        return Map::instance().GetVisitedLocations();
     }
 
     void Initialize() {

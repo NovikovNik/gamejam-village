@@ -21,5 +21,6 @@ namespace WorldState {
     [[nodiscard]] const std::string& GetBackupLocationPath();
     [[nodiscard]] const std::map<std::string, std::set<std::string>>& GetRegisteredEntities();
     [[nodiscard]] const std::set<std::string>& GetEntitiesWhiteList();
+    [[nodiscard]] const std::set<std::string>& GetLocationsWhiteList();
 
 }

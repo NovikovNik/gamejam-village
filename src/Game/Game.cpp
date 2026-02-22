@@ -74,6 +74,7 @@ void Game::Initialize() {
     WorldState::SetCurrentState(ProgressSystemManager::World().state);
     WorldState::SetBackupLocationPath(ProgressSystemManager::World().backupLocationPath);
     MapManager::SetRemovedEntities(ProgressSystemManager::World().removedEntities);
+    MapManager::SetVisitedLocations(ProgressSystemManager::World().visitedLocations);
     // Стартовую локацию выставляем в сохранке!!!
     bool isLoaded = MapManager::LoadLastLoadedLevel();
     if (!isLoaded) {

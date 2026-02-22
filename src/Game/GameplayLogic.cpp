@@ -403,7 +403,7 @@ class SignsAct: public GameAct {
                 const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;
                 std::vector<std::string> signRows;
                 for (const auto& [key, available] : registeredLocations) {
-                    if (!available) {
+                    if (!available && WorldState::GetLocationsWhiteList().contains(key)) {
                         signRows.push_back(key);
                     }
                 }

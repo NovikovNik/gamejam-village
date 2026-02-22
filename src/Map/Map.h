@@ -16,6 +16,9 @@ namespace MapManager {
     void SetRemovedEntities(const std::set<std::string>& removedEntities);
     [[nodiscard]] const std::set<std::string>& GetRemovedEntities();
 
+    void SetVisitedLocations(const std::set<std::string>& visitedLocations);
+    [[nodiscard]] const std::set<std::string>& GetVisitedLocations();
+
     void Initialize();
     void Destroy();
     void Update(float deltaTime);
@@ -24,7 +27,6 @@ namespace MapManager {
     void UnloadCurrentMap();
     void UpdateCameraScaleFactor(const std::string locationName);
     void OpenCurrentLocationInExplorer();
-    void SeedInstantSpawnEntitiesInFilesystem();
     void SetPlayerPositionToSpawnPoint(const std::string& spawnPointName);
 
     void ShowInteractHint(float x, float y);

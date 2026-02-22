@@ -41,6 +41,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             worldSaveData.state = WorldState::GetCurrentState();
             worldSaveData.backupLocationPath = WorldState::GetBackupLocationPath();
             worldSaveData.removedEntities = MapManager::GetRemovedEntities();
+            worldSaveData.visitedLocations = MapManager::GetVisitedLocations();
             nlohmann::json j;
             playerSaveData.ToJson(j);
             audioSaveData.ToJson(j["audio"]);

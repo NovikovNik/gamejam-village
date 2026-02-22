@@ -53,6 +53,13 @@ public:
         entitiesWhiteList.insert("Elder.vil");
         entitiesWhiteList.insert("Guard.vil");
         entitiesWhiteList.insert("Nebula.vil");
+
+        locationsWhiteList.insert("world-void");
+        locationsWhiteList.insert("backroad");
+        locationsWhiteList.insert("crossroads");
+        locationsWhiteList.insert("assembly-hall");
+        locationsWhiteList.insert("elders-house");
+        locationsWhiteList.insert("old-house");
     }
 
     void Destroy()
@@ -315,6 +322,7 @@ public:
     const std::string& GetBackupLocationPath() const { return backupLocationPath; }
 
     const std::set<std::string>& GetEntitiesWhiteList() const { return entitiesWhiteList; }
+    const std::set<std::string>& GetLocationsWhiteList() const { return locationsWhiteList; }
 
 private:
     LocationsStates::State currentState;
@@ -328,6 +336,7 @@ private:
 
     std::optional<NextLocation> nextLocation;
     std::set<std::string> entitiesWhiteList;
+    std::set<std::string> locationsWhiteList;
 };
 
 void WorldState::Initiate() {
@@ -372,4 +381,8 @@ void WorldState::RemoveFromWorldState(const World::Entity::TagName& tagName) {
 
 const std::set<std::string>& WorldState::GetEntitiesWhiteList() {
     return GameStateManager::instance().GetEntitiesWhiteList();
+}
+
+const std::set<std::string>& WorldState::GetLocationsWhiteList() {
+    return GameStateManager::instance().GetLocationsWhiteList();
 }
