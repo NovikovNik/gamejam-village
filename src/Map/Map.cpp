@@ -107,7 +107,7 @@ public:
     [[nodiscard]] bool LoadMap(const std::string& filename) {
         // Load JSON map data
 #if !ENABLE_CHEATS
-        std::string filepath = FileSystemManager::GetExecutableDir() / filename;
+        std::string filepath = (FileSystemManager::GetExecutableDir() / filename).string();
 #else
         std::string filepath = filename;
 #endif

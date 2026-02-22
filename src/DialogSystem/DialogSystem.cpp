@@ -42,7 +42,7 @@ public:
     void LoadAllDialogs(const std::string& directory) {
 
 #if !ENABLE_CHEATS
-        std::string dialogsDirectory = FileSystemManager::GetExecutableDir() / "assets/dialogs";
+        std::string dialogsDirectory = (FileSystemManager::GetExecutableDir() / "assets/dialogs").string();
 #else
         std::string dialogsDirectory = directory;
 #endif

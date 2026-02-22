@@ -88,7 +88,7 @@ public:
         UnloadTextures();
 
 #if !ENABLE_CHEATS
-        std::string texturesDirectory = FileSystemManager::GetExecutableDir() / "assets/textures";
+        std::string texturesDirectory = (FileSystemManager::GetExecutableDir() / "assets/textures").string();
 #else
         std::string texturesDirectory = directory;
 #endif
@@ -122,7 +122,7 @@ public:
         UnloadFonts();
 
 #if !ENABLE_CHEATS
-        std::string fontsDirectory = FileSystemManager::GetExecutableDir() / "assets/fonts";
+        std::string fontsDirectory = (FileSystemManager::GetExecutableDir() / "assets/fonts").string();
 #else
         std::string fontsDirectory = directory;
 #endif

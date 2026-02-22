@@ -139,7 +139,7 @@ void LoadAllSounds(const std::string& directory) {
     namespace fs = std::filesystem;
 
 #if !ENABLE_CHEATS
-    std::string soundsDirectory = FileSystemManager::GetExecutableDir() / "assets/audio";
+    std::string soundsDirectory = (FileSystemManager::GetExecutableDir() / "assets/audio").string();
 #else
     std::string soundsDirectory = directory;
 #endif
