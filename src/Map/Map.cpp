@@ -221,8 +221,8 @@ public:
                 const std::string interactableObjectName = interactableObjectJson["name"].get<std::string>();
                 const float x = interactableObjectJson["x"].get<float>();
                 const float y = interactableObjectJson["y"].get<float>();
-                const float width = interactableObjectJson["width"].get<float>();
-                const float height = interactableObjectJson["height"].get<float>();
+                const float width = interactableObjectJson.contains("width") ? interactableObjectJson["width"].get<float>() : 64.f;
+                const float height = interactableObjectJson.contains("height") ? interactableObjectJson["height"].get<float>() : 64.f;
                 World::EInteractableObject* interactableObject = entitiesManager.SpawnEntity<World::EInteractableObject>(x, y, width, height, interactableObjectName);
             }
         }
