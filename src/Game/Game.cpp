@@ -91,6 +91,7 @@ void Game::Initialize() {
 
 void Game::OnGameShutdown(GameShutdownEvent& e) {
     Logger::Log("[Game] Game shutdown event received. Stopping the game.");
+    ProgressSystemManager::SaveData();
     isRunning = false;
 }
 

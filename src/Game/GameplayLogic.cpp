@@ -293,7 +293,7 @@ namespace {
                 }
             }
 
-            if (e.entityId == "Joe") {
+            if (e.entityId == "joe") {
                 if (ProgressSystemManager::Player().joeQuestProgress == 0) {
                     DialogSystemManager::StartDialog("Joe", "quest-start");
 
@@ -308,7 +308,7 @@ namespace {
             }
 
             // Самые важные отношения с коровами в игре
-            if (e.entityId == "Cow") {
+            if (e.entityId == "cow") {
                 if (ProgressSystemManager::Player().joeQuestProgress >= 2) {
                     if (mapName == "crossroads") {
                         DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-carrot");
