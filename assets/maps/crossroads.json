@@ -207,6 +207,12 @@
             "y": -414.99493408203125,
             "name": "Cow",
             "spawnOnStart": true
+        },
+        {
+            "x": -551.699462890625,
+            "y": -107.91787719726562,
+            "name": "Guard",
+            "spawnOnStart": false
         }
     ],
     "interactible_objects": [

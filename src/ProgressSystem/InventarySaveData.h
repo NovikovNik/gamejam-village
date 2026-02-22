@@ -8,6 +8,9 @@ using ItemId = std::string;
 
 namespace World {
     inline const ItemId message = "message";
+    inline const ItemId sword = "sword";
+    inline const ItemId key = "key";
+    inline const ItemId carrot = "carrot";
 
     inline const std::set<ItemId> GetAllItems() { return {message}; }
 }

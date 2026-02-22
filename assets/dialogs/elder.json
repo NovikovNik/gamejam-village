@@ -88,6 +88,19 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-spawn-guard-quest-completed": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "I can hear from the far end of the village that a guardian has already arrived at the house consumed by the void."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "Go there and speak with him. He will help us with the void mist."
+                }
+            ],
+            "textSize": 20
         }
     }
 }
