@@ -79,5 +79,23 @@ void World::Camera::Update(float dt) {
                 positionX = 128.0;
             }
         }
+        if (currentLocationName == "crossroads") {
+            if (positionY < -470.0) {
+                positionY = -470.0;
+            }
+            if (positionY > 468.0) {
+                positionY = 468.0;
+            }
+            if (positionX < -568.0) {
+                positionX = -568.0;
+            }
+            if (positionX > 571.0) {
+                positionX = 571.0;
+            }
+        }
+        if (currentLocationName == "assembly-hall" || currentLocationName == "elders-house" || currentLocationName == "old-house") { // Все остальные локации помещения
+            positionX = -3.4;
+            positionY = -1.8;
+        }
     }
 }

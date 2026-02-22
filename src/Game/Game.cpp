@@ -182,11 +182,13 @@ void Game::ProcessInput() {
                     MapManager::OpenCurrentLocationInExplorer();
                     break;
                 }
+#if ENABLE_CHEATS
                 if (event.key.key == SDLK_R) {
                     // RELOAD LEVEL!
                     MapManager::ReloadMap();
                     break;
                 }
+#endif
                 if (event.key.key == SDLK_F) {
                     EventBus::instance().EmitEvent<InterectButtonPressedEvent>();
                     break;
