@@ -59,6 +59,12 @@ endif()
 
 target_link_libraries(game_engine PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3 SDL3_image::SDL3_image)
 
+if(WIN32)
+    set_target_properties(game_engine PROPERTIES
+        WIN32_EXECUTABLE $<CONFIG:Release>
+    )
+endif()
+
 target_compile_options(game_engine PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4>
     $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Wpedantic>

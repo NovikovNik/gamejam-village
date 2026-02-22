@@ -168,16 +168,32 @@ public:
             registeredEntities.insert(entityKey);
         }
 
+        auto isAsciiOnly = [](const fs::path& p) {
+            const std::wstring s = p.filename().wstring();
+            return std::all_of(s.begin(), s.end(), [](wchar_t c) {
+                return (c >= L'A' && c <= L'Z') ||
+                       (c >= L'a' && c <= L'z') ||
+                       (c >= L'0' && c <= L'9') ||
+                       c == L'_' || c == L'-' || c == L'.' || c == L' ';
+            });
+        };
+
         // Clear current state
         currentState = {};
         // Process subfolders (depth 1)
         for (const auto& entry : fs::directory_iterator(villagePath)) {
             if (entry.is_directory()) {
+                if (!isAsciiOnly(entry.path())) {
+                    continue;
+                }
                 std::string subfolderName = entry.path().filename().string();
-                
+
                 // Scan files inside this subfolder
                 for (const auto& fileEntry : fs::directory_iterator(entry.path())) {
                     if (fileEntry.is_regular_file()) {
+                        if (!isAsciiOnly(fileEntry.path())) {
+                            continue;
+                        }
                         LocationsStates::Object obj;
                         
                         // Handle files with pattern: <name>.<type>.txt
