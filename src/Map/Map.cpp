@@ -220,14 +220,9 @@ public:
                 const std::string interactableObjectName = interactableObjectJson["name"].get<std::string>();
                 const float x = interactableObjectJson["x"].get<float>();
                 const float y = interactableObjectJson["y"].get<float>();
-                bool shouldSpawnInstantly = false;
-                if (interactableObjectJson.contains("spawnOnStart")) {
-                    shouldSpawnInstantly = interactableObjectJson["spawnOnStart"].get<bool>();
-                } else {
-                    Logger::Warn(std::format("InteractibleObject {} does not have spawnOnStart property, defaulting to true", interactableObjectName));
-                    shouldSpawnInstantly = true;
-                }
-                spawners.push_back({ interactableObjectName, "object", x, y, shouldSpawnInstantly });
+                const float width = interactableObjectJson["width"].get<float>();
+                const float height = interactableObjectJson["height"].get<float>();
+                World::EInteractableObject* interactableObject = entitiesManager.SpawnEntity<World::EInteractableObject>(x, y, width, height, interactableObjectName);
             }
         }
 

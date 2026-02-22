@@ -6,8 +6,8 @@
 
 World::EInteractableObject::EInteractableObject(const std::string& name)
     : EInteractable(make_nnInteractId(name)) {
-    const auto textureId = make_nnTex(std::format("object_{}", name));
-    LoadData(textureId, 64, 64);
+    tagName = { name, "object" };
+    texture = make_nnTex(std::format("object_{}", name));
 }
 
 bool World::EInteractableObject::Update(float deltaTime) {
