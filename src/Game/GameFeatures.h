@@ -6,7 +6,7 @@ enum class MovementDirection {
 };
 
 struct GameFeatures {
-    inline static std::string gameTitle = "Test Game";
+    inline static std::string gameTitle = "AAAB";
     inline static bool isDebug = false;
     inline static bool isFullscreen = false;
     inline static bool isResizeble = false;
