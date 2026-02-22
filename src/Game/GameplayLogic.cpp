@@ -214,21 +214,42 @@ namespace {
 
             if (e.entityId == "Elder") {
                 // Первый диалог со старейшиной в деревне. Он заберет письмо и попросит пройтись через деревню
-                if (!ProgressSystemManager::Player().elderStartQuestCompleted) {
-                    if (!elderAskedForGoThroughLocation) {
+                if (ProgressSystemManager::Player().elderHubActiveQuest == "go-through-location") {
+                    if (!elderAskToGoThroughLocation) {
                         DialogSystemManager::StartDialog("Elder", "dialog-welcome");
                         if (ProgressSystemManager::Inventory().HasItem(World::message)) {
                             ProgressSystemManager::Inventory().RemoveItem(World::message);
                         }
-                        elderAskedForGoThroughLocation = true;
+                        elderAskToGoThroughLocation = true;
                     } else {
                         // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
-                        if (!elderAskedForGoThroughLocation) {
+                        if (!locationChanged) {
                             DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
                         } else {
-                            ProgressSystemManager::Player().elderStartQuestCompleted = true;
+                            ProgressSystemManager::Player().elderHubActiveQuest = "cat-quest";
                             DialogSystemManager::StartDialog("Elder", "dialog-cat-quest");
                         }
+                    }
+                }
+                if (ProgressSystemManager::Player().elderHubActiveQuest == "cat-quest") {
+                    const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
+                    auto it = registeredEntities.find("Cat.vil");
+                    const bool catNotInEldersHouse = (it == registeredEntities.end() || !it->second.contains("elders-house"));
+                    if (catNotInEldersHouse) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-again");
+                    } else {
+                        ProgressSystemManager::Player().elderHubActiveQuest = "spawn-guard";
+                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
+                    }
+                }
+                if (ProgressSystemManager::Player().elderHubActiveQuest == "spawn-guard") {
+                    const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
+                    auto it = registeredEntities.find("Guard.vil");
+                    const bool guardNotInVillage = (it == registeredEntities.end() || !it->second.contains("crossroads"));
+                    if (guardNotInVillage) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-again");
+                    } else {
+                        ProgressSystemManager::Player().elderHubActiveQuest = "quest-completed";
                     }
                 }
             }
@@ -236,6 +257,18 @@ namespace {
 
         void OnEntityCreated(EntityCreatedEvent& e) {
             Logger::Log(std::format("[Gameplay][Main] EntityCreated: {} {}", e.GetName(), e.GetType()));
+            if (MapManager::GetCurrentMapName() == "elders-house") {
+                if (e.GetName() == "Cat") {
+                    // Кот в доме старейшины если старейшина есть внутри
+                    if (ProgressSystemManager::Player().elderHubActiveQuest == "cat-quest") {
+                        auto* elderNpc = MapManager::GetEntitiesContainer().FindEntity({"Elder", "vil"});
+                        if (elderNpc) {
+                            ProgressSystemManager::Player().elderHubActiveQuest = "spawn-guard";
+                            DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
+                        }
+                    }
+                }
+            }
         }
 
         void OnEntityDestroyed(EntityDestroyedEvent& e) {
@@ -249,7 +282,7 @@ namespace {
         private:
         int elderInteractionsCount = 0;
         bool locationChanged = false;
-        bool elderAskedForGoThroughLocation = false;
+        bool elderAskToGoThroughLocation = false;
 
         Events::Handler onLocationChangedEvent;
         Events::Handler onLocationChanged;

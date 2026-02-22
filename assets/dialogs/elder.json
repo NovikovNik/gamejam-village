@@ -53,6 +53,41 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-cat-quest-again": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "As I already said, my house has been overrun by rats or mice. I cannot enter it until this problem is dealt with."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "If only you could somehow create cat.vil out of thin air inside my house…"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-spawn-guard-quest": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "Now we can attend to more serious matters. Have you noticed the void mist hanging over the house to the east?"
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "The books speak of an order of guardians who possess knowledge of how to fight this affliction."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-spawn-guard-quest-again": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "We need to summon a guardian to the village. Guard once lived here, but no one remembers them anymore, and no one knows where to find them."
+                }
+            ],
+            "textSize": 20
         }
     }
 }

@@ -207,12 +207,6 @@
             "y": -414.99493408203125,
             "name": "Cow",
             "spawnOnStart": true
-        },
-        {
-            "x": 313.4063720703125,
-            "y": -153.46685791015625,
-            "name": "Cat",
-            "spawnOnStart": true
         }
     ],
     "interactible_objects": [
@@ -247,6 +241,11 @@
             "x": -643.7385864257812,
             "y": -9.573760032653809,
             "name": "main"
+        },
+        {
+            "x": 359.171142578125,
+            "y": -176.72537231445312,
+            "name": "elders-house"
         }
     ],
     "levelChangeTriggers": [
@@ -282,13 +281,13 @@
             "tease": true
         },
         {
-            "name": "LevelChangeTriggers.001",
+            "name": "go_eldershouse",
             "x": 413.8510437011719,
             "y": -357.5229797363281,
             "width": 356.7260437011719,
             "height": 202.6625213623047,
             "texture": "levelchange",
-            "location": "",
+            "location": "assets/maps/elders-house.json",
             "spawnPointMatch": ""
         },
         {
