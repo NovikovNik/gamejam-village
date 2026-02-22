@@ -11,7 +11,7 @@ void World::ETriggerLocation::Render(float deltaTime) {
     }
 
     if (!isLocationAvailable) {
-        Renderer::DrawSprite(voidTextureId, positionX, positionY, width, height);
+        Renderer::DrawSprite(voidTextureId, positionX, positionY, width, height, false, true);
     }
 }
     

@@ -10,3 +10,7 @@
 Tests:
 1. cmake --build build --target game_engine_tests
 6. ./build/game_engine_tests
+
+
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_CHEATS=OFF
+cmake --build build --config Release

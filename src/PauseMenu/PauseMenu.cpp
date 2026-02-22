@@ -19,7 +19,7 @@
 namespace {
 
 constexpr float BOX_W       = 340.f;
-constexpr float BOX_H       = 370.f;
+constexpr float BOX_H       = 420.f;
 constexpr float ROW_H       = 44.f;
 constexpr float ROWS_TOP    = 56.f;   // y-offset of first row inside box
 constexpr float SLIDER_W    = 160.f;
@@ -32,7 +32,7 @@ constexpr float FONT_SIZE_TITLE = 22.f;
 constexpr float FONT_SIZE_ITEM  = 16.f;
 
 // Palette
-constexpr SDL_Color COL_OVERLAY    {  0,  0,  0, 170 };
+constexpr SDL_Color COL_OVERLAY    {  0,  0,  0, 200 };
 constexpr SDL_Color COL_BOX        { 18, 18, 26, 230 };
 constexpr SDL_Color COL_BORDER     { 80, 80,120, 255 };
 constexpr SDL_Color COL_SELECTED   { 55, 55,100, 220 };
@@ -75,11 +75,15 @@ int HitTestRow(float mx, float my) {
     if (my >= volTop && my < volBot)
         return static_cast<int>((my - volTop) / ROW_H);
 
-    // Action button rows (after divider)
-    const float btnTop = volBot + 9.f;  // 4 gap + 1 divider + 4 gap
-    const float btnBot = btnTop + (ROW_COUNT - ROW_EXIT) * ROW_H;
-    if (my >= btnTop && my < btnBot)
-        return ROW_EXIT + static_cast<int>((my - btnTop) / ROW_H);
+    // Action button rows (Exit, then gap, then Restart)
+    constexpr float RESTART_GAP = 48.f;
+    const float btnTop  = volBot + 9.f;
+    const float exitTop = btnTop;
+    const float exitBot = exitTop + ROW_H;
+    const float rstTop  = exitBot + RESTART_GAP;
+    const float rstBot  = rstTop  + ROW_H;
+    if (my >= exitTop && my < exitBot) return ROW_EXIT;
+    if (my >= rstTop  && my < rstBot)  return ROW_RESTART;
 
     return -1;
 }
@@ -233,13 +237,13 @@ void UpdateAndRender() {
     Renderer::DrawFilledRectScreen(0.f, 0.f, sw, sh, COL_OVERLAY);
 
     // Box background
-    Renderer::DrawFilledRectScreen(bx, by, BOX_W, BOX_H, COL_BOX);
-
-    // Border (2 px edges)
-    Renderer::DrawFilledRectScreen(bx,               by,               BOX_W, 2.f,   COL_BORDER);
-    Renderer::DrawFilledRectScreen(bx,               by + BOX_H - 2.f, BOX_W, 2.f,   COL_BORDER);
-    Renderer::DrawFilledRectScreen(bx,               by,               2.f,   BOX_H, COL_BORDER);
-    Renderer::DrawFilledRectScreen(bx + BOX_W - 2.f, by,               2.f,   BOX_H, COL_BORDER);
+//    Renderer::DrawFilledRectScreen(bx, by, BOX_W, BOX_H, COL_BOX);
+//
+//    // Border (2 px edges)
+//    Renderer::DrawFilledRectScreen(bx,               by,               BOX_W, 2.f,   COL_BORDER);
+//    Renderer::DrawFilledRectScreen(bx,               by + BOX_H - 2.f, BOX_W, 2.f,   COL_BORDER);
+//    Renderer::DrawFilledRectScreen(bx,               by,               2.f,   BOX_H, COL_BORDER);
+//    Renderer::DrawFilledRectScreen(bx + BOX_W - 2.f, by,               2.f,   BOX_H, COL_BORDER);
 
     // Title
     const auto fid = Renderer::TextId(make_nnTex("charriot"));
@@ -259,16 +263,10 @@ void UpdateAndRender() {
     const float divY = by + ROWS_TOP + (ROW_SFX + 1) * ROW_H + 4.f;
     Renderer::DrawFilledRectScreen(bx + 8.f, divY, BOX_W - 16.f, 1.f, COL_BORDER);
 
-    // Action button rows
-    for (int i = ROW_EXIT; i < ROW_COUNT; ++i) {
-        RenderRow(i, divY + 4.f + (i - ROW_EXIT) * ROW_H);
-    }
-
-    // Hint
-    const SDL_Color hint{ 110, 110, 130, 255 };
-    Renderer::DrawTextScreen(fid,
-        "Click/drag sliders   UP/DOWN   LEFT/RIGHT   ESC: close",
-        bx + 8.f, by + BOX_H - 22.f, 11, &hint);
+    // Action button rows (Restart has extra gap to separate it visually)
+    constexpr float RESTART_GAP = 48.f;
+    RenderRow(ROW_EXIT,    divY + 4.f);
+    RenderRow(ROW_RESTART, divY + 4.f + ROW_H + RESTART_GAP);
 }
 
 bool HandleKeyDown(SDL_Keycode key) {

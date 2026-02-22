@@ -2,7 +2,7 @@
 #include "BasicSaveData.h"
 
 struct AudioSaveData : public BasicSaveData {
-    float masterVolume = 1.0f;
+    float masterVolume = 0.75f;
     float musicVolume  = 0.8f;
     float sfxVolume    = 1.0f;
     bool  muted        = false;
@@ -10,7 +10,7 @@ struct AudioSaveData : public BasicSaveData {
     int GetVersion() const override { return 1; }
 
     void ResetToDefaults() override {
-        masterVolume = 1.0f;
+        masterVolume = 0.75f;
         musicVolume  = 0.8f;
         sfxVolume    = 1.0f;
         muted        = false;

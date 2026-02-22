@@ -348,6 +348,11 @@ public:
 
     void Render(float deltaTime) {
         entitiesManager.Render(deltaTime);
+        if (interactHintPosition) {
+            const auto& pos = interactHintPosition.value();
+            Renderer::DrawSprite(make_nnTex("f_button"), pos.x, pos.y, 24, 24);
+            interactHintPosition.reset();
+        }
     }
 
     [[nodiscard]] const World::EntitiesContainer& GetEntitiesContainer() {
@@ -532,6 +537,10 @@ public:
         return this->removedEntities;
     }
 
+    void ShowInteractHint(float x, float y) {
+        interactHintPosition = glm::vec2(x, y);
+    }
+
 private:
     std::set<std::string> removedEntities;
     World::EntitiesManager entitiesManager;
@@ -544,6 +553,8 @@ private:
     Events::Handler onWorldStateUpdated;
     std::set<World::Entity::TagName> newInteractedEntities;
     std::set<World::Entity::TagName> prevInteractedEntities;
+
+    std::optional<glm::vec2> interactHintPosition;
 
     bool isInitialSync = true;
 };
@@ -623,6 +634,10 @@ namespace MapManager {
 
     const std::set<std::string>& GetRemovedEntities() {
         return Map::instance().GetRemovedEntities();
+    }
+
+    void ShowInteractHint(float x, float y) {
+        Map::instance().ShowInteractHint(x, y);
     }
 
 };

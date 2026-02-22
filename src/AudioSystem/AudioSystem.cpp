@@ -32,7 +32,7 @@ std::string      g_currentMusic;
 bool             g_musicPlaying  = false;
 bool             g_musicPaused   = false;
 
-float g_masterVolume = 1.0f;
+float g_masterVolume = 0.75f;
 float g_sfxVolume    = 1.0f;
 float g_musicVolume  = 0.8f;
 bool  g_muted        = false;

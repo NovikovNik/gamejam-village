@@ -309,7 +309,12 @@ void World::EPlayer::Render(float deltaTime) {
 //    }
     if (bShowTooltip && !DialogSystemManager::IsDialogActive()) {
         const auto& pos = GetPosition();
-        Renderer::DrawSprite(tooltipTexture, pos.x, pos.y - tooltipHeight - 16.0f, tooltipWidth, tooltipHeight);
+        MapManager::ShowInteractHint(pos.x, pos.y - tooltipHeight - 16.0f);
+//        const auto& hint = MapManager::GetEntitiesContainer().FindEntity<World::EHint>();
+//        if (hint) {
+//            hint->SetPosition(pos.x, pos.y - tooltipHeight - 16.0f);
+//        }
+        //Renderer::DrawSprite(tooltipTexture, pos.x, pos.y - tooltipHeight - 16.0f, tooltipWidth, tooltipHeight);
     }
 }
 

@@ -162,18 +162,22 @@ void Game::ProcessInput() {
                 }
 
                 if(event.key.key == SDLK_ESCAPE) {
+#if ENABLE_CHEATS
                     if (GameFeatures::isDebug) {
                         GameFeatures::isDebug = false;
                         break;
                     }
+#endif
                     PauseMenu::Open();
                     break;
                 }
+#if ENABLE_CHEATS
                 if(event.key.key == SDLK_TAB) {
                     GameFeatures::isDebug = !GameFeatures::isDebug;
                     Logger::Debug("Debug state changed to: " + std::to_string(GameFeatures::isDebug));
                     break;
                 }
+#endif
                 if (event.key.key == SDLK_V) { // Open current location
                     MapManager::OpenCurrentLocationInExplorer();
                     break;
