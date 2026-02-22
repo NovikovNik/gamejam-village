@@ -24,6 +24,35 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-chestbox-get-key": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "I found a key in the chestbox. I wonder what it's for. It's probably for some other chestbox.",
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-chestbox-use-key": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "Inside the chest, you discover old books and records of the Warriors’ Guild that once occupied this house.",
+                    "align": "right"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "Among the texts, you manage to find the name of the northeastern house — “Assembly Hall.”"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "This information should prove useful.",
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
         }
     }
 }

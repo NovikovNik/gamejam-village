@@ -263,7 +263,7 @@ namespace {
 
             if (e.entityId == "Guard") {
                 if (mapName == "crossroads") {
-                    if (ProgressSystemManager::Player().elderHubActiveQuest == "guard_quest") {
+                    if (ProgressSystemManager::Player().elderHubActiveQuest == "guard_quest" || ProgressSystemManager::Player().elderHubActiveQuest == "spawn-guard") {
                         if (ProgressSystemManager::Inventory().HasItem(World::sword)) {
                             ProgressSystemManager::Inventory().RemoveItem(World::sword);
                             DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
@@ -274,6 +274,21 @@ namespace {
                     }
                     if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist") {
                         DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
+                    }
+                }
+            }
+
+            if (e.entityId == "Chestbox") {
+                if (mapName == "elders-house") {
+                    if (!ProgressSystemManager::Inventory().HasItem(World::key)) {
+                        ProgressSystemManager::Inventory().AddItem(World::key);
+                        DialogSystemManager::StartDialog("Utility", "dialog-chestbox-get-key");
+                    }
+                }
+                if (mapName == "old-house") {
+                    if (ProgressSystemManager::Inventory().HasItem(World::key)) {
+                        ProgressSystemManager::Inventory().RemoveItem(World::key);
+                        DialogSystemManager::StartDialog("Utility", "dialog-chestbox-use-key");
                     }
                 }
             }

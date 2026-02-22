@@ -27,7 +27,7 @@ namespace World {
 
         glm::vec2 direction; // for normalization kinda
         bool horizontalFlip = false;
-        float basicSpeed = 140.0f;
+        float basicSpeed = 300.0f;
         std::string name;
         bool bShowTooltip = false;
 

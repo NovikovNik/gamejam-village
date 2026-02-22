@@ -60,7 +60,16 @@
             "spawnOnStart": false
         }
     ],
-    "interactible_objects": [],
+    "interactible_objects": [
+        {
+            "x": -0.9166789054870605,
+            "y": -194.9352264404297,
+            "width": 58.437408447265625,
+            "height": 40.676788330078125,
+            "name": "Chestbox",
+            "spawnOnStart": true
+        }
+    ],
     "interactables": [],
     "players": [
         {
