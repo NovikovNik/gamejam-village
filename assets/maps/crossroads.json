@@ -204,7 +204,7 @@
             "y": -0.0,
             "width": 1715.0,
             "height": 1369.0,
-            "texture": "crossroads"
+            "texture": "crossroads_core"
         }
     ],
     "npcs": [
@@ -330,5 +330,13 @@
             "spawnPointMatch": ""
         }
     ],
-    "alwaysOnTop": []
+    "alwaysOnTop": [
+        {
+            "x": 0.0,
+            "y": -0.0,
+            "width": 1715.0,
+            "height": 1369.0,
+            "texture": "crossroads_top"
+        }
+    ]
 }
