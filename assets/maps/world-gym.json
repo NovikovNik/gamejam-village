@@ -178,6 +178,12 @@
             "y": 39.58470153808594,
             "name": "Name_Sign",
             "spawnOnStart": true
+        },
+        {
+            "x": 120.37310028076172,
+            "y": 39.58470153808594,
+            "name": "Locations_Sign",
+            "spawnOnStart": true
         }
     ],
     "interactables": [],

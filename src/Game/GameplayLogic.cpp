@@ -7,6 +7,7 @@
 #include <Events/DialogEndedEvent.h>
 #include <Events/ChangeLocationEvent.h>
 #include <Events/LocationChangedEvent.h>
+#include <Events/InterectButtonPressedEvent.h>
 #include <Renderer/Camera.h>
 #include <Events/InteractWithEntityEvent.h>
 #include <Events/GameShutdownEvent.h>
@@ -247,12 +248,15 @@ class SignsAct: public GameAct {
     public:
         void Initialize() {
             onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &SignsAct::OnInteractWithEntity);
+            onInterectButtonPressed = EventBus::instance().SubscribeToEvent<InterectButtonPressedEvent>(this, &SignsAct::OnInterectButtonPressed);
         }
         
         void Update(float deltaTime) override {}
 
         void OnInteractWithEntity(InteractWithEntityEvent& e) {
-
+            if (DialogSystemManager::IsDialogActive()) {
+                return;
+            }
             if (e.entityId == "Name_Sign") {
                 const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
                 std::vector<std::string> signRows;
@@ -263,10 +267,28 @@ class SignsAct: public GameAct {
                 }
                 DialogSystemManager::OpenSign(signRows);
             }
+            
+            if (e.entityId == "Locations_Sign") {
+                const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;
+                std::vector<std::string> signRows;
+                for (const auto& [key, available] : registeredLocations) {
+                    if (!available) {
+                        signRows.push_back(key);
+                    }
+                }
+                DialogSystemManager::OpenSign(signRows);
+            }
+        }
+
+        void OnInterectButtonPressed(InterectButtonPressedEvent& e) {
+            if (DialogSystemManager::IsDialogActive()) {
+                DialogSystemManager::CloseSign();
+            }
         }
 
     private:
         Events::Handler onInteractWithEntity;
+        Events::Handler onInterectButtonPressed;
 };
 
 class GameplayLogicManager: public Singleton<GameplayLogicManager> {

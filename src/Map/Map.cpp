@@ -113,6 +113,8 @@ public:
             return false;
         }
 
+        isInitialSync = true;
+
         Physics::Reset();
         UnloadCurrentMap();
         currentLevel = filename;

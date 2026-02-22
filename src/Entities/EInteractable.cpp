@@ -26,7 +26,7 @@ void World::EInteractable::Interact() {
 }
 
 void World::EInteractable::CreatePhysicsObjects() {
-    physicsTriggerId = Physics::CreateStaticRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), true);
+    physicsTriggerId = Physics::CreateStaticRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), true, 1 << 7);
 }
 
 void World::EInteractable::RemovePhysicsObjects() {

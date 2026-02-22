@@ -131,6 +131,7 @@ public:
     void CloseSign() {
         signRows.clear();
         signActive = false;
+        dialogsCooldown = 10;
     }
 
     void EndDialog() {
@@ -145,12 +146,15 @@ public:
 
     // Чтобы узнавать статус диалоговой системы
     bool IsDialogActive() const {
-        return dialogActive || signActive;
+        return (dialogActive || signActive) || (dialogsCooldown > 0);
     }
 
     [[maybe_unused]] void UpdateDialog() {}
 
     void RenderDialog() {
+        if (dialogsCooldown > 0) {
+            --dialogsCooldown;
+        }
         if (signActive) {
             Renderer::DrawSpriteScreen(signBackgroundTexture, 55, 55, 387*1.8f, 270*1.8f);
             for (int32_t rowId = 0; const auto& row : signRows) {
@@ -245,6 +249,7 @@ private:
 
     bool dialogActive = false;
     bool signActive = false;
+    int32_t dialogsCooldown = 0;
     std::vector<std::string> signRows;
 
     std::string currentCharacterId;

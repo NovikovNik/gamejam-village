@@ -58,7 +58,7 @@ void World::ENpc::OnSpawn(float x, float y, float w, float h) {
 
 void World::ENpc::CreatePhysicsObjects() {
     physicsColliderId = Physics::CreateStaticRectangle(GetPosition().x, GetPosition().y, GetWidth() * 0.5f, GetHeight() * 0.9f);
-    physicsTriggerId = Physics::CreateStaticRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), true);
+    physicsTriggerId = Physics::CreateStaticRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), true, 1 << 7);
 }
 
 void World::ENpc::RemovePhysicsObjects() {
