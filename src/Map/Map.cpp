@@ -106,7 +106,11 @@ public:
 
     [[nodiscard]] bool LoadMap(const std::string& filename) {
         // Load JSON map data
+#if !ENABLE_CHEATS
+        std::string filepath = FileSystemManager::GetExecutableDir() / filename;
+#else
         std::string filepath = filename;
+#endif
         std::ifstream file(filepath);
         if (!file.is_open()) {
             Logger::Err(std::format("Failed to load map: {}", filepath));

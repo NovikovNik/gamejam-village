@@ -6,6 +6,7 @@
 #include <Events/PlaySoundEvent.h>
 #include <Events/PlayMusicEvent.h>
 
+#include <FileSystem/FileSystem.h>
 #include <filesystem>
 #include <unordered_map>
 #include <vector>
@@ -137,13 +138,19 @@ void Update() {
 void LoadAllSounds(const std::string& directory) {
     namespace fs = std::filesystem;
 
-    if (!fs::exists(directory)) {
+#if !ENABLE_CHEATS
+    std::string soundsDirectory = FileSystemManager::GetExecutableDir() / "assets/audio";
+#else
+    std::string soundsDirectory = directory;
+#endif
+
+    if (!fs::exists(soundsDirectory)) {
         Logger::Err("[AudioSystem] Sound directory not found: " + directory);
         return;
     }
 
     int loaded = 0;
-    for (const auto& entry : fs::recursive_directory_iterator(directory)) {
+    for (const auto& entry : fs::recursive_directory_iterator(soundsDirectory)) {
         if (!entry.is_regular_file()) continue;
 
         std::string ext = entry.path().extension().string();

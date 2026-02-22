@@ -41,12 +41,16 @@ public:
 
     void LoadAllDialogs(const std::string& directory) {
 
-        // std::filesystem::path directory = FileSystemManager::GetExecutableDir() / "assets/dialogs";
-        if (!std::filesystem::exists(directory)) {
+#if !ENABLE_CHEATS
+        std::string dialogsDirectory = FileSystemManager::GetExecutableDir() / "assets/dialogs";
+#else
+        std::string dialogsDirectory = directory;
+#endif
+        if (!std::filesystem::exists(dialogsDirectory)) {
             Logger::Err("Dialogs path does not exist: " + directory);
             return;
         }
-        for (const auto& entry : std::filesystem::directory_iterator(directory)) {
+        for (const auto& entry : std::filesystem::directory_iterator(dialogsDirectory)) {
             if (entry.is_regular_file() && entry.path().extension() == ".json") {
                 nlohmann::json json = LoadDialogData(entry.path().string());
                 if (json.is_null()) continue;
