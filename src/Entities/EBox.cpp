@@ -16,7 +16,7 @@ void World::EBox::OnSpawn(float x, float y, float w, float h) {
 }
 
 void World::EBox::OnPitBoxOverlap(PitBoxOverlapEvent& event) {
-    if (event.boxName == GetBoxName()) {
+    if (event.boxPhysicsId == physicsObjectId) {
         MapManager::DestroyEntity(event.pitTagName.name, event.pitTagName.type);
         MapManager::DestroyEntity(GetTagName().name, GetTagName().type);
     }

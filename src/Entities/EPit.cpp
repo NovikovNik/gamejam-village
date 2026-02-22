@@ -18,7 +18,8 @@ bool World::EPit::Update(float deltaTime) {
     const auto& overlapInfos = Physics::GetOverlapInfos();
     for (const auto& overlapInfo : overlapInfos) {
         if (overlapInfo.objectId1 == physicsTriggerId || overlapInfo.objectId2 == physicsTriggerId) {
-            EventBus::instance().EmitEvent<PitBoxOverlapEvent>(matchBoxName, GetTagName());
+            const auto boxPhysicsId = overlapInfo.objectId2 == physicsTriggerId ? overlapInfo.objectId1 : overlapInfo.objectId2;
+            EventBus::instance().EmitEvent<PitBoxOverlapEvent>(matchBoxName, GetTagName(), boxPhysicsId);
             break;
         }
     }

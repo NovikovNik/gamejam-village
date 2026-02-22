@@ -7,6 +7,7 @@ class PitBoxOverlapEvent : public Event {
 public:
     BoxName boxName;
     World::Entity::TagName pitTagName;
+    int32_t boxPhysicsId;
 
-    PitBoxOverlapEvent(BoxName boxName, World::Entity::TagName pitTagName) : boxName(std::move(boxName)), pitTagName(std::move(pitTagName)) {}
+    PitBoxOverlapEvent(BoxName boxName, World::Entity::TagName pitTagName, int32_t boxPhysicsId) : boxName(std::move(boxName)), pitTagName(std::move(pitTagName)), boxPhysicsId(boxPhysicsId) {}
 };

@@ -169,11 +169,12 @@ public:
                 //World::EPit* pit = entitiesManager.SpawnEntity<World::EPit>(make_nnBoxName(matchBoxName) );
                 const float x = pitJson["x"].get<float>();
                 const float y = pitJson["y"].get<float>();
+                const std::string pitName = pitJson.contains("name") ? pitJson["name"].get<std::string>() : matchBoxName;
 
                 //pit->SetPosition(x, y);
                 //pit->SetTagName({ matchBoxName, "pit" });
 
-                spawners.push_back({ matchBoxName, "pit", x, y, true });
+                spawners.push_back({ pitName, "pit", x, y, true });
             }
         }
         
