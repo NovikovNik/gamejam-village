@@ -249,10 +249,10 @@ public:
                 const float height = levelChangeTriggerJson["height"].get<float>();
                 const std::string spawnPointMatch = levelChangeTriggerJson["spawnPointMatch"].get<std::string>();
                 const bool tease = levelChangeTriggerJson.contains("tease") ? levelChangeTriggerJson["tease"].get<bool>() : false;
-                World::ETriggerLocation* triggerLocation = entitiesManager.SpawnEntity<World::ETriggerLocation>(x, y, width, height, locationName, spawnPointMatch, tease);
+                const std::string voidTextureId = levelChangeTriggerJson["texture"].get<std::string>();
+                World::ETriggerLocation* triggerLocation = entitiesManager.SpawnEntity<World::ETriggerLocation>(x, y, width, height, locationName, spawnPointMatch, voidTextureId, tease);
                 // Возможно триггеру не нужна будет текстура в конце концов
                 // Хотя это может быть, например, обьект телепорт. Почему бы и нет
-                triggerLocation->LoadData(make_nnTex(levelChangeTriggerJson["texture"].get<std::string>()), width, height);
             }
         }
 

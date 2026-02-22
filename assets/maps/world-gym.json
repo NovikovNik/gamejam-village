@@ -200,8 +200,8 @@
             "name": "LevelChangeTriggers",
             "x": -81.71124267578125,
             "y": -172.2384490966797,
-            "width": 64.0,
-            "height": 64.0,
+            "width": 177.84524536132812,
+            "height": 177.84524536132812,
             "texture": "levelchange",
             "location": "assets/maps/world-1.json",
             "spawnPointMatch": "",
@@ -214,6 +214,16 @@
             "width": 64.0,
             "height": 64.0,
             "texture": "levelchange",
+            "location": "assets/maps/world-1.json",
+            "spawnPointMatch": ""
+        },
+        {
+            "name": "Plane",
+            "x": 133.73590087890625,
+            "y": -122.18159484863281,
+            "width": 88.55326843261719,
+            "height": 88.55326843261719,
+            "texture": "test-ground",
             "location": "assets/maps/world-1.json",
             "spawnPointMatch": ""
         }

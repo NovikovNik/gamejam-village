@@ -7,7 +7,13 @@
 namespace World {
     class ETriggerLocation : public EMapObject {
     public:
-        ETriggerLocation(const std::string& locationName, const std::string& spawnPointMatch, bool tease) : locationName(locationName), spawnPointMatch(spawnPointMatch), tease(tease) {}
+        ETriggerLocation(const std::string& locationName, const std::string& spawnPointMatch, const std::string& voidTextureId, bool tease) : 
+            locationName(locationName), 
+            spawnPointMatch(spawnPointMatch),
+            tease(tease)
+        {
+            texture = make_nnTex(voidTextureId);
+        }
         void Render(float deltaTime) override;
         void ChangeLocation();
 
@@ -18,7 +24,7 @@ namespace World {
         void CheckStateWithTease();
         void CheckStateWithoutTease();
         bool Update(float deltaTime) override;
-
+        
     private:
         const std::string locationName;
         const std::string spawnPointMatch;

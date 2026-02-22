@@ -193,7 +193,7 @@ public:
                             obj.type = obj.type.substr(1);
                         }
                         
-                        if (!obj.type.empty()) {  // skip files without extension (e.g. "villager")
+                        if (!obj.type.empty()) {  // skip files without extension (e.g. "vil")
                             // Migrate old .txt files to new format
                             if (wasTextFile) {
                                 auto newFilePath = originalFilePath.parent_path() / (obj.name + "." + obj.type);

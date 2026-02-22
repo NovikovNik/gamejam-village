@@ -14,7 +14,7 @@ void World::ETriggerLocation::Render(float deltaTime) {
         Renderer::DrawSprite(voidTextureId, positionX, positionY, width, height);
     }
 }
-
+    
 void World::ETriggerLocation::ChangeLocation() {
     EventBus::instance().EmitEvent<ChangeLocationEvent>(locationName, spawnPointMatch);
 }
@@ -22,7 +22,12 @@ void World::ETriggerLocation::ChangeLocation() {
 void World::ETriggerLocation::OnSpawn(float x, float y, float w, float h) {
     EMapObject::OnSpawn(x, y, w, h);
     physicsTriggerId = Physics::CreateStaticRectangle(x, y, GetWidth(), GetHeight(), true, 0x02);
-    voidTextureId = Renderer::TextureId("void-trigger"_nnTex);
+    if (texture == make_nnTex("levelchange") && *texture != 0) {
+        voidTextureId = Renderer::TextureId("void-trigger"_nnTex);
+    }
+    else {
+        voidTextureId = texture;
+    }
 }
 
 void World::ETriggerLocation::OnDestroy() {
