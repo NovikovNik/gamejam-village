@@ -175,6 +175,36 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-guard-quest": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "Greetings! The entrance to the house is sealed. I can clearly sense the presence of a void curse here. I will need your help."
+                },
+                {
+                    "name": "Guard",
+                    "text": "To the southwest from here, there is a house with a collapsed entrance. It used to be a barracks. Find my sword there — it is special, and it will help us deal with this void."
+                }
+            ]
+        },
+        "dialog-guard-quest-completed": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "Excellent — you’ve found my sword! The runes upon it say that, to dispel this mist, this place must be returned to life."
+                },
+                {
+                    "name": "Guard",
+                    "text": "It exists, and yet it does not exist at the same time."
+                },
+                {
+                    "name": "Guard",
+                    "text": "We must learn the name of this house. Perhaps the village elder can help us with that."
+                }
+            ]
         }
     }
 }

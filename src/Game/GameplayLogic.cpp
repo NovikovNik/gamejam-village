@@ -269,8 +269,11 @@ namespace {
                             DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
                             ProgressSystemManager::Player().elderHubActiveQuest = "void-mist";
                         } else {
-                            DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-again");
+                            DialogSystemManager::StartDialog("Guard", "dialog-guard-quest");
                         }
+                    }
+                    if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist") {
+                        DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
                     }
                 }
             }
