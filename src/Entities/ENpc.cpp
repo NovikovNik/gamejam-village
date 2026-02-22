@@ -6,7 +6,7 @@
 
 World::ENpc::ENpc(const std::string& name) : EInteractable(make_nnInteractId(name)) {
     const auto textureId = make_nnTex(std::format("npc_{}", name));
-    if (name != "Cow") {
+    if (name != "cow") {
         LoadData(textureId, 64, 64);
 
         animationIdle.textureId = make_nnTex(std::format("npc_{}_idle", name));
@@ -15,7 +15,7 @@ World::ENpc::ENpc(const std::string& name) : EInteractable(make_nnInteractId(nam
         animationIdle.frameSize = 64;
         animationIdle.frameDelay = 0.15f;
     } 
-    if (name == "Cow") {
+    if (name == "cow") {
         LoadData(textureId, 128, 64);
 
         animationIdle.textureId = make_nnTex(std::format("npc_{}_idle", name));
@@ -24,7 +24,7 @@ World::ENpc::ENpc(const std::string& name) : EInteractable(make_nnInteractId(nam
         animationIdle.frameSize = 128;
         animationIdle.frameDelay = 0.15f;
     }
-    if (name == "Cat") {
+    if (name == "cat") {
         LoadData(textureId, 32, 32);
 
         animationIdle.textureId = make_nnTex(std::format("npc_{}_idle", name));

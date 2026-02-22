@@ -47,12 +47,12 @@ public:
         onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &GameStateManager::OnEntityDestroyed);
         onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &GameStateManager::OnLocationChanged);
 
-        entitiesWhiteList.insert("Cat.vil");
-        entitiesWhiteList.insert("Cow.vil");
-        entitiesWhiteList.insert("Joe.vil");
-        entitiesWhiteList.insert("Elder.vil");
-        entitiesWhiteList.insert("Guard.vil");
-        entitiesWhiteList.insert("Nebula.vil");
+        entitiesWhiteList.insert("cat.vil");
+        entitiesWhiteList.insert("cow.vil");
+        entitiesWhiteList.insert("joe.vil");
+        entitiesWhiteList.insert("elder.vil");
+        entitiesWhiteList.insert("guard.vil");
+        entitiesWhiteList.insert("nebula.vil");
 
         locationsWhiteList.insert("world-void");
         locationsWhiteList.insert("backroad");

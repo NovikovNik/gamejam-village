@@ -199,7 +199,8 @@ public:
         // Load npcs from JSON
         if (mapData.contains("npcs") && mapData["npcs"].is_array()) {
             for (const auto& npcJson : mapData["npcs"]) {
-                const std::string npcName = npcJson["name"].get<std::string>();
+                std::string npcName = npcJson["name"].get<std::string>();
+                std::transform(npcName.begin(), npcName.end(), npcName.begin(), ::tolower);
                 const float x = npcJson["x"].get<float>();
                 const float y = npcJson["y"].get<float>();
                 bool shouldSpawnInstantly = false;
@@ -313,6 +314,7 @@ public:
         EventBus::instance().EmitEvent<WindowFocusedEvent>();
 
         EventBus::instance().EmitEvent<LocationChangedEvent>(locationName);
+        visitedLocations.insert(locationName);
         UpdateCameraScaleFactor(locationName);
 
         // HACK: Чтобы перезагрузить состояние мира после загрузки локации
