@@ -152,6 +152,14 @@ public:
             }
         }
 
+        if (mapData.contains("colliders_circles") && mapData["colliders_circles"].is_array()) {
+            for (const auto& colliderCircleJson : mapData["colliders_circles"]) {
+                const float x = colliderCircleJson["x"].get<float>();
+                const float y = colliderCircleJson["y"].get<float>();
+                const float radius = colliderCircleJson["r"].get<float>();
+                Physics::CreateStaticCircle(x, y, radius);
+            }
+        }   
         std::vector<World::ESpawners::Spawner> spawners;
         
         // Load pits from JSON
