@@ -353,6 +353,12 @@ public:
             Renderer::DrawSprite(make_nnTex("f_button"), pos.x, pos.y, 24, 24);
             interactHintPosition.reset();
         }
+
+        if (registrationHintTimeLeft > 0.f) {
+            Renderer::DrawSprite(make_nnTex("ui_filesystem"), registrationHintPosition.x, registrationHintPosition.y, 32, 32);
+            registrationHintPosition = registrationHintPosition + glm::vec2(0.f, -180.f) * deltaTime;
+            registrationHintTimeLeft -= deltaTime;
+        }
     }
 
     [[nodiscard]] const World::EntitiesContainer& GetEntitiesContainer() {
@@ -541,6 +547,11 @@ public:
         interactHintPosition = glm::vec2(x, y);
     }
 
+    void ShowRegistrationHint(float x, float y) {
+        registrationHintPosition = glm::vec2(x, y - 30.f);
+        registrationHintTimeLeft = 0.8f;
+    }
+
 private:
     std::set<std::string> removedEntities;
     World::EntitiesManager entitiesManager;
@@ -555,6 +566,8 @@ private:
     std::set<World::Entity::TagName> prevInteractedEntities;
 
     std::optional<glm::vec2> interactHintPosition;
+    glm::vec2 registrationHintPosition;
+    float registrationHintTimeLeft = 0.f;
 
     bool isInitialSync = true;
 };
@@ -640,4 +653,7 @@ namespace MapManager {
         Map::instance().ShowInteractHint(x, y);
     }
 
+    void ShowRegistrationHint(float x, float y) {
+        Map::instance().ShowRegistrationHint(x, y);
+    }
 };

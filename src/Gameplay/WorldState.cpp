@@ -241,16 +241,16 @@ public:
         Logger::Log("Loaded game state from village folder");
     }
 
-    void RegisterInWorldState(const World::Entity::TagName& tagName) {
+    bool RegisterInWorldState(const World::Entity::TagName& tagName) {
         if (tagName.type == "object") {
-            return;
+            return false;
         }
         const auto key = std::format("{}.{}", tagName.name, tagName.type);
 
         const auto locationName = MapManager::GetCurrentMapName();
         auto& entity = currentState.registeredEntities[key];
         if (entity.contains(locationName) || locationName == "world-void" || locationName == "intro") {
-            return;
+            return false;
         }
         entity.insert(locationName);
 
@@ -264,6 +264,8 @@ public:
         // Create new file without .txt extension
         FileSystemManager::CreateKeyFile(villageDir.string(), filename);
         EventBus::instance().EmitEvent<WorldStateUpdatedEvent>();
+
+        return true;
     }
 
     void RemoveFromWorldState(const World::Entity::TagName& tagName) {
@@ -310,8 +312,8 @@ void WorldState::Destroy() {
     GameStateManager::instance().Destroy();
 }
 
-void WorldState::RegisterInWorldState(const World::Entity::TagName& tagName) {
-    GameStateManager::instance().RegisterInWorldState(tagName);
+bool WorldState::RegisterInWorldState(const World::Entity::TagName& tagName) {
+    return GameStateManager::instance().RegisterInWorldState(tagName);
 }
 
 void WorldState::Update() {

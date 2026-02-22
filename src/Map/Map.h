@@ -28,4 +28,5 @@ namespace MapManager {
     void SetPlayerPositionToSpawnPoint(const std::string& spawnPointName);
 
     void ShowInteractHint(float x, float y);
+    void ShowRegistrationHint(float x, float y);
 };

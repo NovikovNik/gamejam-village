@@ -215,7 +215,10 @@ bool World::EPlayer::Update(float deltaTime) {
         currentInteractable = interactable;
         if (currentInteractable) {
             bShowTooltip = true;
-            WorldState::RegisterInWorldState(currentInteractable->GetTagName());
+            const bool isRegistered = WorldState::RegisterInWorldState(currentInteractable->GetTagName());
+            if (isRegistered) {
+                MapManager::ShowRegistrationHint(currentInteractable->GetPosition().x, currentInteractable->GetPosition().y);
+            }
         } else {
             bShowTooltip = false;
         }

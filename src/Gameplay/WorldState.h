@@ -12,7 +12,7 @@ namespace WorldState {
     void Destroy();
     void Update();
 
-    void RegisterInWorldState(const World::Entity::TagName& tagName);
+    bool RegisterInWorldState(const World::Entity::TagName& tagName);
     void RemoveFromWorldState(const World::Entity::TagName& tagName);
 
     void SetCurrentState(const LocationsStates::State& state);

@@ -42,7 +42,10 @@ bool World::EBox::Update(float deltaTime) {
     const auto& overlapInfos = Physics::GetOverlapInfos();
     for (const auto& overlapInfo : overlapInfos) {
         if (overlapInfo.objectId1 == physicsObjectId || overlapInfo.objectId2 == physicsObjectId) {
-            WorldState::RegisterInWorldState(GetTagName());
+            const bool isRegistered = WorldState::RegisterInWorldState(GetTagName());
+            if (isRegistered) {
+                MapManager::ShowRegistrationHint(GetPosition().x, GetPosition().y);
+            }
             break;
         }
     }
