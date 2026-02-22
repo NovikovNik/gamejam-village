@@ -14,7 +14,8 @@ World::ENpc::ENpc(const std::string& name) : EInteractable(make_nnInteractId(nam
         animationIdle.maxElementsPerRow = 6;
         animationIdle.frameSize = 64;
         animationIdle.frameDelay = 0.15f;
-    } else {
+    } 
+    if (name == "Cow") {
         LoadData(textureId, 128, 64);
 
         animationIdle.textureId = make_nnTex(std::format("npc_{}_idle", name));
@@ -22,6 +23,15 @@ World::ENpc::ENpc(const std::string& name) : EInteractable(make_nnInteractId(nam
         animationIdle.maxElementsPerRow = 6;
         animationIdle.frameSize = 128;
         animationIdle.frameDelay = 0.15f;
+    }
+    if (name == "Cat") {
+        LoadData(textureId, 32, 32);
+
+        animationIdle.textureId = make_nnTex(std::format("npc_{}_idle", name));
+        animationIdle.numOfFrames = 10;
+        animationIdle.maxElementsPerRow = 10;
+        animationIdle.frameSize = 32;
+        animationIdle.frameDelay = 0.15f; 
     }
 }
 

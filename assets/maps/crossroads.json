@@ -114,6 +114,12 @@
             "y": -414.99493408203125,
             "name": "Cow",
             "spawnOnStart": true
+        },
+        {
+            "x": 313.4063720703125,
+            "y": -153.46685791015625,
+            "name": "Cat",
+            "spawnOnStart": true
         }
     ],
     "interactible_objects": [],
