@@ -30,12 +30,31 @@ void World::ETriggerLocation::OnDestroy() {
     Physics::RemoveObject(physicsTriggerId);
 }
 
-
-bool World::ETriggerLocation::Update(float deltaTime) {
-    if (!EMapObject::Update(deltaTime)) {
-        return false;
+void World::ETriggerLocation::ProcessOverlap() {
+    const auto& overlapInfos = Physics::GetOverlapInfos();
+    for (const auto& overlapInfo : overlapInfos) {
+        if (overlapInfo.objectId1 == physicsTriggerId || overlapInfo.objectId2 == physicsTriggerId) {
+            ChangeLocation();
+            break;
+        }
     }
+}
 
+void World::ETriggerLocation::CheckStateWithTease() {
+    const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;
+    const auto shortLocationName = std::filesystem::path(locationName).filename().stem().string();
+    if (!registeredLocations.contains(shortLocationName)) {
+        isLocationAvailable = false;
+        return;
+    }
+    else if (!registeredLocations.at(shortLocationName)) {
+        isLocationAvailable = false;
+        return;
+    }
+    isLocationAvailable = true;
+}
+
+void World::ETriggerLocation::CheckStateWithoutTease() {
     const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;
     const auto shortLocationName = std::filesystem::path(locationName).filename().stem().string();
     if (registeredLocations.contains(shortLocationName) && !registeredLocations.at(shortLocationName)) {
@@ -44,17 +63,21 @@ bool World::ETriggerLocation::Update(float deltaTime) {
     else {
         isLocationAvailable = true;
     }
+}
 
-    if (!isLocationAvailable) {
-        return true;
+bool World::ETriggerLocation::Update(float deltaTime) {
+    if (!EMapObject::Update(deltaTime)) {
+        return false;
+    }
+    if (!tease) {
+        CheckStateWithoutTease();
+    }
+    else {
+        CheckStateWithTease();
     }
 
-    const auto& overlapInfos = Physics::GetOverlapInfos();
-    for (const auto& overlapInfo : overlapInfos) {
-        if (overlapInfo.objectId1 == physicsTriggerId || overlapInfo.objectId2 == physicsTriggerId) {
-            ChangeLocation();
-            break;
-        }
+    if (isLocationAvailable) {
+        ProcessOverlap();
     }
 
     return true;

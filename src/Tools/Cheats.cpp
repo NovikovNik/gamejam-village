@@ -1,6 +1,5 @@
 #include "Cheats.h"
 
-#define ENABLE_CHEATS 1
 #if ENABLE_CHEATS
 
 #include <Renderer/Renderer.h>

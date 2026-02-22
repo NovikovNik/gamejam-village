@@ -198,8 +198,19 @@
     "levelChangeTriggers": [
         {
             "name": "LevelChangeTriggers",
-            "x": 336.5999450683594,
-            "y": -3.051335334777832,
+            "x": -81.71124267578125,
+            "y": -172.2384490966797,
+            "width": 64.0,
+            "height": 64.0,
+            "texture": "levelchange",
+            "location": "assets/maps/world-1.json",
+            "spawnPointMatch": "",
+            "tease": true
+        },
+        {
+            "name": "LevelChangeTriggersNoTease",
+            "x": 43.29442596435547,
+            "y": -170.3521728515625,
             "width": 64.0,
             "height": 64.0,
             "texture": "levelchange",
