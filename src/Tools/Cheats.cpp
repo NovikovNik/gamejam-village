@@ -1,5 +1,6 @@
 #include "Cheats.h"
 
+#define ENABLE_CHEATS 1
 #if ENABLE_CHEATS
 
 #include <Renderer/Renderer.h>
@@ -20,6 +21,7 @@
 #include <algorithm>
 #include <format>
 #include <filesystem>
+#include <sstream>
 #include <vector>
 #include <set>
 #include <utility>
@@ -151,6 +153,27 @@ public:
                 ImGui::EndTabItem();
             }
 
+            if (ImGui::BeginTabItem("Sign")) {
+                ImGui::Text("Each line becomes one row on the sign.");
+                ImGui::Separator();
+                ImGui::InputTextMultiline("##sign", signBuf, sizeof(signBuf),
+                    ImVec2(-1.f, 120.f));
+                if (ImGui::Button("Open Sign")) {
+                    std::vector<std::string> rows;
+                    std::istringstream ss(signBuf);
+                    std::string line;
+                    while (std::getline(ss, line)) {
+                        rows.push_back(line);
+                    }
+                    DialogSystemManager::OpenSign(rows);
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Close Sign")) {
+                    DialogSystemManager::CloseSign();
+                }
+                ImGui::EndTabItem();
+            }
+
             if (ImGui::BeginTabItem("World State")) {
                 const auto& state = WorldState::GetCurrentState();
                 if (state.registeredEntities.empty()) {
@@ -244,6 +267,7 @@ private:
     bool dialogListDirty = true;
 
     bool isCheatsActive = false;
+    char signBuf[1024] = "Line one\nLine two\nLine three\nLine four\nLine five\nLine six\nLine seven\nLine eight";
 };
 
 void Cheats::UpdateAndRender() {

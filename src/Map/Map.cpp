@@ -198,9 +198,9 @@ public:
                     Logger::Warn(std::format("NPC {} does not have spawnOnStart property, defaulting to true", npcName));
                     shouldSpawnInstantly = true;
                 }
-                spawners.push_back({ npcName, "villager", x, y, shouldSpawnInstantly });
+                spawners.push_back({ npcName, "vil", x, y, shouldSpawnInstantly });
 //                World::ENpc* npc = entitiesManager.SpawnEntity<World::ENpc>(npcName, x, y);
-//                npc->SetTagName(std::format("{}.villager", npcName));
+//                npc->SetTagName(std::format("{}.vil", npcName));
             }
         }
 
@@ -387,7 +387,7 @@ public:
 
             //objectsLocations[GetCurrentMapName()].insert({ { name, type } });
             const auto position = optPosition.value();
-            if (type == "villager") {
+            if (type == "vil") {
                 auto npc = entitiesManager.SpawnEntity<World::ENpc>(position.x, position.y, 0, 0, name);
                 npc->SetTagName({ name, type });
                 Logger::Log(std::format("[Map] Spawned NPC: {} of type {}", name, type));
@@ -411,7 +411,7 @@ public:
             }
         }
 
-//        if (type == "villager") {
+//        if (type == "vil") {
 //            if (mapData.contains("npcs") && mapData["npcs"].is_array()) {
 //                for (const auto& npcJson : mapData["npcs"]) {
 //                    const std::string npcName = npcJson["name"].get<std::string>();
@@ -419,7 +419,7 @@ public:
 //                        const float x = npcJson["x"].get<float>();
 //                        const float y = npcJson["y"].get<float>();
 //                        World::ENpc* npc = entitiesManager.SpawnEntity<World::ENpc>(npcName, x, y);
-//                        npc->SetTagName(std::format("{}.villager", npcName));
+//                        npc->SetTagName(std::format("{}.vil", npcName));
 //                        return npc;
 //                    }
 //                }

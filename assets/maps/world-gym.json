@@ -172,7 +172,14 @@
             "spawnOnStart": true
         }
     ],
-    "interactible_objects": [],
+    "interactible_objects": [
+        {
+            "x": -37.077308654785156,
+            "y": 39.58470153808594,
+            "name": "Name_Sign",
+            "spawnOnStart": true
+        }
+    ],
     "interactables": [],
     "players": [
         {

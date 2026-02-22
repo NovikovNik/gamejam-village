@@ -28,6 +28,8 @@ public:
     void Initialize() {
         dialogBackgroundNameTexture = make_nnTex("dialog_ui_speeker");
         dialogBackgroundTexture = make_nnTex("dialog_ui_texture");
+        signBackgroundTexture = make_nnTex("wooden_board_ui");
+        signPlateTexture = make_nnTex("name_sign_ui");
         onNextDialogLineEvent = EventBus::instance().SubscribeToEvent<NextDialogLineEvent>(this, &DialogSystem::OnNextDialogLineEvent);
         onForceDialogStartEvent = EventBus::instance().SubscribeToEvent<ForceDialogStartEvent>(this, &DialogSystem::OnForceDialogStartEvent);
     }
@@ -121,6 +123,16 @@ public:
         Logger::Log(std::format("[DialogSystem] Dialog: {}:{} started", characterId, dialogId));
     }
 
+    void OpenSign(const std::vector<std::string>& rows) {
+        signRows = rows;
+        signActive = true;
+    }
+
+    void CloseSign() {
+        signRows.clear();
+        signActive = false;
+    }
+
     void EndDialog() {
         dialogActive = false;
         EventBus::instance().EmitEvent<DialogEndedEvent>(currentCharacterId, currentDialogId);
@@ -133,13 +145,27 @@ public:
 
     // Чтобы узнавать статус диалоговой системы
     bool IsDialogActive() const {
-        return dialogActive;
+        return dialogActive || signActive;
     }
 
     [[maybe_unused]] void UpdateDialog() {}
 
     void RenderDialog() {
-        if (!dialogActive || currentDialogIndex >= static_cast<int>(currentLines.size())) return;
+        if (signActive) {
+            Renderer::DrawSpriteScreen(signBackgroundTexture, 55, 55, 387*1.8f, 270*1.8f);
+            for (int32_t rowId = 0; const auto& row : signRows) {
+                Renderer::DrawSpriteScreen(signPlateTexture, 55 + 348 - 185, 80 + rowId * 55.5f, 206*1.8f, 29*1.8f);
+                static constexpr SDL_Color black{ 0, 0, 0, 255 };
+                Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), row, 110 + 348 - 185, 80 + rowId * 55.5f + 10, 32, &black, 206*1.8f);
+                rowId++;
+            }
+            return;
+        }
+
+        if (!dialogActive || currentDialogIndex >= static_cast<int>(currentLines.size())) {
+            return;
+        }
+
         const DialogLine& line = currentLines[currentDialogIndex];
         SDL_Color textColor = {line.color[0], line.color[1], line.color[2], line.color[3]};
 
@@ -159,6 +185,10 @@ public:
     }
 
     void OnNextDialogLineEvent(NextDialogLineEvent&) {
+        if (signActive) {
+            signActive = false;
+            return;
+        }
         if (!dialogActive) {
             return;
         }
@@ -214,6 +244,9 @@ private:
     }
 
     bool dialogActive = false;
+    bool signActive = false;
+    std::vector<std::string> signRows;
+
     std::string currentCharacterId;
     std::string currentDialogId;
     int currentDialogIndex = 0;
@@ -222,6 +255,9 @@ private:
 
     Renderer::TextureId dialogBackgroundNameTexture;
     Renderer::TextureId dialogBackgroundTexture;
+
+    Renderer::TextureId signBackgroundTexture;
+    Renderer::TextureId signPlateTexture;
 
     DialogsMap dialogs;
     std::map<std::string, CharacterMeta> characterMeta;
@@ -244,6 +280,14 @@ void DialogSystemManager::StartDialog(const std::string& characterId, const std:
 
 void DialogSystemManager::EndDialog() {
     DialogSystem::instance().EndDialog();
+}
+
+void DialogSystemManager::OpenSign(const std::vector<std::string>& rows) {
+    DialogSystem::instance().OpenSign(rows);
+}
+
+void DialogSystemManager::CloseSign() {
+    DialogSystem::instance().CloseSign();
 }
 
 bool DialogSystemManager::IsDialogActive() {

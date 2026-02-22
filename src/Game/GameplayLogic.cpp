@@ -10,6 +10,7 @@
 #include <Renderer/Camera.h>
 #include <Events/InteractWithEntityEvent.h>
 #include <Events/GameShutdownEvent.h>
+#include <Gameplay/WorldState.h>
 #include <ProgressSystem/ProgressSystem.h>
 #include <DialogSystem/DialogSystem.h>
 #include <Map/Map.h>
@@ -18,6 +19,7 @@
 #include <memory>
 #include <format>
 #include <cmath>
+#include <vector>
 
 namespace {
     class GameAct {
@@ -240,6 +242,33 @@ namespace {
     }
 }
 
+/* Основной акт, который может быть запущен несколько раз. В основном работает в хабе игры */
+class SignsAct: public GameAct {
+    public:
+        void Initialize() {
+            onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &SignsAct::OnInteractWithEntity);
+        }
+        
+        void Update(float deltaTime) override {}
+
+        void OnInteractWithEntity(InteractWithEntityEvent& e) {
+
+            if (e.entityId == "Name_Sign") {
+                const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
+                std::vector<std::string> signRows;
+                for (const auto& [key, locations] : registeredEntities) {
+                    if (locations.empty() && key.find("vil") != std::string::npos) {
+                        signRows.push_back(key);
+                    }
+                }
+                DialogSystemManager::OpenSign(signRows);
+            }
+        }
+
+    private:
+        Events::Handler onInteractWithEntity;
+};
+
 class GameplayLogicManager: public Singleton<GameplayLogicManager> {
 public:
     void Initialize() {
@@ -256,6 +285,9 @@ public:
 
         nextGameAct = CreateGameAct(id);
         currentGameActId = std::string(id);
+
+        currentGameAct = std::make_unique<SignsAct>();
+        currentGameAct->Initialize();
     }
 
     void LoadGameAct(GameActId id) {
@@ -290,12 +322,18 @@ public:
         if (gameAct != nullptr) {
             gameAct->Update(deltaTime);
         }
+        if (currentGameAct != nullptr) {
+            currentGameAct->Update(deltaTime);
+        }
     }
 
 private:
     std::unique_ptr<GameAct> gameAct;
     std::unique_ptr<GameAct> nextGameAct;
+    std::unique_ptr<GameAct> currentGameAct;
     std::string currentGameActId;
+
+    Events::Handler onInteractWithEntity;
 };
 
 namespace GameplayLogic {

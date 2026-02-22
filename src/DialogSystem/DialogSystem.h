@@ -28,6 +28,8 @@ namespace DialogSystemManager {
     // characterId — ключ персонажа (например "spaghetti"), dialogId — ключ диалога (например "dialog-1")
     void StartDialog(const std::string& characterId, const std::string& dialogId);
     void EndDialog();
+    void OpenSign(const std::vector<std::string>& rows);
+    void CloseSign();
     bool IsDialogActive();
     void UpdateDialog();
     void RenderDialog();

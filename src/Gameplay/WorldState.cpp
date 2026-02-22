@@ -242,11 +242,14 @@ public:
     }
 
     void RegisterInWorldState(const World::Entity::TagName& tagName) {
+        if (tagName.type == "object") {
+            return;
+        }
         const auto key = std::format("{}.{}", tagName.name, tagName.type);
 
         const auto locationName = MapManager::GetCurrentMapName();
         auto& entity = currentState.registeredEntities[key];
-        if (entity.contains(locationName)) {
+        if (entity.contains(locationName) || locationName == "world-void" || locationName == "intro") {
             return;
         }
         entity.insert(locationName);
