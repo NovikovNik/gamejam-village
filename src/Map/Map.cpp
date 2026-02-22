@@ -305,6 +305,7 @@ public:
         EventBus::instance().EmitEvent<WindowFocusedEvent>();
 
         EventBus::instance().EmitEvent<LocationChangedEvent>(locationName);
+        UpdateCameraScaleFactor(locationName);
 
         // HACK: Чтобы перезагрузить состояние мира после загрузки локации
         return true;
@@ -344,6 +345,21 @@ public:
 
     [[nodiscard]] const World::EntitiesContainer& GetEntitiesContainer() {
         return entitiesManager.GetEntitiesContainer();
+    }
+
+    void UpdateCameraScaleFactor(const std::string& locationName) {
+        if (locationName == "backroad") {
+            World::Camera::instance().SetScaleFactor(1.7f);
+        }
+        if (locationName == "intro") {
+            World::Camera::instance().SetScaleFactor(1.1f);
+        }
+        if (locationName == "world-void") {
+            World::Camera::instance().SetScaleFactor(1.5f);
+        }
+        if (locationName == "crossroads") {
+            World::Camera::instance().SetScaleFactor(1.4f);
+        }
     }
 
     World::Entity* SpawnEntity(const std::string& name, const std::string& type, bool silently = false) {

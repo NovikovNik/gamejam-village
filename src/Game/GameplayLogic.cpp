@@ -36,8 +36,6 @@ namespace {
                 Logger::Err("Intro act can only be loaded on intro map");
                 return;
             }
-            // Скейл 1 к 1, ибо это интро
-            World::Camera::instance().SetScaleFactor(1.0f);
 
             onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &ActIntro::OnLocationChanged);
             onDialogEnded = EventBus::instance().SubscribeToEvent<DialogEndedEvent>(this, &ActIntro::OnDialogEnded);
@@ -102,8 +100,6 @@ namespace {
                 Logger::Err("Tutorial act can only be loaded on backroad map");
                 return;
             }
-            // Скейл такой выверен на глаз
-            World::Camera::instance().SetScaleFactor(1.7f);
 
             onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &ActTutorial::OnLocationChanged);
             onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &ActTutorial::OnInteractWithEntity);

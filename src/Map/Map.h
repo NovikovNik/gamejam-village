@@ -19,6 +19,7 @@ namespace MapManager {
     void Render(float deltaTime);
     void ReloadMap();
     void UnloadCurrentMap();
+    void UpdateCameraScaleFactor(const std::string locationName);
     void OpenCurrentLocationInExplorer();
     void SeedInstantSpawnEntitiesInFilesystem();
     void SetPlayerPositionToSpawnPoint(const std::string& spawnPointName);
