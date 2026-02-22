@@ -269,6 +269,12 @@ namespace {
 
             if (e.entityId == "Guard") {
                 if (mapName == "crossroads") {
+                    const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;
+                    const std::string assemblyHallId = "assembly-hall";
+                    if (registeredLocations.contains(assemblyHallId) && registeredLocations.at(assemblyHallId)) {
+                        DialogSystemManager::StartDialog("Guard", "dialog-assembly-hall-available");
+                    }
+
                     if (ProgressSystemManager::Player().elderHubActiveQuest == "guard_quest" || ProgressSystemManager::Player().elderHubActiveQuest == "spawn-guard") {
                         if (ProgressSystemManager::Inventory().HasItem(World::sword)) {
                             ProgressSystemManager::Inventory().RemoveItem(World::sword);
@@ -350,6 +356,7 @@ namespace {
         Events::Handler onEntityCreated;
         Events::Handler onEntityDestroyed;
         Events::Handler onDialogEnded;
+        Events::Handler onFocusWindow;
     };
     
     [[nodiscard]] std::unique_ptr<GameAct> CreateGameAct(GameActId id) {

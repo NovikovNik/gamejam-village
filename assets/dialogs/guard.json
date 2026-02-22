@@ -218,6 +218,15 @@
                     "text": "Rebuild the 'assembly-hall' and we shall be able to enter and lift the curse from this village."
                 }
             ]
+        },
+        "dialog-assembly-hall-available": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "The assembly-hall is already rebuilt. We can enter and lift the curse from this village!"
+                }
+            ]
         }
     }
 }
