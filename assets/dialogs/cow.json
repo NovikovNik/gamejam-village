@@ -1,0 +1,69 @@
+{
+    "id": "Cow",
+    "name": "Cow",
+    "description": "",
+    "dialogs": {
+        "dialog-cow-idle": {
+            "lines": [
+                {
+                    "name": "Big Cow",
+                    "text": "Moo! Moo! Moo!"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "It's defenetely just a cow.",
+                    "size": 20,
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "Or not?",
+                    "size": 20,
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                },
+                {
+                    "name": "Consciousness",
+                    "text": "Maybe she's just hungry.",
+                    "size": 20,
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                }
+            ]
+        },
+        "dialog-cow-quest-carrot": {
+            "lines": [
+                {
+                    "name": "Big Cow",
+                    "text": "Moo! Moo! Moo!",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "You stand before a cow—a grand, self-contained, and fiercely independent creature. You sense a hunger within her, deep and persistent. And you know, with absolute certainty, that there is a carrot nestled right there, in your pocket.",
+                    "size": 20,
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                },
+                {
+                    "name": "Big Cow",
+                    "text": "Moo! Moo! Moo-o-o-o-o!",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "The cow chews the offered carrot with utter abandon. She is content; you can feel a surge of pure, unadulterated happiness radiating from her eyes. It seems... she’s thanking you. Seems?",
+                    "size": 20,
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
+        }
+    }
+}

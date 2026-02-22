@@ -1,0 +1,50 @@
+{
+    "id": "Joe",
+    "name": "Farmer Joe",
+    "description": "",
+    "dialogs": {
+        "quest-start": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Hey there! Could you spare a moment? My back is really hurting, and I need help clearing these haystacks. I’d really appreciate it.",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "quest-progress": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "You’re doing great. I don’t remember seeing you in this village — actually, I don’t remember anyone for some reason — but keep it up!",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "quest-complete": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "That’s it! I can’t believe you’ve done it. Thank you so much!",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "I’ll give you a reward for your help. Here’s some freshy carrot! I know it will help you with your journey.",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        }
+    }
+}

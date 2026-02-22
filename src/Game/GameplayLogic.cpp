@@ -293,6 +293,36 @@ namespace {
                 }
             }
 
+            if (e.entityId == "Joe") {
+                if (ProgressSystemManager::Player().joeQuestProgress == 0) {
+                    DialogSystemManager::StartDialog("Joe", "quest-start");
+
+                } else if (ProgressSystemManager::Player().joeQuestProgress == 1) {
+                    DialogSystemManager::StartDialog("Joe", "quest-progress");
+
+                } else if (ProgressSystemManager::Player().joeQuestProgress == 2) {
+                    DialogSystemManager::StartDialog("Joe", "quest-complete");
+                    ProgressSystemManager::Inventory().AddItem(World::carrot);
+                    ProgressSystemManager::SaveData();
+                }
+            }
+
+            // Самые важные отношения с коровами в игре
+            if (e.entityId == "Cow") {
+                if (ProgressSystemManager::Player().joeQuestProgress >= 2) {
+                    if (mapName == "crossroads") {
+                        DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-carrot");
+                        if (ProgressSystemManager::Inventory().HasItem(World::carrot)) {
+                            ProgressSystemManager::Inventory().RemoveItem(World::carrot);
+                            ProgressSystemManager::Player().cowQuestFeeded = true;
+                            ProgressSystemManager::SaveData();
+                        }
+                    }
+                } else {
+                    DialogSystemManager::StartDialog("Cow", "dialog-cow-idle");
+                }
+            }
+
             if (e.entityId == "Chestbox") {
                 if (mapName == "elders-house") {
                     if (!ProgressSystemManager::Inventory().HasItem(World::key)) {
@@ -339,6 +369,9 @@ namespace {
 
         void OnEntityDestroyed(EntityDestroyedEvent& e) {
             Logger::Log(std::format("[Gameplay][Main] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
+            if (e.GetName() == "box-1" || e.GetName() == "box-2") {
+                ProgressSystemManager::Player().joeQuestProgress++;
+            }
         }
 
         void OnDialogEnded(DialogEndedEvent& e) {
