@@ -44,11 +44,31 @@
                 },
                 {
                     "name": "Narrator",
-                    "text": "Among the texts, you manage to find the name of the northeastern house — “Assembly Hall.”"
+                    "text": "Among the texts, you manage to find the name of the northeastern house — “assembly-hall.”"
                 },
                 {
                     "name": "Narrator",
                     "text": "This information should prove useful.",
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-get-sword": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "You have found the sword the guardsman spoke of. Its steel is engraved with ancient runes. You should deliver it to its rightful master.",
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-chestbox-no-key": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "You don't have the key to the chestbox. You need to find it first.",
                     "align": "right"
                 }
             ],

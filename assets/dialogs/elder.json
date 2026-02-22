@@ -101,6 +101,19 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-book-quest": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "Then the curse is real. I’ve heard that in the old house to the southwest—the one with the blocked entrance—there might be a book hidden in one of the chests. It could hold the answer to breaking this spell."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "I can’t enter the house myself, but I know you can. It might be a long way, but it’s worth a try."
+                }
+            ],
+            "textSize": 20
         }
     }
 }

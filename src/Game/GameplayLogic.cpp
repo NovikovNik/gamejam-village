@@ -215,50 +215,56 @@ namespace {
 
             if (e.entityId == "Elder") {
                 // Первый диалог со старейшиной в деревне. Он заберет письмо и попросит пройтись через деревню
-                if (mapName == "crossroads") {
-                    if (ProgressSystemManager::Player().elderHubActiveQuest == "go-through-location") {
-                        if (!elderAskToGoThroughLocation) {
-                            DialogSystemManager::StartDialog("Elder", "dialog-welcome");
-                            if (ProgressSystemManager::Inventory().HasItem(World::message)) {
-                                ProgressSystemManager::Inventory().RemoveItem(World::message);
-                            }
-                            elderAskToGoThroughLocation = true;
-                        } else {
-                            // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
-                            if (!locationChanged) {
-                                DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
-                            } else {
-                                ProgressSystemManager::Player().elderHubActiveQuest = "cat-quest";
-                                DialogSystemManager::StartDialog("Elder", "dialog-cat-quest");
-                            }
+                if (ProgressSystemManager::Player().elderHubActiveQuest == "go-through-location") {
+                    if (!elderAskToGoThroughLocation) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-welcome");
+                        if (ProgressSystemManager::Inventory().HasItem(World::message)) {
+                            ProgressSystemManager::Inventory().RemoveItem(World::message);
                         }
-                    }
-                    if (ProgressSystemManager::Player().elderHubActiveQuest == "cat-quest") {
-                        const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
-                        auto it = registeredEntities.find("Cat.vil");
-                        const bool catNotInEldersHouse = (it == registeredEntities.end() || !it->second.contains("elders-house"));
-                        if (catNotInEldersHouse) {
-                            DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-again");
+                        elderAskToGoThroughLocation = true;
+                    } else {
+                        // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
+                        if (!locationChanged) {
+                            DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
                         } else {
-                            ProgressSystemManager::Player().elderHubActiveQuest = "spawn-guard";
-                            DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
+                            ProgressSystemManager::Player().elderHubActiveQuest = "cat-quest";
+                            DialogSystemManager::StartDialog("Elder", "dialog-cat-quest");
                         }
-                    }
-                    if (ProgressSystemManager::Player().elderHubActiveQuest == "spawn-guard") {
-                        const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
-                        auto it = registeredEntities.find("Guard.vil");
-                        const bool guardNotInVillage = (it == registeredEntities.end() || !it->second.contains("crossroads"));
-                        if (guardNotInVillage) {
-                            DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-again");
-                        } else {
-                            DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
-                            ProgressSystemManager::Player().elderHubActiveQuest = "guard_quest";
-                        }
-                    }
-                    if (ProgressSystemManager::Player().elderHubActiveQuest == "guard_quest") {
-                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
                     }
                 }
+                if (ProgressSystemManager::Player().elderHubActiveQuest == "cat-quest") {
+                    const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
+                    auto it = registeredEntities.find("Cat.vil");
+                    const bool catNotInEldersHouse = (it == registeredEntities.end() || !it->second.contains("elders-house"));
+                    if (catNotInEldersHouse) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-again");
+                    } else {
+                        ProgressSystemManager::Player().elderHubActiveQuest = "spawn-guard";
+                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
+                    }
+                }
+                if (ProgressSystemManager::Player().elderHubActiveQuest == "spawn-guard") {
+                    const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
+                    auto it = registeredEntities.find("Guard.vil");
+                    const bool guardNotInVillage = (it == registeredEntities.end() || !it->second.contains("crossroads"));
+                    if (guardNotInVillage) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-again");
+                    } else {
+                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
+                        ProgressSystemManager::Player().elderHubActiveQuest = "guard_quest";
+                    }
+                }
+                if (ProgressSystemManager::Player().elderHubActiveQuest == "guard_quest") {
+                    DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
+                }
+                if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist") {
+                    if (ProgressSystemManager::Inventory().HasItem(World::book)) {}
+                        ProgressSystemManager::Inventory().RemoveItem(World::book);
+                        DialogSystemManager::StartDialog("Elder", "void-mist-info");
+                        ProgressSystemManager::Player().elderHubActiveQuest = "void-mist-info";
+                    } else {
+                        DialogSystemManager::StartDialog("Elder", "dialog-book-quest");
+                    }
             }
 
             if (e.entityId == "Guard") {
@@ -285,10 +291,22 @@ namespace {
                         DialogSystemManager::StartDialog("Utility", "dialog-chestbox-get-key");
                     }
                 }
+                // Здесь добавляем книгу в инвентарь (нужна старейшине)
                 if (mapName == "old-house") {
                     if (ProgressSystemManager::Inventory().HasItem(World::key)) {
                         ProgressSystemManager::Inventory().RemoveItem(World::key);
+                        ProgressSystemManager::Inventory().AddItem(World::book);
                         DialogSystemManager::StartDialog("Utility", "dialog-chestbox-use-key");
+                    } else {
+                        DialogSystemManager::StartDialog("Utility", "dialog-chestbox-no-key");
+                    }
+                }
+            }
+            if (e.entityId == "Sword") {
+                if (mapName == "old-house") {
+                    if (!ProgressSystemManager::Inventory().HasItem(World::sword)) {
+                        ProgressSystemManager::Inventory().AddItem(World::sword);
+                        DialogSystemManager::StartDialog("Utility", "dialog-get-sword");
                     }
                 }
             }

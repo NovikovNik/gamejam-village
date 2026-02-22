@@ -11,8 +11,9 @@ namespace World {
     inline const ItemId sword = "sword";
     inline const ItemId key = "key";
     inline const ItemId carrot = "carrot";
+    inline const ItemId book = "book";
 
-    inline const std::set<ItemId> GetAllItems() { return {message}; }
+    inline const std::set<ItemId> GetAllItems() { return {message, sword, key, carrot, book}; }
 }
 
 class InventarySaveData {
