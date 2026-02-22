@@ -205,6 +205,19 @@
                     "text": "We must learn the name of this house. Perhaps the village elder can help us with that."
                 }
             ]
+        },
+        "dialog-rebuild-assembly-hall": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "So, you’ve managed to learn the name of this house. Strange... how none of us could recall it, as if the very memory had been stricken from our minds..."
+                },
+                {
+                    "name": "Guard",
+                    "text": "Rebuild the 'assembly-hall' and we shall be able to enter and lift the curse from this village."
+                }
+            ]
         }
     }
 }

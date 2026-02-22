@@ -414,7 +414,7 @@
             "width": 356.7260437011719,
             "height": 202.6625213623047,
             "texture": "levelchange",
-            "location": "assets/maps/world-gym.json",
+            "location": "assets/maps/assembly-hall.json",
             "spawnPointMatch": "",
             "tease": true
         },
@@ -435,7 +435,7 @@
             "width": 51.05690383911133,
             "height": 69.78518676757812,
             "texture": "levelchange",
-            "location": "old-house",
+            "location": "assets/maps/old-house.json",
             "spawnPointMatch": ""
         }
     ],

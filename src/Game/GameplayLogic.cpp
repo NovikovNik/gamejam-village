@@ -260,7 +260,7 @@ namespace {
                 if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist") {
                     if (ProgressSystemManager::Inventory().HasItem(World::book)) {}
                         ProgressSystemManager::Inventory().RemoveItem(World::book);
-                        DialogSystemManager::StartDialog("Elder", "void-mist-info");
+                        DialogSystemManager::StartDialog("Elder", "dialog-void-mist-info");
                         ProgressSystemManager::Player().elderHubActiveQuest = "void-mist-info";
                     } else {
                         DialogSystemManager::StartDialog("Elder", "dialog-book-quest");
@@ -280,6 +280,9 @@ namespace {
                     }
                     if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist") {
                         DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
+                    }
+                    if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist-info") {
+                        DialogSystemManager::StartDialog("Guard", "dialog-rebuild-assembly-hall");
                     }
                 }
             }

@@ -114,6 +114,19 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-void-mist-info": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "You have found the book of ancient lore! It is just as we thought. It says this house was once known as the 'assembly-hall.'"
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "If it has been corrupted, then it must be restored. Onward, then!"
+                }
+            ],
+            "textSize": 20
         }
     }
 }
