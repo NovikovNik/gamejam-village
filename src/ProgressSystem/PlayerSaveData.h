@@ -9,6 +9,7 @@ struct PlayerSaveData : public BasicSaveData {
     std::string lastLevel = "assets/maps/intro.json";
     std::string lastGameAct = std::string(GameActIds::Intro);
     bool fileSystemIconVisible = false;
+    bool elderStartQuestCompleted = false;
 
     int GetVersion() const override {
         return 1;
@@ -18,7 +19,9 @@ struct PlayerSaveData : public BasicSaveData {
         position = {0.f, 0.f};
         lastLevel = "assets/maps/intro.json";
         lastGameAct = std::string(GameActIds::Intro);
+
         fileSystemIconVisible = false;
+        elderStartQuestCompleted = false;
     }
 
     void ToJson(nlohmann::json& j) const override {
@@ -30,6 +33,7 @@ struct PlayerSaveData : public BasicSaveData {
         j["lastLevel"] = lastLevel;
         j["lastGameAct"] = lastGameAct;
         j["fileSystemIconVisible"] = fileSystemIconVisible;
+        j["elderStartQuestCompleted"] = elderStartQuestCompleted;
     }
 
     void FromJson(const nlohmann::json& j) override {
@@ -58,7 +62,9 @@ struct PlayerSaveData : public BasicSaveData {
         if (j.contains("fileSystemIconVisible") && j["fileSystemIconVisible"].is_boolean()) {
             fileSystemIconVisible = j["fileSystemIconVisible"].get<bool>();
         }
-
+        if (j.contains("elderStartQuestCompleted") && j["elderStartQuestCompleted"].is_boolean()) {
+            elderStartQuestCompleted = j["elderStartQuestCompleted"].get<bool>();
+        }
         if (!Validate()) {
             ResetToDefaults();
         }

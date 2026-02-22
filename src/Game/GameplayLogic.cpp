@@ -214,18 +214,21 @@ namespace {
 
             if (e.entityId == "Elder") {
                 // Первый диалог со старейшиной в деревне. Он заберет письмо и попросит пройтись через деревню
-                if (!elderAskedForGoThroughLocation) {
-                    DialogSystemManager::StartDialog("Elder", "dialog-welcome");
-                    if (ProgressSystemManager::Inventory().HasItem(World::message)) {
-                        ProgressSystemManager::Inventory().RemoveItem(World::message);
-                    }
-                    elderAskedForGoThroughLocation = true;
-                } else {
-                    // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
-                    if (!locationChanged) {
-                        DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
+                if (!ProgressSystemManager::Player().elderStartQuestCompleted) {
+                    if (!elderAskedForGoThroughLocation) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-welcome");
+                        if (ProgressSystemManager::Inventory().HasItem(World::message)) {
+                            ProgressSystemManager::Inventory().RemoveItem(World::message);
+                        }
+                        elderAskedForGoThroughLocation = true;
                     } else {
-                        DialogSystemManager::StartDialog("Elder", "dialog-cat-quest");
+                        // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
+                        if (!elderAskedForGoThroughLocation) {
+                            DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
+                        } else {
+                            ProgressSystemManager::Player().elderStartQuestCompleted = true;
+                            DialogSystemManager::StartDialog("Elder", "dialog-cat-quest");
+                        }
                     }
                 }
             }
