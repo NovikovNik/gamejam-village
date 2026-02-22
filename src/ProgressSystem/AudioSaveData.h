@@ -3,16 +3,16 @@
 
 struct AudioSaveData : public BasicSaveData {
     float masterVolume = 0.75f;
-    float musicVolume  = 0.2f;
-    float sfxVolume    = 0.5f;
+    float musicVolume  = 0.1f;
+    float sfxVolume    = 0.008f;
     bool  muted        = false;
 
     int GetVersion() const override { return 1; }
 
     void ResetToDefaults() override {
         masterVolume = 0.75f;
-        musicVolume  = 0.2f;
-        sfxVolume    = 0.5f;
+        musicVolume  = 0.1f;
+        sfxVolume    = 0.008f;
         muted        = false;
     }
 
@@ -27,8 +27,8 @@ struct AudioSaveData : public BasicSaveData {
     void FromJson(const nlohmann::json& j) override {
         if (!j.is_object()) { ResetToDefaults(); return; }
         masterVolume = j.value("master", 1.0f);
-        musicVolume  = j.value("music",  0.2f);
-        sfxVolume    = j.value("sfx",    0.5f);
+        musicVolume  = j.value("music",  0.1f);
+        sfxVolume    = j.value("sfx",    0.008f);
         muted        = j.value("muted",  false);
         if (!Validate()) ResetToDefaults();
     }

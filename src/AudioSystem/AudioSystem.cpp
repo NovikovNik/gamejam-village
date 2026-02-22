@@ -33,8 +33,8 @@ bool             g_musicPlaying  = false;
 bool             g_musicPaused   = false;
 
 float g_masterVolume = 0.75f;
-float g_sfxVolume    = 0.5f;
-float g_musicVolume  = 0.2f;
+float g_sfxVolume    = 0.008f;
+float g_musicVolume  = 0.1f;
 bool  g_muted        = false;
 
 Events::Handler g_onPlaySound;
