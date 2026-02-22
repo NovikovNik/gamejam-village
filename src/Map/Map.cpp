@@ -404,7 +404,7 @@ public:
                 box->SetTagName({ name, type });
                 return box;
             }
-            if (type == "pit") {
+            if (type == "pit" && !removedEntities.contains(std::format("{}.{}", name, type))) {
                 auto pit = entitiesManager.SpawnEntity<World::EPit>(position.x, position.y, 0, 0, make_nnBoxName(name));
                 pit->SetTagName({ name, type });
                 return pit;
@@ -436,6 +436,7 @@ public:
                     EventBus::instance().EmitEvent<EntityDestroyedEvent>(name, type);
                 }
                 entity->Destroy();
+                removedEntities.insert(std::format("{}.{}", name, type));
 
                 return entity;
             }
@@ -516,7 +517,16 @@ public:
         return prevInteractedEntities;
     }   
 
+    void SetRemovedEntities(const std::set<std::string>& removedEntities) {
+        this->removedEntities = removedEntities;
+    }
+
+    const std::set<std::string>& GetRemovedEntities() {
+        return this->removedEntities;
+    }
+
 private:
+    std::set<std::string> removedEntities;
     World::EntitiesManager entitiesManager;
     World::EPlayer* player = nullptr;
     std::string currentLevel;
@@ -598,6 +608,14 @@ namespace MapManager {
 
     const std::set<World::Entity::TagName>& GetInteractedEntities() {
         return Map::instance().GetInteractedEntities();
+    }
+
+    void SetRemovedEntities(const std::set<std::string>& removedEntities) {
+        Map::instance().SetRemovedEntities(removedEntities);
+    }
+
+    const std::set<std::string>& GetRemovedEntities() {
+        return Map::instance().GetRemovedEntities();
     }
 
 };

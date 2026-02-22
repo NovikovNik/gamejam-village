@@ -8,6 +8,7 @@
 #include "AudioSaveData.h"
 #include "WorldSaveData.h"
 #include "InventarySaveData.h"
+#include <Map/Map.h>
 #include <AudioSystem/AudioSystem.h>
 #include <Gameplay/WorldState.h>
 #include <libs/json/single_include/nlohmann/json.hpp>
@@ -39,7 +40,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             // Snapshot current world state before writing.
             worldSaveData.state = WorldState::GetCurrentState();
             worldSaveData.backupLocationPath = WorldState::GetBackupLocationPath();
-
+            worldSaveData.removedEntities = MapManager::GetRemovedEntities();
             nlohmann::json j;
             playerSaveData.ToJson(j);
             audioSaveData.ToJson(j["audio"]);

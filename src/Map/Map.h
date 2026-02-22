@@ -13,6 +13,9 @@ namespace MapManager {
     void MarkAsInteracted(const World::Entity::TagName& tagName);
     [[nodiscard]] const std::set<World::Entity::TagName>& GetInteractedEntities();
 
+    void SetRemovedEntities(const std::set<std::string>& removedEntities);
+    [[nodiscard]] const std::set<std::string>& GetRemovedEntities();
+
     void Initialize();
     void Destroy();
     void Update(float deltaTime);

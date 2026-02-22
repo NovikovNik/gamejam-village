@@ -5,6 +5,7 @@
 struct WorldSaveData : public BasicSaveData {
     LocationsStates::State state;
     std::string backupLocationPath;
+    std::set<std::string> removedEntities;
 
     int GetVersion() const override { return 1; }
 
@@ -32,6 +33,7 @@ struct WorldSaveData : public BasicSaveData {
             ents[key] = std::move(arr);
         }
         j["backupLocationPath"] = backupLocationPath;
+        j["removedEntities"] = removedEntities;
     }
 
     void FromJson(const nlohmann::json& j) override {
@@ -58,6 +60,11 @@ struct WorldSaveData : public BasicSaveData {
         }
         if (j.contains("backupLocationPath") && j["backupLocationPath"].is_string()) {
             backupLocationPath = j["backupLocationPath"].get<std::string>();
+        }
+        if (j.contains("removedEntities") && j["removedEntities"].is_array()) {
+            for (const auto& el : j["removedEntities"]) {
+                removedEntities.insert(el.get<std::string>());
+            }
         }
     }
 };

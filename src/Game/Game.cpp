@@ -73,6 +73,7 @@ void Game::Initialize() {
     // Restore world state from save file (overrides the filesystem scan on first frame).
     WorldState::SetCurrentState(ProgressSystemManager::World().state);
     WorldState::SetBackupLocationPath(ProgressSystemManager::World().backupLocationPath);
+    MapManager::SetRemovedEntities(ProgressSystemManager::World().removedEntities);
     // Стартовую локацию выставляем в сохранке!!!
     bool isLoaded = MapManager::LoadLastLoadedLevel();
     if (!isLoaded) {
