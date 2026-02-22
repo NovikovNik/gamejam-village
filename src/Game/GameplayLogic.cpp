@@ -391,10 +391,11 @@ class SignsAct: public GameAct {
                 const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
                 std::vector<std::string> signRows;
                 for (const auto& [key, locations] : registeredEntities) {
-                    if (locations.empty() && key.find("vil") != std::string::npos) {
+                    if (locations.empty() && key.find("vil") != std::string::npos && WorldState::GetEntitiesWhiteList().contains(key)) {
                         signRows.push_back(key);
                     }
                 }
+                signRows.push_back("***");
                 DialogSystemManager::OpenSign(signRows);
             }
             

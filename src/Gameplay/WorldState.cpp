@@ -46,6 +46,13 @@ public:
         onChangeLocation = EventBus::instance().SubscribeToEvent<ChangeLocationEvent>(this, &GameStateManager::OnChangeLocation);
         onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &GameStateManager::OnEntityDestroyed);
         onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &GameStateManager::OnLocationChanged);
+
+        entitiesWhiteList.insert("Cat.vil");
+        entitiesWhiteList.insert("Cow.vil");
+        entitiesWhiteList.insert("Joe.vil");
+        entitiesWhiteList.insert("Elder.vil");
+        entitiesWhiteList.insert("Guard.vil");
+        entitiesWhiteList.insert("Nebula.vil");
     }
 
     void Destroy()
@@ -291,6 +298,8 @@ public:
 
     const std::string& GetBackupLocationPath() const { return backupLocationPath; }
 
+    const std::set<std::string>& GetEntitiesWhiteList() const { return entitiesWhiteList; }
+
 private:
     LocationsStates::State currentState;
     std::string backupLocationPath;
@@ -302,6 +311,7 @@ private:
     Events::Handler onLocationChanged;
 
     std::optional<NextLocation> nextLocation;
+    std::set<std::string> entitiesWhiteList;
 };
 
 void WorldState::Initiate() {
@@ -344,3 +354,6 @@ void WorldState::RemoveFromWorldState(const World::Entity::TagName& tagName) {
     GameStateManager::instance().RemoveFromWorldState(tagName);
 }
 
+const std::set<std::string>& WorldState::GetEntitiesWhiteList() {
+    return GameStateManager::instance().GetEntitiesWhiteList();
+}
