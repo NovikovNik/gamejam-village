@@ -413,6 +413,7 @@ class SignsAct: public GameAct {
         void Initialize() {
             onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &SignsAct::OnInteractWithEntity);
             onInterectButtonPressed = EventBus::instance().SubscribeToEvent<InterectButtonPressedEvent>(this, &SignsAct::OnInterectButtonPressed);
+            onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &SignsAct::OnLocationChanged);
         }
         
         void Update(float deltaTime) override {}
@@ -451,9 +452,14 @@ class SignsAct: public GameAct {
             }
         }
 
+        void OnLocationChanged(LocationChangedEvent& e) {
+            DialogSystemManager::CloseSign();
+        }
+
     private:
         Events::Handler onInteractWithEntity;
         Events::Handler onInterectButtonPressed;
+        Events::Handler onLocationChanged;
 };
 
 class GameplayLogicManager: public Singleton<GameplayLogicManager> {
