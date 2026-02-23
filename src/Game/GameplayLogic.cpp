@@ -454,6 +454,7 @@ class SignsAct: public GameAct {
 
         void OnLocationChanged(LocationChangedEvent& e) {
             DialogSystemManager::CloseSign();
+            DialogSystemManager::EndDialog();
         }
 
     private:
