@@ -333,7 +333,7 @@ public:
         SDL_DestroyTexture(texture);
     }
 
-    void DrawTextScreen(Renderer::TextId fontId, const std::string& text, float screenX, float screenY, int fontSize, const SDL_Color* color, int maxLineWidth) {
+    void DrawTextScreen(Renderer::TextId fontId, const std::string& text, float screenX, float screenY, int fontSize, const SDL_Color* color, int maxLineWidth, float alpha) {
         TTF_Font* font = GetOrCreateFont(fontId, fontSize);
         if (!font || text.empty()) return;
 
@@ -348,6 +348,11 @@ public:
         SDL_DestroySurface(surface);
         if (!texture) return;
 
+        if (alpha < 1.0f) {
+            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+            SDL_SetTextureAlphaMod(texture, static_cast<Uint8>(alpha * 255));
+        }
+
         SDL_FRect rect;
         rect.x = screenX;
         rect.y = screenY;
@@ -356,6 +361,18 @@ public:
 
         SDL_RenderTexture(renderer, texture, NULL, &rect);
         SDL_DestroyTexture(texture);
+    }
+
+    bool MeasureText(Renderer::TextId fontId, const std::string& text, int fontSize, int* outWidth, int* outHeight) {
+        // Используем для возможности центрировать текст авматически
+        TTF_Font* font = GetOrCreateFont(fontId, fontSize);
+        if (!font || text.empty()) return false;
+        return TTF_GetStringSize(font, text.c_str(), 0, outWidth, outHeight);
+    }
+
+    void GetRenderOutputSize(int* outWidth, int* outHeight) {
+        *outWidth = renderOutputSizeW;
+        *outHeight = renderOutputSizeH;
     }
 
     void DrawFilledRectScreen(float x, float y, float w, float h, SDL_Color color) {
@@ -537,8 +554,16 @@ void Renderer::DrawText(Renderer::TextId fontId, const std::string& text, float 
     RenderManager::instance().DrawText(fontId, text, x, y, fontSize, color, maxLineWidth);
 }
 
-void Renderer::DrawTextScreen(Renderer::TextId fontId, const std::string& text, float screenX, float screenY, int fontSize, const SDL_Color* color, int maxLineWidth) {
-    RenderManager::instance().DrawTextScreen(fontId, text, screenX, screenY, fontSize, color, maxLineWidth);
+void Renderer::DrawTextScreen(Renderer::TextId fontId, const std::string& text, float screenX, float screenY, int fontSize, const SDL_Color* color, int maxLineWidth, float alpha) {
+    RenderManager::instance().DrawTextScreen(fontId, text, screenX, screenY, fontSize, color, maxLineWidth, alpha);
+}
+
+bool Renderer::MeasureText(Renderer::TextId fontId, const std::string& text, int fontSize, int* outWidth, int* outHeight) {
+    return RenderManager::instance().MeasureText(fontId, text, fontSize, outWidth, outHeight);
+}
+
+void Renderer::GetRenderOutputSize(int* outWidth, int* outHeight) {
+    RenderManager::instance().GetRenderOutputSize(outWidth, outHeight);
 }
 
 void Renderer::BeginRender() {

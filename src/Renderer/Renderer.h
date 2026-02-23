@@ -34,8 +34,12 @@ namespace Renderer {
     [[nodiscard]] bool HasTexture(const TextureId textureId);
     /// maxLineWidth: 0 = без переноса; >0 = макс. ширина строки в пикселях (перенос по словам)
     void DrawText(TextId fontId, const std::string& text, float x, float y, int fontSize = 16, const SDL_Color* color = nullptr, int maxLineWidth = 0);
-    /// Текст в экранных координатах (без учёта камеры) — для UI. maxLineWidth: 0 = без переноса; >0 = перенос по словам
-    void DrawTextScreen(TextId fontId, const std::string& text, float screenX, float screenY, int fontSize = 16, const SDL_Color* color = nullptr, int maxLineWidth = 0);
+    /// Текст в экранных координатах (без учёта камеры) — для UI. maxLineWidth: 0 = без переноса; >0 = перенос по словам. alpha: 0..1 для плавного появления/исчезновения.
+    void DrawTextScreen(TextId fontId, const std::string& text, float screenX, float screenY, int fontSize = 16, const SDL_Color* color = nullptr, int maxLineWidth = 0, float alpha = 1.0f);
+    /// Размер текста в пикселях (без переноса).
+    [[nodiscard]] bool MeasureText(TextId fontId, const std::string& text, int fontSize, int* outWidth, int* outHeight);
+    /// Текущий размер окна вывода рендера (логические координаты).
+    void GetRenderOutputSize(int* outWidth, int* outHeight);
 
     void BeginRender();
     void EndRender();

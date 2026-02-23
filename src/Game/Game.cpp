@@ -3,6 +3,7 @@
 #include <Map/Map.h>
 #include <Renderer/Renderer.h>
 #include <Renderer/UISystem.h>
+#include <Renderer/LocationNameOverlay.h>
 #include <FileSystem/FileSystem.h>
 #include <ProgressSystem/ProgressSystem.h>
 #include <DialogSystem/DialogSystem.h>
@@ -69,6 +70,7 @@ void Game::Initialize() {
     DialogSystemManager::LoadAllDialogs("assets/dialogs/");
     Renderer::LoadAllTextures("assets/textures/");
     Renderer::LoadAllFonts("assets/fonts/");
+    LocationNameOverlay::Initialize();
     WorldState::Initiate();
     // Restore world state from save file (overrides the filesystem scan on first frame).
     WorldState::SetCurrentState(ProgressSystemManager::World().state);
@@ -110,6 +112,7 @@ void Game::Run() {
 
 void Game::Destroy() {
     // The order is strict because of asserts
+    LocationNameOverlay::Destroy();
     AudioSystem::Destroy();
     Renderer::Destroy();
     WorldState::Destroy();
@@ -295,6 +298,7 @@ void Game::Update() {
     GameplayLogic::Update(deltaTime);
     GameplayLogic::UpdateCurrentGameAct();
     WorldState::Update();
+    LocationNameOverlay::Update(deltaTime);
     Physics::Update(deltaTime);
 
     // Dispatch all events in the queue
@@ -313,6 +317,7 @@ void Game::Render() {
     // Но пока пофиг
     DialogSystemManager::RenderDialog();
     UISystem::Render();
+    LocationNameOverlay::Render();
 
 #if ENABLE_CHEATS
     Cheats::UpdateAndRender();
