@@ -73,6 +73,21 @@
                 }
             ],
             "textSize": 20
+        },
+        "no-time-to-leave": {
+            "lines": [
+                {
+                    "name": "Voice of Reason",
+                    "text": "You look at the path you’ve left behind. You have just come from there, and many experiences await you ahead.",
+                    "align": "right"
+                },
+                {
+                    "name": "Voice of Reason",
+                    "text": "It is not yet time to leave.",
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
         }
     }
 }

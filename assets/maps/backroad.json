@@ -42,12 +42,44 @@
             "y": 0.041107177734375,
             "name": "Guard",
             "spawnOnStart": true
+        },
+        {
+            "x": 35.824562072753906,
+            "y": -133.92294311523438,
+            "name": "Cow",
+            "spawnOnStart": false
+        },
+        {
+            "x": -138.5370330810547,
+            "y": -41.38534927368164,
+            "name": "Elder",
+            "spawnOnStart": false
+        },
+        {
+            "x": -38.642364501953125,
+            "y": 27.285106658935547,
+            "name": "Cat",
+            "spawnOnStart": false
+        },
+        {
+            "x": -1.7264366149902344,
+            "y": -52.21182632446289,
+            "name": "Joe",
+            "spawnOnStart": false
+        },
+        {
+            "x": 133.90296936035156,
+            "y": 30.009506225585938,
+            "name": "Nebula",
+            "spawnOnStart": false
         }
     ],
     "interactible_objects": [
         {
             "x": -197.04940795898438,
             "y": -92.89620208740234,
+            "width": 19.28368377685547,
+            "height": 40.676788330078125,
             "name": "Road_Sign",
             "spawnOnStart": true
         }
@@ -55,7 +87,7 @@
     "interactables": [],
     "players": [
         {
-            "x": -229.80007934570312,
+            "x": -193.28268432617188,
             "y": -11.98651123046875,
             "name": "Player"
         }
@@ -67,7 +99,7 @@
             "name": "main"
         },
         {
-            "x": -227.82711791992188,
+            "x": -198.5673370361328,
             "y": 6.495347023010254,
             "name": "start"
         }
@@ -82,6 +114,16 @@
             "texture": "levelchange",
             "location": "assets/maps/crossroads.json",
             "spawnPointMatch": "main"
+        },
+        {
+            "name": "backroad_second",
+            "x": -314.7108459472656,
+            "y": -0.5213851928710938,
+            "width": 110.53819274902344,
+            "height": 114.27313995361328,
+            "texture": "levelchange",
+            "location": "assets/maps/crossroads.json",
+            "spawnPointMatch": "village_right"
         }
     ],
     "alwaysOnTop": [

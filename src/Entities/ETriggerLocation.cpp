@@ -1,8 +1,10 @@
 #include "ETriggerLocation.h"
 #include <Renderer/Renderer.h>
 #include <Game/GameFeatures.h>
+#include <Game/GameplayLogic.h>
 #include <Events/ChangeLocationEvent.h>
 #include <Gameplay/WorldState.h>
+#include <Events/ForceDialogStartEvent.h>
 #include <filesystem>
 
 void World::ETriggerLocation::Render(float deltaTime) {
@@ -37,8 +39,20 @@ void World::ETriggerLocation::OnDestroy() {
 
 void World::ETriggerLocation::ProcessOverlap() {
     const auto& overlapInfos = Physics::GetOverlapInfos();
+    static bool isStopDialogShown = false;
     for (const auto& overlapInfo : overlapInfos) {
         if (overlapInfo.objectId1 == physicsTriggerId || overlapInfo.objectId2 == physicsTriggerId) {
+            if (spawnPointMatch == "village_right" && GameplayLogic::GetCurrentGameActId() == GameActIds::Tutorial) {
+                if (!isStopDialogShown) {
+                    EventBus::instance().EmitEvent<ForceDialogStartEvent>("Utility", "no-time-to-leave");
+                    isStopDialogShown = true;
+                    return;
+                }
+                else {
+                    return;
+                }
+            }
+
             ChangeLocation();
             break;
         }
