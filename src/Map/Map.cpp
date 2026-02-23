@@ -14,6 +14,7 @@
 #include <Entities/ESpawners.h>
 #include <Entities/ETriggerLocation.h>
 #include <Entities/EEffect.h>
+#include <Events/PlaySoundEvent.h>
 #include <Events/WindowFocusedEvent.h>
 #include <Events/ClearWorldStateEvent.h>
 #include <Events/ChangeLocationEvent.h>
@@ -69,12 +70,13 @@ public:
                 .numOfFrames = 16,
                 .maxElementsPerRow = 4,
                 .frameSize = 64,
-                .frameDelay = 0.1f,
-                .textureId = make_nnTex("animation-template"),
+                .frameDelay = 0.05f,
+                .textureId = make_nnTex("matrics"),
             };
             const auto entity = DestroyEntity(name, type, true);
             if (entity != nullptr && !isInitialSync) {
-               entitiesManager.SpawnEntity<World::Effect>(entity->GetPosition().x, entity->GetPosition().y, 64, 64, animation);
+                EventBus::instance().EmitEvent<PlaySoundEvent>("sfx_destroy");
+                entitiesManager.SpawnEntity<World::Effect>(entity->GetPosition().x, entity->GetPosition().y, 64, 64, animation);
             }
         }
 
@@ -86,11 +88,12 @@ public:
                     .numOfFrames = 16,
                     .maxElementsPerRow = 4,
                     .frameSize = 64,
-                    .frameDelay = 0.1f,
-                    .textureId = make_nnTex("animation-template"),
+                    .frameDelay = 0.05f,
+                    .textureId = make_nnTex("matrics"),
                 };
                 const auto entity = SpawnEntity(name, type, true); 
                 if (entity != nullptr && !isInitialSync) {
+                    EventBus::instance().EmitEvent<PlaySoundEvent>("sfx_spawn");
                     entitiesManager.SpawnEntity<World::Effect>(entity->GetPosition().x, entity->GetPosition().y, 64, 64, animation);
                 }
             }
