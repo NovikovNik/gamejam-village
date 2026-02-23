@@ -130,7 +130,7 @@ namespace {
         void OnEntityDestroyed(EntityDestroyedEvent& e) {
             // Тут запускаем диалог после удаления старейшины
             Logger::Log(std::format("[Gameplay][Tutorial] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
-            if (e.GetName() == "guard") {
+            if (e.GetName() == GameplayEntities::Guard) {
                 // На случай если игрок попробует удалить старейшину пока идет диалог с ним
                 // мы завершим диалог и запустим новый
                 if (DialogSystemManager::IsDialogActive()) {
@@ -138,7 +138,7 @@ namespace {
                 }
                 DialogSystemManager::StartDialog("Guard", "dialog-after-deleted");
             }
-            if (e.GetName() == "Road_Sign") {
+            if (e.GetName() == GameplayEntities::Sign) {
                 // Игрок может удалить дорожный знак — он останется на карте, но это будет
                 // обыграно словно он стер надпсь на нём
                 Logger::Log("[Gameplay][Tutorial] Road_Sign destroyed");
@@ -148,7 +148,8 @@ namespace {
 
         void OnDialogEnded(DialogEndedEvent& e) {
             Logger::Log(std::format("[Gameplay][Intro] DialogEnded: {}", e.dialogId));
-            if (e.characterId == "guard" && e.dialogId == "dialog-1") {
+            // Здесь Guard с большой буквы, т.к он так прописан в диалоговом файле
+            if (e.characterId == "Guard" && e.dialogId == "dialog-1") {
                 ProgressSystemManager::Player().fileSystemIconVisible = true;
                 ProgressSystemManager::SaveData();
             }
@@ -157,7 +158,7 @@ namespace {
         // Последний диалог dialog-8 (про kick-my-ass)
         void OnInteractWithEntity(InteractWithEntityEvent& e) {
             Logger::Log(std::format("[Gameplay][Tutorial] InteractWithEntity: {}", e.entityId));
-            if (e.entityId == "guard") {
+            if (e.entityId == GameplayEntities::Guard) {
                 if (guardInteractionsCount < 8) {
                     guardInteractionsCount++;
                 }
@@ -165,7 +166,7 @@ namespace {
                 DialogSystemManager::StartDialog("Guard", dialogId);
             }
 
-            if (e.entityId == "Road_Sign") {
+            if (e.entityId == GameplayEntities::Sign) {
                 Logger::Log("[Gameplay][Tutorial] Road_Sign interacted");
                 DialogSystemManager::StartDialog("Utility", "roadside-info-1");
             }
@@ -213,7 +214,7 @@ namespace {
             Logger::Log(std::format("[Gameplay][Main] InteractWithEntity: {}", e.entityId));
             std::string const mapName = MapManager::GetCurrentMapName();
 
-            if (e.entityId == "elder") {
+            if (e.entityId == GameplayEntities::Elder) {
                 // Первый диалог со старейшиной в деревне. Он заберет письмо и попросит пройтись через деревню
                 if (ProgressSystemManager::Player().elderHubActiveQuest == "go-through-location") {
                     if (!elderAskToGoThroughLocation) {
@@ -267,7 +268,7 @@ namespace {
                     }
             }
 
-            if (e.entityId == "guard") {
+            if (e.entityId == GameplayEntities::Guard) {
                 if (mapName == "crossroads") {
                     const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;
                     const std::string assemblyHallId = "assembly-hall";
@@ -293,7 +294,7 @@ namespace {
                 }
             }
 
-            if (e.entityId == "joe") {
+            if (e.entityId == GameplayEntities::Joe) {
                 if (ProgressSystemManager::Player().joeQuestProgress == 0) {
                     DialogSystemManager::StartDialog("Joe", "quest-start");
 
@@ -308,7 +309,7 @@ namespace {
             }
 
             // Самые важные отношения с коровами в игре
-            if (e.entityId == "cow") {
+            if (e.entityId == GameplayEntities::Cow) {
                 if (ProgressSystemManager::Player().joeQuestProgress >= 2) {
                     if (mapName == "crossroads") {
                         DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-carrot");
@@ -323,7 +324,7 @@ namespace {
                 }
             }
 
-            if (e.entityId == "Chestbox") {
+            if (e.entityId == GameplayEntities::ChestBox) {
                 if (mapName == "elders-house") {
                     if (!ProgressSystemManager::Inventory().HasItem(World::key)) {
                         ProgressSystemManager::Inventory().AddItem(World::key);
