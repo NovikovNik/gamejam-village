@@ -2,5 +2,6 @@
 
 namespace UISystem {
     void Initialize();
-    void Render();
+    void Render(float deltaTime);
+    void FocusHint();
 }

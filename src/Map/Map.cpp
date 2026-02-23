@@ -22,6 +22,7 @@
 #include <Events/WorldStateEvents.h>
 #include <FileSystem/FileSystem.h>
 #include <ProgressSystem/ProgressSystem.h>
+#include <Renderer/UISystem.h>
 #include <Gameplay/WorldState.h>
 #include <EventBus/EventBus.h>
 #include <Events/EntitiesEvent.h>
@@ -40,6 +41,14 @@ public:
 
     void Initialize() {
         onWorldStateUpdated = EventBus::instance().SubscribeToEvent<WorldStateUpdatedEvent>(this, &Map::OnWorldStateUpdated);
+
+        registrationHintAnimation = Renderer::AnimationHandle {
+            .numOfFrames = 4,
+            .maxElementsPerRow = 2,
+            .frameSize = 66,
+            .frameDelay = 0.05f,
+            .textureId = make_nnTex("ui_filesystem_anim"),
+        };
     }
 
     void Destroy() {
@@ -365,7 +374,9 @@ public:
         }
 
         if (registrationHintTimeLeft > 0.f) {
-            Renderer::DrawSprite(make_nnTex("ui_filesystem"), registrationHintPosition.x, registrationHintPosition.y, 32, 32);
+            Renderer::RenderAnimation(registrationHintAnimation, deltaTime, registrationHintPosition.x, registrationHintPosition.y, 32, 32);
+            UISystem::FocusHint();
+//            Renderer::DrawSprite(make_nnTex("ui_filesystem"), registrationHintPosition.x, registrationHintPosition.y, 32, 32);
             registrationHintPosition = registrationHintPosition + glm::vec2(0.f, -180.f) * deltaTime;
             registrationHintTimeLeft -= deltaTime;
         }
@@ -589,6 +600,8 @@ private:
     std::optional<glm::vec2> interactHintPosition;
     glm::vec2 registrationHintPosition;
     float registrationHintTimeLeft = 0.f;
+
+    Renderer::AnimationHandle registrationHintAnimation;
 
     bool isInitialSync = true;
 };

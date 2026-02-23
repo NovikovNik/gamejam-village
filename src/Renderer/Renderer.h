@@ -22,6 +22,7 @@ namespace Renderer {
     /// Спрайт в экранных координатах (без учёта камеры) — для UI
     void DrawSpriteScreen(TextureId textureId, float screenX, float screenY, float width, float height);
     void DrawSpriteScreen(TextureId textureId, float screenX, float screenY, float width, float height, double angle);
+    /// Screen-space sprite with source rect (subimage). angle in degrees, default 0.
     // Debug render
     void DrawRectangle(float x, float y, float w, float h, float angle);
     void DrawCircle(float x, float y, float radius);
@@ -62,4 +63,5 @@ namespace Renderer {
     };
 
     bool RenderAnimation(AnimationHandle& animationHandle, float deltaTime, float x, float y, float width, float height, bool horizontalFlip = false);
+    bool RenderAnimationScreen(AnimationHandle& animationHandle, float deltaTime, float x, float y, float width, float height, bool horizontalFlip = false);
 }

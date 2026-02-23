@@ -242,6 +242,23 @@ public:
         SDL_RenderTextureRotated(renderer, texture, NULL, &rect, angle, &center, SDL_FLIP_NONE);
     }
 
+    void DrawSpriteScreen(Renderer::TextureId textureId, float screenX, float screenY, float width, float height, float srcX, float srcY, float srcW, float srcH, double angle) {
+        SDL_Texture* texture = textures[textureId];
+        if (texture == nullptr) {
+            return;
+        }
+
+        SDL_FRect dst;
+        dst.x = screenX;
+        dst.y = screenY;
+        dst.w = width;
+        dst.h = height;
+
+        SDL_FRect src{ srcX, srcY, srcW, srcH };
+        SDL_FPoint center = { width / 2.0f, height / 2.0f };
+        SDL_RenderTextureRotated(renderer, texture, &src, &dst, angle, &center, SDL_FLIP_NONE);
+    }
+
     void DrawRectangle(float x, float y, float w, float h, float angle) {
         glm::vec2 cam = World::Camera::instance().GetPosition();
         float scaleFactor = World::Camera::instance().GetScaleFactor();
@@ -482,6 +499,26 @@ public:
         return animationHandle.currentFrameId == animationHandle.numOfFrames - 1;
     }
 
+    bool RenderAnimationScreen(Renderer::AnimationHandle& animationHandle, float deltaTime, float x, float y, float width, float height, bool horizontalFlip = false) {
+        animationHandle.currentFrameTime += deltaTime;
+        if (animationHandle.currentFrameTime >= animationHandle.frameDelay) {
+            animationHandle.currentFrameTime -= animationHandle.frameDelay;
+            animationHandle.currentFrameId++;
+            if (animationHandle.currentFrameId >= animationHandle.numOfFrames) {
+                animationHandle.currentFrameId = 0;
+            }
+        }
+        const int framesPerRow = animationHandle.maxElementsPerRow > 0 ? animationHandle.maxElementsPerRow : animationHandle.numOfFrames;
+        const int col = animationHandle.currentFrameId % framesPerRow;
+        const int row = animationHandle.currentFrameId / framesPerRow;
+        const float srcX = static_cast<float>(col * animationHandle.frameSize);
+        const float srcY = static_cast<float>(row * animationHandle.frameSize);
+        const float srcW = static_cast<float>(animationHandle.frameSize);
+        const float srcH = static_cast<float>(animationHandle.frameSize);
+        DrawSpriteScreen(animationHandle.textureId, x, y, width, height, srcX, srcY, srcW, srcH, horizontalFlip);
+        return animationHandle.currentFrameId == animationHandle.numOfFrames - 1;
+    }
+
 private:
     SDL_Renderer* renderer {};
     SDL_Window* window {};
@@ -592,4 +629,8 @@ void Renderer::EndImGuiFrame() {
 
 bool Renderer::RenderAnimation(Renderer::AnimationHandle& animationHandle, float deltaTime, float x, float y, float width, float height, bool horizontalFlip) {
     return RenderManager::instance().RenderAnimation(animationHandle, deltaTime, x, y, width, height, horizontalFlip);
+}
+
+bool Renderer::RenderAnimationScreen(Renderer::AnimationHandle& animationHandle, float deltaTime, float x, float y, float width, float height, bool horizontalFlip) {
+    return RenderManager::instance().RenderAnimationScreen(animationHandle, deltaTime, x, y, width, height, horizontalFlip);
 }

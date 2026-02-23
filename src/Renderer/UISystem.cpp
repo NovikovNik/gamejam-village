@@ -16,15 +16,28 @@ public:
     void Initialize() {
         fileSystemIconTextureId = make_nnTex("ui_filesystem");
         messageIconTextureId = make_nnTex("ui_message");
+
+        focusHintAnimation = Renderer::AnimationHandle {
+            .numOfFrames = 4,
+            .maxElementsPerRow = 2,
+            .frameSize = 66,
+            .frameDelay = 0.1f,
+            .textureId = make_nnTex("ui_filesystem_anim"),
+        };
     }
 
-    void Render() {
+    void Render(float deltaTime) {
         // Инвентарь: иконки предметов в левом верхнем углу, 40x40, друг за другом
-
         // Отрисовка иконки файловой системы после её открытия в туториале
         if (GameplayLogic::GetCurrentGameActId() != "intro") {
             if (ProgressSystemManager::Player().fileSystemIconVisible) {
-                Renderer::DrawSpriteScreen(fileSystemIconTextureId, 738, 2, 60, 66);
+
+                if (focusHintTimeLeft > 0.f) {
+                    focusHintTimeLeft -= deltaTime;
+                    Renderer::RenderAnimationScreen(focusHintAnimation, deltaTime, 736, 2, 66, 66);
+                } else {
+                    Renderer::DrawSpriteScreen(fileSystemIconTextureId, 736, 2, 66, 66);
+                }
             }
 
             // Отрисовка инвентаря
@@ -42,9 +55,17 @@ public:
         }
     }
 
+    void FocusHint() {
+        focusHintTimeLeft = 2.f;
+    }
+
 private:
     Renderer::TextureId fileSystemIconTextureId;
     Renderer::TextureId messageIconTextureId;
+
+    Renderer::AnimationHandle focusHintAnimation;
+
+    float focusHintTimeLeft = 0.f;
 };
 
 namespace UISystem {
@@ -52,7 +73,11 @@ namespace UISystem {
         UISystemManager::instance().Initialize();
     }
 
-    void Render() {
-        UISystemManager::instance().Render();
+    void Render(float deltaTime) {
+        UISystemManager::instance().Render(deltaTime);
+    }
+
+    void FocusHint() {
+        UISystemManager::instance().FocusHint();
     }
 }

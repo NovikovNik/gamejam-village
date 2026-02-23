@@ -4,6 +4,7 @@
 
 #include <Renderer/Renderer.h>
 #include <Renderer/Camera.h>
+#include <Renderer/UISystem.h>
 #include <imgui/imgui.h>
 #include <Game/GameFeatures.h>
 #include <Map/Map.h>
@@ -124,6 +125,14 @@ public:
         }
         if (ImGui::IsItemHovered()) {
             ImGui::SetTooltip("Reset save data to defaults and overwrite gamesave.json");
+        }
+
+        ImGui::Separator();
+        if (ImGui::Button("Show focus hint")) {
+            UISystem::FocusHint();
+        }
+        if (ImGui::IsItemHovered()) {
+            ImGui::SetTooltip("Show filesystem icon focus hint animation");
         }
         
         // Debug info

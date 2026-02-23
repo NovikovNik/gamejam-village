@@ -316,8 +316,8 @@ void Game::Render() {
     // Но мб будем что-то двигать? И тогда будет нужна,
     // Но пока пофиг
     DialogSystemManager::RenderDialog();
-    UISystem::Render();
-    LocationNameOverlay::Render();
+LocationNameOverlay::Render();
+    UISystem::Render(deltaTime);
 
 #if ENABLE_CHEATS
     Cheats::UpdateAndRender();
