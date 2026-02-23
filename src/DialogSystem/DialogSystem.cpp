@@ -115,7 +115,6 @@ public:
             return;
         }
 
-        EventBus::instance().EmitEvent<PlaySoundEvent>("dialog_start");
         const DialogData& data = itDialog->second;
         dialogActive = true;
         currentCharacterId = characterId;
