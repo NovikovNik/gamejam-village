@@ -108,14 +108,14 @@ void ActivateRow(int row) {
     if (row == ROW_EXIT) {
         EventBus::instance().EmitEvent<GameShutdownEvent>();
     } else if (row == ROW_RESTART) {
-        // Delete save file
-        const auto savePath = AppDataSaveHelper::GetGameSavePath();
         std::error_code ec;
-        std::filesystem::remove(savePath, ec);
         // Delete village folder next to the executable
         const auto villageDir = FileSystemManager::GetExecutableDir() / "village";
         std::filesystem::remove_all(villageDir, ec);
         EventBus::instance().EmitEvent<GameShutdownEvent>();
+        // Delete save file
+        const auto savePath = AppDataSaveHelper::GetGameSavePath();
+        std::filesystem::remove(savePath, ec);
     }
 }
 
