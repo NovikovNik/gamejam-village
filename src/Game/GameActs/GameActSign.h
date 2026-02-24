@@ -35,7 +35,7 @@ public:
                     signRows.push_back(key);
                 }
             }
-            signRows.push_back("***");
+            signRows.push_back("???");
             DialogSystemManager::OpenSign(signRows);
         }
 
