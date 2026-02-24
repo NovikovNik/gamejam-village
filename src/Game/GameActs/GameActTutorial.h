@@ -81,7 +81,7 @@ public:
     void OnDialogEnded(DialogEndedEvent& e) {
         Logger::Log(std::format("[Gameplay][Intro] DialogEnded: {}", e.dialogId));
         // Здесь Guard с большой буквы, т.к он так прописан в диалоговом файле
-        if (e.characterId == "Guard" && e.dialogId == "dialog-1") {
+        if (e.characterId == "Guard" && e.dialogId == "tutorial-dialog-1") {
             ProgressSystemManager::Player().fileSystemIconVisible = true;
             ProgressSystemManager::SaveData();
         }

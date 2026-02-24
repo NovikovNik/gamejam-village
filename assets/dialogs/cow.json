@@ -64,6 +64,15 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-cow-quest-complete": {
+            "lines": [
+                {
+                    "name": "Big Cow",
+                    "text": "*Happy mooing* Moo! Moo! Moo!"
+                }
+            ],
+            "textSize": 20
         }
     }
 }

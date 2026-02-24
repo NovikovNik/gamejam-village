@@ -16,6 +16,7 @@
 #include <DialogSystem/DialogSystem.h>
 #include <string>
 #include <format>
+#include <cstdlib>
 
 namespace GameActs {
 
@@ -42,38 +43,45 @@ public:
     void OnInteractWithEntity(InteractWithEntityEvent& e) {
         Logger::Log(std::format("[Gameplay][Main] InteractWithEntity: {}", e.entityId));
         std::string const mapName = MapManager::GetCurrentMapName();
+        QuestId const currentActiveQuestId = ProgressSystemManager::Quests().GetCurrentActiveQuest();
 
+        /* ELDER DIALOGES */
         if (e.entityId == GameplayEntities::Elder) {
             // Первый диалог со старейшиной в деревне. Он заберет письмо и попросит пройтись через деревню
-            if (ProgressSystemManager::Player().elderHubActiveQuest == "go-through-location") {
-                if (!elderAskToGoThroughLocation) {
+            if (currentActiveQuestId == World::ElderFirstMeetingQuest) {
+                if (ProgressSystemManager::Quests().GetStatus(World::ElderFirstMeetingQuest) == QuestStatus::NotStarted) {
                     DialogSystemManager::StartDialog("Elder", "dialog-welcome");
                     if (ProgressSystemManager::Inventory().HasItem(World::message)) {
                         ProgressSystemManager::Inventory().RemoveItem(World::message);
                     }
-                    elderAskToGoThroughLocation = true;
-                } else {
+                    ProgressSystemManager::Quests().SetStatus(World::ElderFirstMeetingQuest, QuestStatus::OnGoing);
+                }  
+                if (ProgressSystemManager::Quests().GetStatus(World::ElderFirstMeetingQuest) == QuestStatus::OnGoing) {
                     // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
                     if (!locationChanged) {
                         DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
                     } else {
-                        ProgressSystemManager::Player().elderHubActiveQuest = "cat-quest";
+                        ProgressSystemManager::Quests().SetStatus(World::ElderFirstMeetingQuest, QuestStatus::Completed);
+                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderCatQuest);
                         DialogSystemManager::StartDialog("Elder", "dialog-cat-quest");
                     }
                 }
             }
-            if (ProgressSystemManager::Player().elderHubActiveQuest == "cat-quest") {
+
+            if (currentActiveQuestId == World::ElderCatQuest) {
                 const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
                 auto it = registeredEntities.find("cat.vil");
                 const bool catNotInEldersHouse = (it == registeredEntities.end() || !it->second.contains("elders-house"));
                 if (catNotInEldersHouse) {
                     DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-again");
                 } else {
-                    ProgressSystemManager::Player().elderHubActiveQuest = "spawn-guard";
+                    ProgressSystemManager::Quests().SetStatus(World::ElderCatQuest, QuestStatus::Completed);
+                    ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderSpawnGuardQuest);
                     DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
                 }
             }
-            if (ProgressSystemManager::Player().elderHubActiveQuest == "spawn-guard") {
+
+            if (currentActiveQuestId == World::ElderSpawnGuardQuest) {
                 const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
                 auto it = registeredEntities.find("guard.vil");
                 const bool guardNotInVillage = (it == registeredEntities.end() || !it->second.contains("crossroads"));
@@ -81,23 +89,28 @@ public:
                     DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-again");
                 } else {
                     DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
-                    ProgressSystemManager::Player().elderHubActiveQuest = "guard_quest";
+                    ProgressSystemManager::Quests().SetStatus(World::ElderSpawnGuardQuest, QuestStatus::Completed);
+                    ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderGuardInteractQuest);
                 }
             }
-            if (ProgressSystemManager::Player().elderHubActiveQuest == "guard_quest") {
+
+            if (currentActiveQuestId == World::ElderGuardInteractQuest) {
                 DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
             }
-            if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist") {
+
+            if (currentActiveQuestId == World::ElderVoidMistQuest) {
                 if (ProgressSystemManager::Inventory().HasItem(World::book)) {
                     ProgressSystemManager::Inventory().RemoveItem(World::book);
                     DialogSystemManager::StartDialog("Elder", "dialog-void-mist-info");
-                    ProgressSystemManager::Player().elderHubActiveQuest = "void-mist-info";
+                    ProgressSystemManager::Quests().SetStatus(World::ElderVoidMistQuest, QuestStatus::Completed);
+                    ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistExtraQuest);
                 } else {
                     DialogSystemManager::StartDialog("Elder", "dialog-book-quest");
                 }
             }
         }
 
+        /* GUARD DIALOGES */
         if (e.entityId == GameplayEntities::Guard) {
             if (mapName == "crossroads") {
                 const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;
@@ -106,47 +119,91 @@ public:
                     DialogSystemManager::StartDialog("Guard", "dialog-assembly-hall-available");
                 }
 
-                if (ProgressSystemManager::Player().elderHubActiveQuest == "guard_quest" || ProgressSystemManager::Player().elderHubActiveQuest == "spawn-guard") {
+                if (currentActiveQuestId == World::ElderGuardInteractQuest || currentActiveQuestId == World::ElderSpawnGuardQuest) {
                     if (ProgressSystemManager::Inventory().HasItem(World::sword)) {
                         ProgressSystemManager::Inventory().RemoveItem(World::sword);
                         DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
-                        ProgressSystemManager::Player().elderHubActiveQuest = "void-mist";
+                        ProgressSystemManager::Quests().SetStatus(World::ElderGuardInteractQuest, QuestStatus::Completed);
+                        ProgressSystemManager::Quests().SetStatus(World::ElderSpawnGuardQuest, QuestStatus::Completed);
+                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistQuest);
                     } else {
                         DialogSystemManager::StartDialog("Guard", "dialog-guard-quest");
                     }
                 }
-                if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist") {
+                if (currentActiveQuestId == World::ElderVoidMistQuest) {
                     DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
                 }
-                if (ProgressSystemManager::Player().elderHubActiveQuest == "void-mist-info") {
+                if (currentActiveQuestId == World::ElderVoidMistExtraQuest) {
                     DialogSystemManager::StartDialog("Guard", "dialog-rebuild-assembly-hall");
                 }
             }
         }
 
+        /* JOE DIALOGES */
         if (e.entityId == GameplayEntities::Joe) {
-            if (ProgressSystemManager::Player().joeQuestProgress == 0) {
-                DialogSystemManager::StartDialog("Joe", "quest-start");
+            bool boxesAlreadyDestroyed = false;
+            if (mapName == "crossroads") {
+                const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
+                auto box1 = registeredEntities.find("box-1.box");
+                auto box2 = registeredEntities.find("box-2.box");
 
-            } else if (ProgressSystemManager::Player().joeQuestProgress == 1) {
+                auto isBoxPresentOnCrossroads = [&](const auto& it) {
+                    return it != registeredEntities.end() && it->second.contains("crossroads");
+                };
+
+                const bool box1Present = isBoxPresentOnCrossroads(box1);
+                const bool box2Present = isBoxPresentOnCrossroads(box2);
+
+                boxesAlreadyDestroyed = !box1Present && !box2Present;
+            }
+
+            auto joeQuestStatus = ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest);
+
+            if (joeQuestStatus == QuestStatus::NotStarted) {
+                if (boxesAlreadyDestroyed) {
+                    // Коробки уже уничтожены до разговора — сразу считаем квест выполненным.
+                    DialogSystemManager::StartDialog("Joe", "quest-complete-before-start");
+                    ProgressSystemManager::Inventory().AddItem(World::carrot);
+                    ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::Completed);
+                    ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::Completed);
+                    ProgressSystemManager::SaveData();
+                } else {
+                    DialogSystemManager::StartDialog("Joe", "quest-start");
+                    ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::OnGoing);
+                }
+
+            } else if (joeQuestStatus == QuestStatus::OnGoing) {
                 DialogSystemManager::StartDialog("Joe", "quest-progress");
 
-            } else if (ProgressSystemManager::Player().joeQuestProgress == 2) {
+            } else if (joeQuestStatus == QuestStatus::Completed && ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::NotStarted) {
                 DialogSystemManager::StartDialog("Joe", "quest-complete");
                 ProgressSystemManager::Inventory().AddItem(World::carrot);
+                ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::Completed);
                 ProgressSystemManager::SaveData();
+            } else if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::Completed) {
+                if (std::rand() % 2 == 0) {
+                    DialogSystemManager::StartDialog("Joe", "neutral-dialog-1");
+                } else {
+                    DialogSystemManager::StartDialog("Joe", "neutral-dialog-2");
+                }
             }
         }
 
+        /* COW DIALOGES */
         // Самые важные отношения с коровами в игре
         if (e.entityId == GameplayEntities::Cow) {
-            if (ProgressSystemManager::Player().joeQuestProgress >= 2) {
+            if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest) == QuestStatus::Completed) {
                 if (mapName == "crossroads") {
-                    DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-carrot");
-                    if (ProgressSystemManager::Inventory().HasItem(World::carrot)) {
-                        ProgressSystemManager::Inventory().RemoveItem(World::carrot);
-                        ProgressSystemManager::Player().cowQuestFeeded = true;
-                        ProgressSystemManager::SaveData();
+                    if (ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest) == QuestStatus::NotStarted) {
+                        DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-carrot");
+                        if (ProgressSystemManager::Inventory().HasItem(World::carrot)) {
+                            ProgressSystemManager::Inventory().RemoveItem(World::carrot);
+                            ProgressSystemManager::Quests().SetStatus(World::CowFeededQuest, QuestStatus::Completed);
+                            ProgressSystemManager::SaveData();
+                        }
+                    }
+                    if (ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest) == QuestStatus::Completed) {
+                        DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-complete");
                     }
                 }
             } else {
@@ -184,13 +241,16 @@ public:
 
     void OnEntityCreated(EntityCreatedEvent& e) {
         Logger::Log(std::format("[Gameplay][Main] EntityCreated: {} {}", e.GetName(), e.GetType()));
-        if (MapManager::GetCurrentMapName() == "elders-house") {
+        QuestId const currentActiveQuestId = ProgressSystemManager::Quests().GetCurrentActiveQuest();
+        std::string const currentMapName = MapManager::GetCurrentMapName();
+        if (currentMapName == "elders-house") {
             if (e.GetName() == "cat") {
                 // Кот в доме старейшины если старейшина есть внутри
-                if (ProgressSystemManager::Player().elderHubActiveQuest == "cat-quest") {
+                if (currentActiveQuestId == World::ElderCatQuest) {
                     auto* elderNpc = MapManager::GetEntitiesContainer().FindEntity({"Elder", "vil"});
                     if (elderNpc) {
-                        ProgressSystemManager::Player().elderHubActiveQuest = "spawn-guard";
+                        ProgressSystemManager::Quests().SetStatus(World::ElderCatQuest, QuestStatus::Completed);
+                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderSpawnGuardQuest);
                         DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
                     }
                 }
@@ -201,7 +261,12 @@ public:
     void OnEntityDestroyed(EntityDestroyedEvent& e) {
         Logger::Log(std::format("[Gameplay][Main] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
         if (e.GetName() == "box-1" || e.GetName() == "box-2") {
-            ProgressSystemManager::Player().joeQuestProgress++;
+            if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest) == QuestStatus::OnGoing) {
+                ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::Completed);
+            }
+            if (ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest) == QuestStatus::NotStarted) {
+                ProgressSystemManager::Quests().SetStatus(World::CowFeededQuest, QuestStatus::OnGoing);
+            }
         }
     }
 

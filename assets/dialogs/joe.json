@@ -19,7 +19,14 @@
             "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "You’re doing great. I don’t remember seeing you in this village — actually, I don’t remember anyone for some reason — but keep it up!",
+                    "text": "You’re doing great. I don’t remember seeing you in this village — actually, I don’t remember anyone for some reason",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "There still one more haystack to clear. Keep it up!",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
@@ -39,6 +46,49 @@
                 {
                     "name": "Farmer Joe",
                     "text": "I’ll give you a reward for your help. Here’s some freshy carrot! I know it will help you with your journey.",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "quest-complete-before-start": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "That’s quite funny — I was just about to ask you to help deal with the haystacks, but you’ve already taken care of them yourself. Amazing!",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "In any case, I have this carrot as a reward. Here, take it — you’ve earned it.",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "neutral-dialog-1": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Good work is work well done. I wish I could finally rest — I’m so tired after the whole day?",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "neutral-dialog-2": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Have you seen the old big cow? She was grazing in the field, but she’s disappeared somewhere. I hope she’s all right.",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"

@@ -7,6 +7,7 @@
 #include "PlayerSaveData.h"
 #include "AudioSaveData.h"
 #include "WorldSaveData.h"
+#include "QuestsSaveData.h"
 #include "InventarySaveData.h"
 #include <Map/Map.h>
 #include <AudioSystem/AudioSystem.h>
@@ -21,6 +22,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
                 Logger::Log("[ProgressSystem] No save file found, creating new save file");
                 // Инициализация данных по умолчанию
                 playerSaveData.ResetToDefaults();
+                questsSaveData.ResetToDefaults();
                 SaveData();
             }
             else {
@@ -47,6 +49,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             audioSaveData.ToJson(j["audio"]);
             worldSaveData.ToJson(j["world"]);
             inventorySaveData.ToJson(j["inventory"]);
+            questsSaveData.ToJson(j["quests"]);
             AppDataSaveHelper::SaveGameJson(j);
             dirty = false;
             Logger::Log("[ProgressSystem] Data saved");
@@ -65,6 +68,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             playerSaveData.FromJson(j);
             audioSaveData.FromJson(j.value("audio", nlohmann::json::object()));
             worldSaveData.FromJson(j.value("world", nlohmann::json::object()));
+            questsSaveData.FromJson(j.value("quests", nlohmann::json::object()));
             inventorySaveData.FromJson(j.value("inventory", nlohmann::json::object()));
             Logger::Log("[ProgressSystem] Data loaded");
         }
@@ -89,6 +93,10 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             dirty = true;
             return inventorySaveData;
         }
+        QuestsSaveData& Quests() {
+            dirty = true;
+            return questsSaveData;
+        }
 
     private:
         bool dirty = false;
@@ -96,6 +104,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
         AudioSaveData  audioSaveData;
         WorldSaveData  worldSaveData;
         InventarySaveData inventorySaveData;
+        QuestsSaveData questsSaveData;
 };
 
 void ProgressSystemManager::Initialize() {
@@ -124,4 +133,8 @@ WorldSaveData& ProgressSystemManager::World() {
 
 InventarySaveData& ProgressSystemManager::Inventory() {
     return ProgressSystem::instance().Inventory();
+}
+
+QuestsSaveData& ProgressSystemManager::Quests() {
+    return ProgressSystem::instance().Quests();
 }
