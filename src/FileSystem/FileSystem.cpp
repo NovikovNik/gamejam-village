@@ -5,6 +5,12 @@
 #include <cstdlib>
 #include <fstream>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <shellapi.h>
+#undef CreateDirectory
+#endif
+
 class FileSystem : public Singleton<FileSystem>
 {
 public:
@@ -16,13 +22,29 @@ public:
         }
 
 #ifdef _WIN32
-        std::string cmd = "explorer \"" + fullPath.string() + "\"";
+        // Open folder via ShellExecuteW to avoid slow std::system/console startup
+        const auto widePath = fullPath.wstring();
+        HINSTANCE result = ShellExecuteW(
+            nullptr,
+            L"open",
+            widePath.c_str(),
+            nullptr,
+            nullptr,
+            SW_SHOWNORMAL
+        );
+        if (reinterpret_cast<UINT_PTR>(result) <= 32) {
+            Logger::Err("[FS] ShellExecuteW failed for path: " + fullPath.string());
+        }
 #elif __APPLE__
         std::string cmd = "open \"" + fullPath.string() + "\"";
 #else
         std::string cmd = "xdg-open \"" + fullPath.string() + "\"";
 #endif
+
+#if !defined(_WIN32)
         std::system(cmd.c_str());
+#endif
+
         Logger::Debug("[FS] Folder opened: " + fullPath.string());
     }
 
