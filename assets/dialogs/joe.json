@@ -26,7 +26,7 @@
                 },
                 {
                     "name": "Farmer Joe",
-                    "text": "There still one more haystack to clear. Keep it up!",
+                    "text": "But haystacks are still there. I'am counting on you to clear them all.",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"

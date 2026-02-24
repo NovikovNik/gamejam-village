@@ -2,9 +2,16 @@
 
 #include <string>
 #include <set>
+#include <map>
 #include <libs/json/single_include/nlohmann/json.hpp>
 
 using ItemId = std::string;
+using ChestBoxId = std::string;
+
+enum class ChestBoxStatus : uint8_t {
+    NotOpened = 0,
+    Opened = 1,
+};
 
 namespace World {
     inline const ItemId message = "message";
@@ -14,12 +21,21 @@ namespace World {
     inline const ItemId book = "book";
 
     inline const std::set<ItemId> GetAllItems() { return {message, sword, key, carrot, book}; }
+
+    inline const ChestBoxId chestBoxElderHouse = "chestbox";
+    inline const ChestBoxId chestBoxOldHouse = "chestbox-old-house";
+    inline const ChestBoxId swordBox = "swordbox-old-house";
 }
 
 class InventarySaveData {
     std::set<ItemId> items;
+    std::map<ChestBoxId, ChestBoxStatus> chestBoxes;
 
 public:
+
+    bool ChestBoxWasOpened(const ChestBoxId& chestBoxId) const;
+    void SetChestBoxOpened(const ChestBoxId& chestBoxId);
+
     /// Есть ли предмет в инвентаре.
     [[nodiscard]] bool HasItem(const ItemId& itemId) const;
 

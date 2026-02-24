@@ -88,6 +88,16 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-chestbox-already-opened": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "It's empty. There's nothing here.",
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
         }
     }
 }

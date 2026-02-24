@@ -141,50 +141,27 @@ public:
 
         /* JOE DIALOGES */
         if (e.entityId == GameplayEntities::Joe) {
-            bool boxesAlreadyDestroyed = false;
             if (mapName == "crossroads") {
-                const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
-                auto box1 = registeredEntities.find("box-1.box");
-                auto box2 = registeredEntities.find("box-2.box");
+                auto joeQuestStatus = ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest);
 
-                auto isBoxPresentOnCrossroads = [&](const auto& it) {
-                    return it != registeredEntities.end() && it->second.contains("crossroads");
-                };
-
-                const bool box1Present = isBoxPresentOnCrossroads(box1);
-                const bool box2Present = isBoxPresentOnCrossroads(box2);
-
-                boxesAlreadyDestroyed = !box1Present && !box2Present;
-            }
-
-            auto joeQuestStatus = ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest);
-
-            if (joeQuestStatus == QuestStatus::NotStarted) {
-                if (boxesAlreadyDestroyed) {
-                    // Коробки уже уничтожены до разговора — сразу считаем квест выполненным.
-                    DialogSystemManager::StartDialog("Joe", "quest-complete-before-start");
+                if (joeQuestStatus == QuestStatus::NotStarted) {
+                        DialogSystemManager::StartDialog("Joe", "quest-start");
+                        ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::OnGoing);
+                } else if (joeQuestStatus == QuestStatus::OnGoing) {
+                    DialogSystemManager::StartDialog("Joe", "quest-progress");
+    
+                } else if (joeQuestStatus == QuestStatus::Completed && ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::NotStarted) {
+                    DialogSystemManager::StartDialog("Joe", "quest-complete");
                     ProgressSystemManager::Inventory().AddItem(World::carrot);
-                    ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::Completed);
                     ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::Completed);
                     ProgressSystemManager::SaveData();
-                } else {
-                    DialogSystemManager::StartDialog("Joe", "quest-start");
-                    ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::OnGoing);
-                }
 
-            } else if (joeQuestStatus == QuestStatus::OnGoing) {
-                DialogSystemManager::StartDialog("Joe", "quest-progress");
-
-            } else if (joeQuestStatus == QuestStatus::Completed && ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::NotStarted) {
-                DialogSystemManager::StartDialog("Joe", "quest-complete");
-                ProgressSystemManager::Inventory().AddItem(World::carrot);
-                ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::Completed);
-                ProgressSystemManager::SaveData();
-            } else if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::Completed) {
-                if (std::rand() % 2 == 0) {
-                    DialogSystemManager::StartDialog("Joe", "neutral-dialog-1");
-                } else {
-                    DialogSystemManager::StartDialog("Joe", "neutral-dialog-2");
+                } else if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::Completed) {
+                    if (std::rand() % 2 == 0) {
+                        DialogSystemManager::StartDialog("Joe", "neutral-dialog-1");
+                    } else {
+                        DialogSystemManager::StartDialog("Joe", "neutral-dialog-2");
+                    }
                 }
             }
         }
@@ -213,25 +190,37 @@ public:
 
         if (e.entityId == GameplayEntities::ChestBox) {
             if (mapName == "elders-house") {
-                if (!ProgressSystemManager::Inventory().HasItem(World::key)) {
-                    ProgressSystemManager::Inventory().AddItem(World::key);
+                if (ProgressSystemManager::Inventory().ChestBoxWasOpened(World::chestBoxElderHouse)) {
+                    DialogSystemManager::StartDialog("Utility", "dialog-chestbox-already-opened");
+                } else {
+                    ProgressSystemManager::Inventory().SetChestBoxOpened(World::chestBoxElderHouse);
                     DialogSystemManager::StartDialog("Utility", "dialog-chestbox-get-key");
+                    ProgressSystemManager::Inventory().AddItem(World::key);
                 }
             }
             // Здесь добавляем книгу в инвентарь (нужна старейшине)
             if (mapName == "old-house") {
-                if (ProgressSystemManager::Inventory().HasItem(World::key)) {
-                    ProgressSystemManager::Inventory().RemoveItem(World::key);
-                    ProgressSystemManager::Inventory().AddItem(World::book);
-                    DialogSystemManager::StartDialog("Utility", "dialog-chestbox-use-key");
+                if (ProgressSystemManager::Inventory().ChestBoxWasOpened(World::chestBoxOldHouse)) {
+                    DialogSystemManager::StartDialog("Utility", "dialog-chestbox-already-opened");
                 } else {
-                    DialogSystemManager::StartDialog("Utility", "dialog-chestbox-no-key");
+                    if (ProgressSystemManager::Inventory().HasItem(World::key)) {
+                        ProgressSystemManager::Inventory().RemoveItem(World::key);
+                        ProgressSystemManager::Inventory().AddItem(World::book);
+                        ProgressSystemManager::Inventory().SetChestBoxOpened(World::chestBoxOldHouse);
+                        DialogSystemManager::StartDialog("Utility", "dialog-chestbox-use-key");
+                    } else {
+                        DialogSystemManager::StartDialog("Utility", "dialog-chestbox-no-key");
+                    }
                 }
             }
         }
-        if (e.entityId == "Sword") {
+
+        if (e.entityId == GameplayEntities::Sword) {
             if (mapName == "old-house") {
-                if (!ProgressSystemManager::Inventory().HasItem(World::sword)) {
+                if (ProgressSystemManager::Inventory().ChestBoxWasOpened(World::swordBox)) {
+                    DialogSystemManager::StartDialog("Utility", "dialog-chestbox-already-opened");
+                } else {
+                    ProgressSystemManager::Inventory().SetChestBoxOpened(World::swordBox);
                     ProgressSystemManager::Inventory().AddItem(World::sword);
                     DialogSystemManager::StartDialog("Utility", "dialog-get-sword");
                 }
