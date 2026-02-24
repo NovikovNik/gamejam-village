@@ -14,6 +14,7 @@ enum class QuestStatus : uint8_t {
 };
 
 namespace World {
+    inline const QuestId VoidFirstEntranceQuest = "void_first_entrance_quest";
     inline const QuestId JoeCarrotQuest = "joe_carrot_quest";
     inline const QuestId JoeCarrotFinal = "joe_carrot_extra_quest"; // Отдельный квест для других строчек после вручения морковки
     inline const QuestId CowFeededQuest = "cow_feed_quest";
@@ -59,6 +60,7 @@ inline void QuestsSaveData::ResetToDefaults() {
     quests.clear();
 
     // Инициализируем все известные квесты в состояние NotStarted.
+    quests[World::VoidFirstEntranceQuest]  = QuestStatus::NotStarted;
     quests[World::JoeCarrotQuest]          = QuestStatus::NotStarted;
     quests[World::CowFeededQuest]          = QuestStatus::NotStarted;
     quests[World::ElderFirstMeetingQuest]  = QuestStatus::NotStarted;
@@ -120,6 +122,7 @@ inline void QuestsSaveData::FromJson(const nlohmann::json& j) {
         }
     };
 
+    ensureQuest(World::VoidFirstEntranceQuest);
     ensureQuest(World::JoeCarrotQuest);
     ensureQuest(World::CowFeededQuest);
     ensureQuest(World::ElderFirstMeetingQuest);

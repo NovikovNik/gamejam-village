@@ -93,6 +93,14 @@ void World::Camera::Update(float dt) {
                 positionX = 571.0;
             }
         }
+        if (currentLocationName == "world-void") {
+            if (positionX < -151.0) {
+                positionX = -151.0;
+            }
+            if (positionX > 150.0) {
+                positionX = 150.0;
+            }
+        }
         if (currentLocationName == "assembly-hall" || currentLocationName == "elders-house" || currentLocationName == "old-house") { // Все остальные локации помещения
             positionX = -3.4;
             positionY = -1.8;

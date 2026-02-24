@@ -151,6 +151,7 @@ public:
                 tile.y = tileJson["y"].get<float>();
                 tile.width = tileJson["width"].get<float>();
                 tile.height = tileJson["height"].get<float>();
+                tile.tiled = tileJson.contains("tiled") ? tileJson["tiled"].get<bool>() : false;
                 std::string textureName = tileJson["texture"].get<std::string>();
                 tile.texture = make_nnTex(textureName);
                 tilesData.push_back(tile);
@@ -492,6 +493,10 @@ public:
         FileSystemManager::OpenSystemExplorer(fullPath.string());
     }
 
+    void SpawnEffect(float x, float y, float w, float h, const Renderer::AnimationHandle& animation) {
+        entitiesManager.SpawnEntity<World::Effect>(x, y, w, h, animation);
+    }
+
     void SeedInstantSpawnEntitiesInFilesystem(bool isFirstTimeVisitingLocation) {
         const auto* spawnersEntity = entitiesManager.GetEntitiesContainer().FindEntity<World::ESpawners>();
         if (!spawnersEntity) {
@@ -637,6 +642,10 @@ namespace MapManager {
 
     World::Entity* SpawnEntity(const std::string& name, const std::string& type) {
         return Map::instance().SpawnEntity(name, type);
+    }
+
+    void SpawnEffect(float x, float y, float w, float h, const Renderer::AnimationHandle& animation) {
+        Map::instance().SpawnEffect(x, y, w, h, animation);
     }
 
     void DestroyEntity(const std::string& name, const std::string& type) {

@@ -11,6 +11,8 @@
 #include <Events/InteractWithEntityEvent.h>
 #include <Events/EntitiesEvent.h>
 #include <Events/GameShutdownEvent.h>
+#include <Entities/EPlayer.h>
+#include <ProgressSystem/QuestsSaveData.h>
 #include <EventBus/EventBus.h>
 #include <Logger/Logger.h>
 #include <Map/Map.h>
@@ -67,6 +69,7 @@ public:
             if (DialogSystemManager::IsDialogActive()) {
                 DialogSystemManager::EndDialog();
             }
+            ProgressSystemManager::Player().fileSystemIconVisible = true;
             DialogSystemManager::StartDialog("Guard", "dialog-after-deleted");
             guardWasDeleted = true;
         }
@@ -114,6 +117,24 @@ public:
         Logger::Log(std::format("[Gameplay][Tutorial] LocationChanged: {}", e.locationName));
         if (e.locationName == "crossroads") {
             ::GameplayLogic::LoadGameAct(GameActIds::Main);
+        }
+
+        if (e.locationName == "world-void") {
+            if (auto* player = MapManager::GetEntitiesContainer().FindEntity<World::EPlayer>()) {
+                Renderer::AnimationHandle animation = Renderer::AnimationHandle {
+                    .numOfFrames = 16,
+                    .maxElementsPerRow = 4,
+                    .frameSize = 64,
+                    .frameDelay = 0.05f,
+                    .textureId = make_nnTex("matrics"),
+                };
+                MapManager::SpawnEffect(player->GetPosition().x, player->GetPosition().y, 64, 64, animation);
+
+                if (ProgressSystemManager::Quests().GetStatus(World::VoidFirstEntranceQuest) == QuestStatus::NotStarted) {
+                    ProgressSystemManager::Quests().SetStatus(World::VoidFirstEntranceQuest, QuestStatus::OnGoing);
+                    DialogSystemManager::StartDialog("Utility", "void-backroad-first");
+                }
+            }
         }
     }
 

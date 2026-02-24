@@ -2,13 +2,17 @@
 
 #include "GameActBase.h"
 #include <Entities/EInteractable.h>
+#include <Entities/EEffect.h>
 #include <Events/LocationChangedEvent.h>
 #include <Events/DialogEndedEvent.h>
 #include <Events/ForceDialogStartEvent.h>
 #include <Events/ChangeLocationEvent.h>
 #include <Events/InteractWithEntityEvent.h>
 #include <Events/EntitiesEvent.h>
+#include <Events/PlaySoundEvent.h>
 #include <EventBus/EventBus.h>
+#include <Entities/EntitiesManager.h>
+#include <Entities/EPlayer.h>
 #include <Logger/Logger.h>
 #include <Map/Map.h>
 #include <ProgressSystem/ProgressSystem.h>
@@ -22,7 +26,7 @@ namespace GameActs {
 
 class MainAct : public GameAct {
 public:
-    void Initialize() {
+    void Initialize() override {
         onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &MainAct::OnLocationChanged);
         onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &MainAct::OnInteractWithEntity);
         onEntityCreated = EventBus::instance().SubscribeToEvent<EntityCreatedEvent>(this, &MainAct::OnEntityCreated);
@@ -37,6 +41,24 @@ public:
         Logger::Log(std::format("[Gameplay][Main] LocationChanged: {}", e.locationName));
         if (e.locationName == "backroad") {
             locationChanged = true;
+        }
+        // Spawn effect when player enters world-void
+        if (e.locationName == "world-void") {
+            if (auto* player = MapManager::GetEntitiesContainer().FindEntity<World::EPlayer>()) {
+                Renderer::AnimationHandle animation = Renderer::AnimationHandle {
+                    .numOfFrames = 16,
+                    .maxElementsPerRow = 4,
+                    .frameSize = 64,
+                    .frameDelay = 0.05f,
+                    .textureId = make_nnTex("matrics"),
+                };
+                MapManager::SpawnEffect(player->GetPosition().x, player->GetPosition().y, 64, 64, animation);
+
+                if (ProgressSystemManager::Quests().GetStatus(World::VoidFirstEntranceQuest) == QuestStatus::NotStarted) {
+                    ProgressSystemManager::Quests().SetStatus(World::VoidFirstEntranceQuest, QuestStatus::OnGoing);
+                    DialogSystemManager::StartDialog("Utility", "void-crossroads-first");
+                }
+            }
         }
     }
 
@@ -253,6 +275,7 @@ public:
         Logger::Log(std::format("[Gameplay][Main] EntityCreated: {} {}", e.GetName(), e.GetType()));
         QuestId const currentActiveQuestId = ProgressSystemManager::Quests().GetCurrentActiveQuest();
         std::string const currentMapName = MapManager::GetCurrentMapName();
+
         if (currentMapName == "elders-house") {
             if (e.GetName() == "cat") {
                 // Кот в доме старейшины если старейшина есть внутри

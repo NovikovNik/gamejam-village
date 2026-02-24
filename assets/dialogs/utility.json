@@ -98,6 +98,40 @@
                 }
             ],
             "textSize": 20
+        },
+        "void-backroad-first": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "What a strange place — as if everything and nothing were fused into one. I see everything, I hear everything, but am I still myself, or something else?",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "Perhaps someone is watching me through this endless darkness. What am I?",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                }
+            ],
+            "textSize": 20
+        },
+        "void-crossroads-first": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "A sense of emptiness. Weightlessness. My gaze passes straight through my hands. Do hands even exist?",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "Does anything I do truly exist? Does it have meaning, or is all of this just one vast theatrical performance?",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                }
+            ],
+            "textSize": 20
         }
     }
 }

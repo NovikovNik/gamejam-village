@@ -1,5 +1,6 @@
 #pragma once
 #include <Entities/EntitiesManager.h>
+#include <Renderer/Renderer.h>
 #include <string>
 #include <set>
 
@@ -8,6 +9,7 @@ namespace MapManager {
     [[nodiscard]] std::string GetCurrentMapName();
     [[nodiscard]] const World::EntitiesContainer& GetEntitiesContainer();
     [[nodiscard]] World::Entity* SpawnEntity(const std::string& name, const std::string& type);
+    void SpawnEffect(float x, float y, float w, float h, const Renderer::AnimationHandle& animation);
     [[nodiscard]] bool LoadLastLoadedLevel();
     void DestroyEntity(const std::string& name, const std::string& type);
     void MarkAsInteracted(const World::Entity::TagName& tagName);
