@@ -50,8 +50,8 @@ public:
         // Здесь мы полностью сбрасываем состояние игры по приколу! Поэтому здесь и очистка сохранения должна быть!
         if (e.GetName() == "kick-my" && e.GetType() == "ass") {
             Logger::Log("[Gameplay][Tutorial] Kick my ass file created. Stopping the game.");
-            ProgressSystemManager::Player().ResetToDefaults();
             EventBus::instance().EmitEvent<GameShutdownEvent>();
+            WorldState::RemoveFromWorldState(World::Entity::TagName{e.GetName(), e.GetType()});
         }
         if (e.GetName() == GameplayEntities::Guard) {
             if (guardWasDeleted) {
