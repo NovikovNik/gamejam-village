@@ -28,6 +28,15 @@ std::optional<glm::vec2> World::ESpawners::GetSpawnerPosition(const std::string&
     return std::nullopt;
 }
 
+float World::ESpawners::GetSpawnerMass(const std::string& name, const std::string& type) const {
+    for (const auto& spawner : spawners) {
+        if (spawner.name == name && spawner.type == type) {
+            return spawner.mass;
+        }
+    }
+    return 1.0f;
+}
+
 std::vector<std::pair<std::string, std::string>> World::ESpawners::GetInstantSpawnEntities() const {
     std::vector<std::pair<std::string, std::string>> result;
     for (const auto& spawner : spawners) {

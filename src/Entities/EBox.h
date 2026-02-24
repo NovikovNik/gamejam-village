@@ -7,7 +7,7 @@
 namespace World {
     class EBox : public EMovable {
     public:
-        EBox(BoxName boxName) : boxName(boxName) {}
+        EBox(BoxName boxName, float mass = 1.0f) : boxName(boxName), mass(mass) {}
         void OnSpawn(float x, float y, float w, float h) override;
         bool Update(float deltaTime) override;
         void Render(float deltaTime) override;
@@ -24,6 +24,7 @@ namespace World {
         void OnPitBoxOverlap(PitBoxOverlapEvent& event);
     private:
         BoxName boxName;
+        float mass{};
         Physics::ObjectId physicsObjectId{};
         Events::Handler pitBoxOverlapHandler{};
     };

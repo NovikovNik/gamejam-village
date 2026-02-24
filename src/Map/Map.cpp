@@ -199,7 +199,6 @@ public:
         if (mapData.contains("boxes") && mapData["boxes"].is_array()) {
             for (const auto& boxJson : mapData["boxes"]) {
                 const std::string boxName = boxJson["name"].get<std::string>();
-//                World::EBox* box = entitiesManager.SpawnEntity<World::EBox>(make_nnBoxName(boxName));
                 const float x = boxJson["x"].get<float>();
                 const float y = boxJson["y"].get<float>();
                 bool shouldSpawnInstantly = false;
@@ -209,7 +208,8 @@ public:
                     Logger::Warn(std::format("Box {} does not have spawnOnStart property, defaulting to true", boxName));
                     shouldSpawnInstantly = true;
                 }
-                spawners.push_back({ boxName, "box", x, y, shouldSpawnInstantly });
+                const float mass = boxJson.contains("mass") ? boxJson["mass"].get<float>() : 1.0f;
+                spawners.push_back({ boxName, "box", x, y, shouldSpawnInstantly, mass });
             }
         }
 
@@ -440,7 +440,8 @@ public:
                 return obj;
             }
             if (type == "box") {
-                auto box = entitiesManager.SpawnEntity<World::EBox>(position.x, position.y, 0, 0, make_nnBoxName(name));
+                const float mass = spawners->GetSpawnerMass(name, type);
+                auto box = entitiesManager.SpawnEntity<World::EBox>(position.x, position.y, 0, 0, make_nnBoxName(name), mass);
                 box->SetTagName({ name, type });
                 return box;
             }

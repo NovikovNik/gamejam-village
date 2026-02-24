@@ -10,7 +10,7 @@ void World::EBox::OnSpawn(float x, float y, float w, float h) {
     EMovable::OnSpawn(x, y, w, h);
     const auto textureId = Renderer::TextureId("box"_nnTex);
     LoadData(textureId, 64, 64);
-    physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth(), GetHeight(), 1, (1 << 0) | (1 << 4));
+    physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth(), GetHeight(), mass, (1 << 0) | (1 << 4));
 
     pitBoxOverlapHandler = EventBus::instance().SubscribeToEvent<PitBoxOverlapEvent>(this, &EBox::OnPitBoxOverlap);
 }
