@@ -41,7 +41,7 @@ else()
 endif()
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
-add_executable(game_engine ${SOURCES} ${IMGUI_SOURCES})
+add_executable(game_engine ${SOURCES} ${IMGUI_SOURCES} libs/stb_vorbis/stb_vorbis.c)
 
 target_include_directories(game_engine PRIVATE
     "${CMAKE_SOURCE_DIR}"
@@ -51,6 +51,7 @@ target_include_directories(game_engine PRIVATE
     "libs/termcolor"
     "${CMAKE_CURRENT_SOURCE_DIR}/libs/SDL/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/libs/base64/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/libs/stb_vorbis"
 )
 if(ENABLE_CHEATS)
     target_include_directories(game_engine PRIVATE "libs/imgui")

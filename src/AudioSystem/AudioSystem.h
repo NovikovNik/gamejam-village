@@ -11,8 +11,8 @@ namespace AudioSystem {
     /// Call once per frame: cleans up finished SFX streams and refills looping music.
     void Update();
 
-    /// Loads all .wav files from the given directory. The stem of each filename
-    /// becomes the SoundId (e.g. "assets/audio/jump.wav" → id "jump").
+    /// Loads all .wav and .ogg files from the given directory. The stem of each filename
+    /// becomes the SoundId (e.g. "assets/audio/jump.wav" or "music.ogg" → id "jump" / "music").
     void LoadAllSounds(const std::string& directory);
 
     /// Play a one-shot sound effect. volume is a [0,1] scale applied on top of sfx volume.

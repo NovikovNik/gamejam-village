@@ -12,6 +12,12 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <cstdlib>
+
+// Single-file lib: include .c with HEADER_ONLY for declarations; implementation from libs/stb_vorbis/stb_vorbis.c in build
+#define STB_VORBIS_HEADER_ONLY
+#include "stb_vorbis.c"
+#undef STB_VORBIS_HEADER_ONLY
 
 namespace {
 
@@ -155,22 +161,45 @@ void LoadAllSounds(const std::string& directory) {
 
         std::string ext = entry.path().extension().string();
         std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-        if (ext != ".wav") continue;
+        const bool isWav = (ext == ".wav");
+        const bool isOgg = (ext == ".ogg");
+        if (!isWav && !isOgg)
+        {
+            continue;
+        }
 
         const std::string path = entry.path().string();
         const std::string id   = entry.path().stem().string();
 
         SoundData data;
-        Uint8* raw = nullptr;
-        Uint32 len = 0;
 
-        if (!SDL_LoadWAV(path.c_str(), &data.spec, &raw, &len)) {
-            Logger::Err("[AudioSystem] Failed to load '" + path + "': " + SDL_GetError());
-            continue;
+        if (isWav) {
+            Uint8* raw = nullptr;
+            Uint32 len = 0;
+            if (!SDL_LoadWAV(path.c_str(), &data.spec, &raw, &len)) {
+                Logger::Err("[AudioSystem] Failed to load WAV '" + path + "': " + SDL_GetError());
+                continue;
+            }
+            data.buffer.assign(raw, raw + len);
+            SDL_free(raw);
+        } else {
+            // OGG: decode with stb_vorbis to interleaved 16-bit PCM
+            int channels = 0;
+            int sampleRate = 0;
+            short* pcm = nullptr;
+            const int samplesPerChannel = stb_vorbis_decode_filename(path.c_str(), &channels, &sampleRate, &pcm);
+            if (samplesPerChannel <= 0 || !pcm) {
+                Logger::Err("[AudioSystem] Failed to load OGG '" + path + "'");
+                continue;
+            }
+            data.spec.format = SDL_AUDIO_S16LE;
+            data.spec.channels = channels;
+            data.spec.freq = sampleRate;
+            const size_t totalSamples = static_cast<size_t>(samplesPerChannel) * static_cast<size_t>(channels);
+            const size_t byteLen = totalSamples * sizeof(short);
+            data.buffer.assign(reinterpret_cast<Uint8*>(pcm), reinterpret_cast<Uint8*>(pcm) + byteLen);
+            free(pcm);
         }
-
-        data.buffer.assign(raw, raw + len);
-        SDL_free(raw);
 
         g_sounds[id] = std::move(data);
         loaded++;
