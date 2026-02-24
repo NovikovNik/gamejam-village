@@ -119,19 +119,40 @@ public:
                     DialogSystemManager::StartDialog("Guard", "dialog-assembly-hall-available");
                 }
 
-                if (currentActiveQuestId == World::ElderGuardInteractQuest || currentActiveQuestId == World::ElderSpawnGuardQuest) {
+                if (currentActiveQuestId == World::ElderGuardInteractQuest) {
+                    if (ProgressSystemManager::Quests().GetStatus(World::ElderGuardInteractQuest) == QuestStatus::OnGoing) {
+                        if (ProgressSystemManager::Inventory().HasItem(World::sword)) {
+                            ProgressSystemManager::Inventory().RemoveItem(World::sword);
+                            DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
+                            ProgressSystemManager::Quests().SetStatus(World::ElderGuardInteractQuest, QuestStatus::Completed);
+                            ProgressSystemManager::Quests().SetStatus(World::ElderSpawnGuardQuest, QuestStatus::Completed);
+                            ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistQuest);
+                        } else {
+                            DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-reminder");
+                        }
+                    } else if (ProgressSystemManager::Quests().GetStatus(World::ElderGuardInteractQuest) == QuestStatus::NotStarted) {
+                        DialogSystemManager::StartDialog("Guard", "dialog-guard-quest");
+                        ProgressSystemManager::Quests().SetStatus(World::ElderGuardInteractQuest, QuestStatus::OnGoing);
+                    }
+                } else if (currentActiveQuestId == World::ElderSpawnGuardQuest || currentActiveQuestId == World::ElderFirstMeetingQuest) {
+                    // Если взаимодействуем до квеста старейшины со стражником
                     if (ProgressSystemManager::Inventory().HasItem(World::sword)) {
-                        ProgressSystemManager::Inventory().RemoveItem(World::sword);
-                        DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
+                        DialogSystemManager::StartDialog("Guard", "dialog-guard-already-found-sword");
                         ProgressSystemManager::Quests().SetStatus(World::ElderGuardInteractQuest, QuestStatus::Completed);
                         ProgressSystemManager::Quests().SetStatus(World::ElderSpawnGuardQuest, QuestStatus::Completed);
                         ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistQuest);
                     } else {
                         DialogSystemManager::StartDialog("Guard", "dialog-guard-quest");
+                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderGuardInteractQuest);
+                        ProgressSystemManager::Quests().SetStatus(World::ElderGuardInteractQuest, QuestStatus::OnGoing);
                     }
                 }
                 if (currentActiveQuestId == World::ElderVoidMistQuest) {
-                    DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed");
+                    if (std::rand() % 2 == 0) {
+                        DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed-reminder-1");
+                    } else {
+                        DialogSystemManager::StartDialog("Guard", "dialog-guard-quest-completed-reminder-2");
+                    }
                 }
                 if (currentActiveQuestId == World::ElderVoidMistExtraQuest) {
                     DialogSystemManager::StartDialog("Guard", "dialog-rebuild-assembly-hall");

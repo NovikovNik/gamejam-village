@@ -192,6 +192,32 @@
             ],
             "textSize": 20
         },
+        "dialog-guard-already-found-sword": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "This building is surrounded by void mist — you can’t just walk inside. If we could retrieve an ancient sword from the old building, then we might be able to…"
+                },
+                {
+                    "name": "Guard",
+                    "text": "Wait — I see it at your belt! You’ve already found it!"
+                },
+                {
+                    "name": "Guard",
+                    "text": "We must learn the name of this house. Perhaps the village elder can help us with that. Or maybe you already know it?"
+                }
+            ]
+        },
+        "dialog-guard-quest-reminder": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "We must hurry! We cannot allow this void mist to remain here any longer. Find my sword in the old house with the collapsed entrance!"
+                }
+            ]
+        },
         "dialog-guard-quest": {
             "name": "Guard",
             "lines": [
@@ -210,7 +236,7 @@
             "lines": [
                 {
                     "name": "Guard",
-                    "text": "Excellent — you’ve found my sword! The runes upon it say that, to dispel this mist, this place must be returned to life."
+                    "text": "Excellent! You’ve found my sword! The runes upon it say that, to dispel this mist, this place must be returned to life."
                 },
                 {
                     "name": "Guard",
@@ -219,6 +245,24 @@
                 {
                     "name": "Guard",
                     "text": "We must learn the name of this house. Perhaps the village elder can help us with that."
+                }
+            ]
+        },
+        "dialog-guard-quest-completed-reminder-1": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "This is no time to stand around! We must learn the name of this house to pull it back from the void. If only I could remember it! Go to the village elder. He should have the answers."
+                }
+            ]
+        },
+        "dialog-guard-quest-completed-reminder-2": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "There is no time to lose. This house has a name, and that name will help us return it to reality. Run to the elder!"
                 }
             ]
         },
