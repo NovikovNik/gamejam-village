@@ -15,7 +15,7 @@
                     "name": "Sign with text",
                     "text": "This village is forbidden for outsiders!",
                     "size": 30,
-                    "color": [255, 0, 0, 255],
+                    "color": [238, 106, 40, 255],
                     "align": "right"
                 }
             ],
@@ -26,7 +26,7 @@
             "lines": [
                 {
                     "name": "Guard",
-                    "text": "Well, you got it: i'm standing here, conviniently blocking your path to the next location and ther is no way you can make me disappear.",
+                    "text": "Well, you got it: i'm standing here, conviniently blocking your path to the next location and there is no way you can make me disappear.",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
