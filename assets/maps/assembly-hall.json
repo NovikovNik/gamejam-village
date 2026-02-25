@@ -59,36 +59,30 @@
             "x": 116.55662536621094,
             "y": 31.923154830932617,
             "name": "Elder",
-            "spawnOnStart": true
+            "spawnOnStart": false
         },
         {
             "x": 98.77521514892578,
             "y": -48.44670867919922,
             "name": "Guard",
-            "spawnOnStart": true
+            "spawnOnStart": false
         },
         {
             "x": -148.9352264404297,
             "y": 28.312332153320312,
             "name": "Cat",
-            "spawnOnStart": true
+            "spawnOnStart": false
         },
         {
             "x": -10.553760528564453,
             "y": -70.0981674194336,
             "name": "Cow",
-            "spawnOnStart": true
+            "spawnOnStart": false
         },
         {
             "x": -115.70492553710938,
             "y": -42.266380310058594,
             "name": "Joe",
-            "spawnOnStart": true
-        },
-        {
-            "x": -9.526525497436523,
-            "y": 19.071760177612305,
-            "name": "Nebula",
             "spawnOnStart": false
         }
     ],

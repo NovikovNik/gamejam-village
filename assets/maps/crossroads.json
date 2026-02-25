@@ -319,8 +319,7 @@
             "x": 372.4997863769531,
             "y": 398.6569519042969,
             "name": "rocks-1",
-            "spawnOnStart": true,
-            "mass": 0.0
+            "spawnOnStart": true
         }
     ],
     "tiles": [
@@ -355,12 +354,6 @@
             "x": -551.699462890625,
             "y": -107.91787719726562,
             "name": "Guard",
-            "spawnOnStart": false
-        },
-        {
-            "x": 30.86038589477539,
-            "y": 1.8373565673828125,
-            "name": "Nebula",
             "spawnOnStart": false
         },
         {
