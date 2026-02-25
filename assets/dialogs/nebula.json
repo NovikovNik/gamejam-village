@@ -18,6 +18,124 @@
                 }
             ],
             "textSize": 20
+        },
+        "nebula-dialog-1": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "Is there a reason you are here?",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Narrator",
+                    "text": "I do not see one.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "You might be lost...",
+                    "color": [255, 255, 210, 255]
+                }
+            ]
+        },
+        "nebula-dialog-2": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "Or are you looking for something?",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "A way out?",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "But why?",
+                    "color": [255, 255, 210, 255]
+                }
+            ]
+        },
+        "nebula-dialog-3": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "Or do you think there is a purpose to your journey?",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "There is none...",
+                    "color": [255, 255, 210, 255]
+                }
+            ]
+        },
+        "nebula-dialog-4": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "You did what you thought was right.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "Your actions... caused reactions.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "That is how you ended up here.",
+                    "color": [255, 255, 210, 255]
+                }
+            ]
+        },
+        "nebula-dialog-5": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "Was it all for nothing?",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "It might be.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "It is a matter of perspective.",
+                    "color": [255, 255, 210, 255]
+                }
+            ]
+        },
+        "nebula-dialog-6": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "Remember everything you have done.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "The lives of all living beings you have affected today.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "???",
+                    "text": "Emptiness is everything — and everything is nothing.",
+                    "color": [255, 255, 210, 255]
+                }
+            ]
+        },
+        "nebula-dialog-7": {
+            "lines": [
+                {
+                    "name": "???",
+                    "text": "Go home, traveler!",
+                    "color": [255, 255, 210, 255]
+                }
+            ]
         }
     }
 }

@@ -52,7 +52,6 @@ public:
         entitiesWhiteList.insert("joe.vil");
         entitiesWhiteList.insert("elder.vil");
         entitiesWhiteList.insert("guard.vil");
-        entitiesWhiteList.insert("nebula.vil");
 
         locationsWhiteList.insert("world-void");
         locationsWhiteList.insert("backroad");
@@ -113,6 +112,9 @@ public:
 
         const auto currentLocation = MapManager::GetCurrentMapName();
         if (currentLocation == "world-void" && currentState.registeredLocations.contains(backupLocationPath) && currentState.registeredLocations.at(backupLocationPath)) {
+            if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::ElderVoidMistExtraQuest) {
+                return;
+            }
             nextLocation = NextLocation{
                 .locationPath = std::format("assets/maps/{}.json", backupLocationPath),
                 .spawnPoint = "",

@@ -40,6 +40,9 @@ public:
         }
 
         if (e.entityId == "Locations_Sign") {
+            if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::ElderVoidMistExtraQuest) {
+                return; // В конце игры запрещаем всё это делать
+            }
             const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;
             std::vector<std::string> signRows;
             for (const auto& [key, available] : registeredLocations) {

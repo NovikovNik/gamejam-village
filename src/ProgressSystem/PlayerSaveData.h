@@ -15,6 +15,7 @@ struct PlayerSaveData : public BasicSaveData {
     int joeEldersHouseQuestProgress = 0;
     int joeAssemblyHallQuestProgress = 0;
     int guardAssemblyHallQuestProgress = 0;
+    int nebulaQuestProgress = 0;
 
     int GetVersion() const override {
         return 1;
@@ -31,6 +32,7 @@ struct PlayerSaveData : public BasicSaveData {
         joeEldersHouseQuestProgress = 0;
         guardAssemblyHallQuestProgress = 0;
         joeAssemblyHallQuestProgress = 0;
+        nebulaQuestProgress = 0;
     }
 
     void ToJson(nlohmann::json& j) const override {
@@ -47,6 +49,8 @@ struct PlayerSaveData : public BasicSaveData {
         j["joeOldHouseQuestProgress"] = joeOldHouseQuestProgress;
         j["joeEldersHouseQuestProgress"] = joeEldersHouseQuestProgress;
         j["guardAssemblyHallQuestProgress"] = guardAssemblyHallQuestProgress;
+        j["joeAssemblyHallQuestProgress"] = joeAssemblyHallQuestProgress;
+        j["nebulaQuestProgress"] = nebulaQuestProgress;
     }
 
     void FromJson(const nlohmann::json& j) override {
@@ -92,6 +96,9 @@ struct PlayerSaveData : public BasicSaveData {
         }
         if (j.contains("joeAssemblyHallQuestProgress") && j["joeAssemblyHallQuestProgress"].is_number_integer()) {
             joeAssemblyHallQuestProgress = j["joeAssemblyHallQuestProgress"].get<int>();
+        }
+        if (j.contains("nebulaQuestProgress") && j["nebulaQuestProgress"].is_number_integer()) {
+            nebulaQuestProgress = j["nebulaQuestProgress"].get<int>();
         }
 
         if (!Validate()) {

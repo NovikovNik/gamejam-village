@@ -463,6 +463,18 @@ public:
             }
         }
 
+        /* NEBULA DIALOGES */
+        if (e.entityId == GameplayEntities::Nebula) {
+            if (mapName == GameplayMaps::WorldVoid) {
+                int& nebulaQuestProgress = ProgressSystemManager::Player().nebulaQuestProgress;
+                if (nebulaQuestProgress <= 7) {
+                    nebulaQuestProgress++;
+                    DialogSystemManager::StartDialog("Nebula", std::format("nebula-dialog-{}", nebulaQuestProgress));
+                    return;
+                }
+            }
+        }
+
         if (e.entityId == GameplayEntities::ChestBox) {
             if (mapName == GameplayMaps::EldersHouse) {
                 if (ProgressSystemManager::Inventory().ChestBoxWasOpened(World::chestBoxElderHouse)) {
