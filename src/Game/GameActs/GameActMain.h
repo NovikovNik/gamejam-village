@@ -251,6 +251,18 @@ public:
                 DialogSystemManager::StartDialog("Guard", "dialog-backroad-main-act");
                 return;
             }
+
+            if (mapName == GameplayMaps::AssemblyHall) {
+                int& guardAssemblyHallQuestProgress = ProgressSystemManager::Player().guardAssemblyHallQuestProgress;
+                if (guardAssemblyHallQuestProgress < 1) {
+                    guardAssemblyHallQuestProgress++;
+                    DialogSystemManager::StartDialog("Guard", std::format("dialog-assembly-hall-{}", guardAssemblyHallQuestProgress));
+                    return;
+                } else {
+                    DialogSystemManager::StartDialog("Guard", "dialog-assembly-hall-2");
+                    return;
+                }
+            }
         }
 
         /* JOE DIALOGES */
@@ -372,6 +384,18 @@ public:
                     return;
                 } else {
                     DialogSystemManager::StartDialog("Joe", "dialog-elders-house-14");
+                    return;
+                }
+            }
+
+            if (mapName == GameplayMaps::AssemblyHall) {
+                int& joeAssemblyHallQuestProgress = ProgressSystemManager::Player().joeAssemblyHallQuestProgress;
+                if (joeAssemblyHallQuestProgress < 6) {
+                    joeAssemblyHallQuestProgress++;
+                    DialogSystemManager::StartDialog("Joe", std::format("dialog-assembly-hall-{}", joeAssemblyHallQuestProgress));
+                    return;
+                } else {
+                    DialogSystemManager::StartDialog("Joe", "dialog-assembly-hall-6");
                     return;
                 }
             }

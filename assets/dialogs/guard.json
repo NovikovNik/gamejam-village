@@ -296,6 +296,30 @@
                     "text": "Something feels off. Like I’m in the wrong place, but I’m still here anyway."
                 }
             ]
+        },
+        "dialog-assembly-hall-1": {
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "Well, you've made it this far. I'm proud of you."
+                },
+                {
+                    "name": "Guard",
+                    "text": "Just a little farther. One last push. But they told me to warn you - once you're on the other side, there is no going back."
+                },
+                {
+                    "name": "Guard",
+                    "text": "Farewell, my friend. And bon voyage!"
+                }
+            ]
+        },
+        "dialog-assembly-hall-2": {
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "No more lines from me. Good luck!"
+                }
+            ]
         }
     }
 }

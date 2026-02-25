@@ -400,6 +400,60 @@
                     "text": "Oh... oh..."
                 }
             ]
+        },
+        "dialog-assembly-hall-1": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "My name is Joe, and I’m the Farmer."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-2": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "My name is Joe, and I have a cow."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-3": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "My cow eats, and I work."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-4": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "My cow rests, and I work."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-5": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "My cow sleeps, and I work."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-6": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "My cow is happy, and that’s what makes me happy."
+                }
+            ],
+            "textSize": 20
         }
     }
 }
