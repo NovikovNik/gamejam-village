@@ -555,6 +555,10 @@ public:
 
     void OnDialogEnded(DialogEndedEvent& e) {
         Logger::Log(std::format("[Gameplay][Main] DialogEnded: {}", e.dialogId));
+        if (e.dialogId == "nebula-dialog-7") {
+            ProgressSystemManager::Player().gameEnded = true;
+            ProgressSystemManager::SaveData();
+        }
     }
 
 private:

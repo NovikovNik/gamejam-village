@@ -8,7 +8,6 @@ struct PlayerSaveData : public BasicSaveData {
     glm::vec2 position{0.f, 0.f};
     std::string lastLevel = "assets/maps/intro.json";
     std::string lastGameAct = std::string(GameActIds::Intro);
-    bool fileSystemIconVisible = false;
     int tutorialDialogProgress = 0;
     int joeCarrotQuestProgress = 0;
     int joeOldHouseQuestProgress = 0;
@@ -16,6 +15,8 @@ struct PlayerSaveData : public BasicSaveData {
     int joeAssemblyHallQuestProgress = 0;
     int guardAssemblyHallQuestProgress = 0;
     int nebulaQuestProgress = 0;
+    bool fileSystemIconVisible = false;
+    bool gameEnded = false;
 
     int GetVersion() const override {
         return 1;
@@ -33,6 +34,7 @@ struct PlayerSaveData : public BasicSaveData {
         guardAssemblyHallQuestProgress = 0;
         joeAssemblyHallQuestProgress = 0;
         nebulaQuestProgress = 0;
+        gameEnded = false;
     }
 
     void ToJson(nlohmann::json& j) const override {
@@ -51,6 +53,7 @@ struct PlayerSaveData : public BasicSaveData {
         j["guardAssemblyHallQuestProgress"] = guardAssemblyHallQuestProgress;
         j["joeAssemblyHallQuestProgress"] = joeAssemblyHallQuestProgress;
         j["nebulaQuestProgress"] = nebulaQuestProgress;
+        j["gameEnded"] = gameEnded;
     }
 
     void FromJson(const nlohmann::json& j) override {
@@ -99,6 +102,9 @@ struct PlayerSaveData : public BasicSaveData {
         }
         if (j.contains("nebulaQuestProgress") && j["nebulaQuestProgress"].is_number_integer()) {
             nebulaQuestProgress = j["nebulaQuestProgress"].get<int>();
+        }
+        if (j.contains("gameEnded") && j["gameEnded"].is_boolean()) {
+            gameEnded = j["gameEnded"].get<bool>();
         }
 
         if (!Validate()) {
