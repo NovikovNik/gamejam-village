@@ -41,9 +41,9 @@ else()
 endif()
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
-add_executable(game_engine ${SOURCES} ${IMGUI_SOURCES} libs/stb_vorbis/stb_vorbis.c)
+add_executable(AAAB ${SOURCES} ${IMGUI_SOURCES} libs/stb_vorbis/stb_vorbis.c)
 
-target_include_directories(game_engine PRIVATE
+target_include_directories(AAAB PRIVATE
     "${CMAKE_SOURCE_DIR}"
     "${CMAKE_SOURCE_DIR}/src"
     "libs"
@@ -54,19 +54,19 @@ target_include_directories(game_engine PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/libs/stb_vorbis"
 )
 if(ENABLE_CHEATS)
-    target_include_directories(game_engine PRIVATE "libs/imgui")
-    target_compile_definitions(game_engine PRIVATE ENABLE_CHEATS=1)
+    target_include_directories(AAAB PRIVATE "libs/imgui")
+    target_compile_definitions(AAAB PRIVATE ENABLE_CHEATS=1)
 endif()
 
-target_link_libraries(game_engine PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3 SDL3_image::SDL3_image)
+target_link_libraries(AAAB PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3 SDL3_image::SDL3_image)
 
 if(WIN32)
-    set_target_properties(game_engine PROPERTIES
+    set_target_properties(AAAB PROPERTIES
         WIN32_EXECUTABLE $<CONFIG:Release>
     )
 endif()
 
-target_compile_options(game_engine PRIVATE
+target_compile_options(AAAB PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4>
     $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Wpedantic>
     $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
