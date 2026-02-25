@@ -40,7 +40,7 @@ bool             g_musicPlaying  = false;
 bool             g_musicPaused   = false;
 
 float g_masterVolume = 1.0f;
-float g_sfxVolume    = 0.008f;
+float g_sfxVolume    = 0.02f;
 float g_musicVolume  = 1.0f;
 bool  g_muted        = false;
 

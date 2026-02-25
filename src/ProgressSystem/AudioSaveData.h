@@ -4,7 +4,7 @@
 struct AudioSaveData : public BasicSaveData {
     float masterVolume = 1.0f;
     float musicVolume  = 1.0f;
-    float sfxVolume    = 0.008f;
+    float sfxVolume    = 0.02f;
     bool  muted        = false;
 
     int GetVersion() const override { return 1; }
@@ -12,7 +12,7 @@ struct AudioSaveData : public BasicSaveData {
     void ResetToDefaults() override {
         masterVolume = 1.0f;
         musicVolume  = 1.0f;
-        sfxVolume    = 0.008f;
+        sfxVolume    = 0.02f;
         muted        = false;
     }
 
@@ -28,7 +28,7 @@ struct AudioSaveData : public BasicSaveData {
         if (!j.is_object()) { ResetToDefaults(); return; }
         masterVolume = j.value("master", 1.0f);
         musicVolume  = j.value("music",  1.0f);
-        sfxVolume    = j.value("sfx",    0.008f);
+        sfxVolume    = j.value("sfx",    0.02f);
         muted        = j.value("muted",  false);
         if (!Validate()) ResetToDefaults();
     }

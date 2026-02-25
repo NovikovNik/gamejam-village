@@ -319,7 +319,8 @@
             "x": 372.4997863769531,
             "y": 398.6569519042969,
             "name": "rocks-1",
-            "spawnOnStart": true
+            "spawnOnStart": true,
+            "mass": 0.0
         }
     ],
     "tiles": [
