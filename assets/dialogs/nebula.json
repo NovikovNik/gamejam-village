@@ -13,7 +13,7 @@
                 },
                 {
                     "name": "???",
-                    "text": "Come to me, traveler!",
+                    "text": "Come to me, traveler.",
                     "align": "left"
                 }
             ],
@@ -132,7 +132,7 @@
             "lines": [
                 {
                     "name": "???",
-                    "text": "Go home, traveler!",
+                    "text": "Go home, traveler, and live your life.",
                     "color": [255, 255, 210, 255]
                 }
             ]
