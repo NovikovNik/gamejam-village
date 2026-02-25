@@ -58,6 +58,10 @@ public:
         {
             ProcessEnteringVoid();
         }
+
+        if (MapManager::GetCurrentMapName() == GameplayMaps::AssemblyHall) {
+            ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistExtraQuest); // Делаем последний квест активным при переходе в ассембли
+        }
     }
 
     void Update(float /*deltaTime*/) override {}
@@ -82,6 +86,10 @@ public:
                 MapManager::SpawnEffect(player->GetPosition().x, player->GetPosition().y, 64, 64, animation);
                 ProcessEnteringVoid();
             }
+        }
+
+        if (MapManager::GetCurrentMapName() == GameplayMaps::AssemblyHall) {
+            ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistExtraQuest); // Делаем последний квест активным при переходе в ассембли
         }
 
         /* CAT LOCATION during Cat Quest! */
