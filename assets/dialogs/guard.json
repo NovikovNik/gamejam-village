@@ -55,10 +55,6 @@
                     "size": 26,
                     "color": [255, 255, 210, 250],
                     "align": "right"
-                },
-                {
-                    "name": "Narrator",
-                    "text": "There are two ways to delete a file: right click on it in file explorer, then press 'delete', or just press 'delete' on your keyboard."
                 }
             ],
             "textSize": 20
