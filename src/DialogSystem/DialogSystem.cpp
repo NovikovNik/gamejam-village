@@ -5,6 +5,7 @@
 #include <libs/json/single_include/nlohmann/json.hpp>
 #include <EventBus/EventBus.h>
 #include <Events/NextDialogLineEvent.h>
+#include <Events/PreviousDialogLineEvent.h>
 #include <Events/ForceDialogStartEvent.h>
 #include <Events/DialogEndedEvent.h>
 #include <Events/PlaySoundEvent.h>
@@ -31,6 +32,7 @@ public:
         signBackgroundTexture = make_nnTex("wooden_board_ui");
         signPlateTexture = make_nnTex("name_sign_ui");
         onNextDialogLineEvent = EventBus::instance().SubscribeToEvent<NextDialogLineEvent>(this, &DialogSystem::OnNextDialogLineEvent);
+        onPreviousDialogLineEvent = EventBus::instance().SubscribeToEvent<PreviousDialogLineEvent>(this, &DialogSystem::OnPreviousDialogLineEvent);
         onForceDialogStartEvent = EventBus::instance().SubscribeToEvent<ForceDialogStartEvent>(this, &DialogSystem::OnForceDialogStartEvent);
     }
 
@@ -208,6 +210,20 @@ public:
         }
     }
 
+    void OnPreviousDialogLineEvent(PreviousDialogLineEvent&) {
+        if (signActive) {
+            signActive = false;
+            return;
+        }
+        if (!dialogActive) {
+            return;
+        }
+        if (currentDialogIndex > 0) {
+            currentDialogIndex--;
+            EventBus::instance().EmitEvent<PlaySoundEvent>("dialog_next");
+        }
+    }
+
     // Возможность форсированно запустить нужный диалог без взаимодействия с NPC например
     // Гипотетический рассказчик или обучение?
     void OnForceDialogStartEvent(ForceDialogStartEvent& event) {
@@ -271,6 +287,7 @@ private:
     std::map<std::string, CharacterMeta> characterMeta;
 
     Events::Handler onNextDialogLineEvent;
+    Events::Handler onPreviousDialogLineEvent;
     Events::Handler onForceDialogStartEvent;
 };
 

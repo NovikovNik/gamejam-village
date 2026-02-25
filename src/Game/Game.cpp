@@ -23,6 +23,7 @@
 #include "../Events/PlaySoundEvent.h"
 #include "../Events/NextDialogLineEvent.h"
 #include "../Events/GameShutdownEvent.h"
+#include "../Events/PreviousDialogLineEvent.h"
 #include "../Gameplay/WorldState.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keycode.h"
@@ -200,6 +201,10 @@ void Game::ProcessInput() {
                 }
                 if (event.key.key == SDLK_SPACE) {
                     EventBus::instance().EmitEvent<NextDialogLineEvent>();
+                    break;
+                }
+                if (event.key.key == SDLK_BACKSPACE) {
+                    EventBus::instance().EmitEvent<PreviousDialogLineEvent>();
                     break;
                 }
                 if (event.key.key == SDLK_W || event.key.key == SDLK_UP) {
