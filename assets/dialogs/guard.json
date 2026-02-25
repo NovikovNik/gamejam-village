@@ -118,7 +118,7 @@
             "description": "",
             "lines": [
                 {
-                    "text": "Congratulations! You made it. You are the first person who have read all my lines. Thanks, very flattering."
+                    "text": "What if I'm the main boss of this game? Imagine how fun it would be? For me."
                 }
             ],
             "textSize": 20
@@ -127,7 +127,7 @@
             "description": "",
             "lines": [
                 {
-                    "text": "What if I'm the main boss of this game? Imagine how fun it would be? For me."
+                    "text": "I hope you are not using controller. I'm not sure how it would work with that."
                 }
             ],
             "textSize": 20
@@ -136,7 +136,7 @@
             "description": "",
             "lines": [
                 {
-                    "text": "I hope you are not using controller. I'm not sure how it would work with that."
+                    "text": "Congratulations! You made it. You are the first person who have read all my lines. Thanks, very flattering."
                 }
             ],
             "textSize": 20
@@ -170,7 +170,11 @@
                 },
                 {
                     "name": "Narrator",
-                    "text": "The road to the village lies open. You can go there now."
+                    "text": "Yes, it is."
+                },
+                {
+                    "name": "Narrator",
+                    "text": "Ahem… The road to the village lies open. You can go there now!"
                 }
             ],
             "textSize": 20
