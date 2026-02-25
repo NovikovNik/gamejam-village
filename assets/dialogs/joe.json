@@ -7,7 +7,7 @@
             "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "Hey there! Could you spare a moment? My back is really hurting, and I need help clearing these haystacks. I’d really appreciate it.",
+                    "text": "Hey there! Can you spare a moment? My back hurts really badly — would you be so kind as to help me? See these haystacks? I need to clear them all. It shouldn’t take long.",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
@@ -15,18 +15,41 @@
             ],
             "textSize": 20
         },
-        "quest-progress": {
+        "quest-start-without-asking": {
             "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "You’re doing great. I don’t remember seeing you in this village — actually, I don’t remember anyone for some reason",
+                    "text": "Hey there! You cleared a haystack! Thanks! That’s quite funny — I was just about to ask you to help deal with the haystacks, but you’ve already taken care of them yourself. Amazing!"
+                }
+            ],
+            "textSize": 20
+        },
+        "quest-repeat-task": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Just move them to the pit. I hope they will fit there."
+                }
+            ],
+            "textSize": 20
+        },
+        "quest-progress-1": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "One is done, and only one more to go!",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
-                },
+                }
+            ],
+            "textSize": 20
+        },
+        "quest-progress-2": {
+            "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "But haystacks are still there. I'am counting on you to clear them all.",
+                    "text": "One is not done, and only one more to go!",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
@@ -38,14 +61,7 @@
             "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "That’s it! I can’t believe you’ve done it. Thank you so much!",
-                    "size": 20,
-                    "color": [255, 255, 255, 255],
-                    "align": "left"
-                },
-                {
-                    "name": "Farmer Joe",
-                    "text": "I’ll give you a reward for your help. Here’s some freshy carrot! I know it will help you with your journey.",
+                    "text": "You did it! You are a lifesaver! My back feels so much better now. Take this tasty, shiny carrot — you deserve it",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
@@ -57,14 +73,14 @@
             "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "That’s quite funny — I was just about to ask you to help deal with the haystacks, but you’ve already taken care of them yourself. Amazing!",
+                    "text": "Hey there! Can you spare a moment? My back hurts really badly — would you be so kind as to help me? See these haystacks? I need to clear them all. It shouldn’t take long.",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
                 },
                 {
                     "name": "Farmer Joe",
-                    "text": "In any case, I have this carrot as a reward. Here, take it — you’ve earned it.",
+                    "text": "Wait a minute... Don’t say you already did it? You cleared all the haystacks? I haven’t even asked you to do it! Amazing! Take this tasty, shiny carrot — you deserve it.",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
@@ -76,10 +92,11 @@
             "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "Good work is work well done. I wish I could finally rest — I’m so tired after the whole day?",
-                    "size": 20,
-                    "color": [255, 255, 255, 255],
-                    "align": "left"
+                    "text": "My name is Joe, by the way. Joe the Farmer, as they call me. I work here, in this very place you're standing right now."
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "Have you met my cow? She is not here right now; I suppose she is wandering around."
                 }
             ],
             "textSize": 20
@@ -88,10 +105,46 @@
             "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "Have you seen the old big cow? She was grazing in the field, but she’s disappeared somewhere. I hope she’s all right.",
-                    "size": 20,
-                    "color": [255, 255, 255, 255],
-                    "align": "left"
+                    "text": "I saw an opossum one day. Can you imagine? A real opossum here!"
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "Go and look around — maybe you'll get lucky and find it. Draw a picture of it; others would love to see it."
+                }
+            ],
+            "textSize": 20
+        },
+        "neutral-dialog-3": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Ahh... The weather is so yellow today, isn’t it?"
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "Sunny but not too hot. A light breeze is blowing, whistling in my ears. I love it!"
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "I just wish I could go around and see what’s happening in the village instead of standing here all day."
+                }
+            ],
+            "textSize": 20
+        },
+        "neutral-dialog-4": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "You can go or stay. I don’t mind your company. There is plenty of work to do if you wish to join."
+                }
+            ],
+            "textSize": 20
+        },
+        "neutral-dialog-5": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "The day is so yellow. The wind is so nice."
                 }
             ],
             "textSize": 20

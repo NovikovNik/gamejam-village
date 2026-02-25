@@ -10,6 +10,9 @@ struct PlayerSaveData : public BasicSaveData {
     std::string lastGameAct = std::string(GameActIds::Intro);
     bool fileSystemIconVisible = false;
     int tutorialDialogProgress = 0;
+    int joeCarrotQuestProgress = 0;
+    int joeOldHouseQuestProgress = 0;
+    int joeEldersHouseQuestProgress = 0;
 
     int GetVersion() const override {
         return 1;
@@ -21,6 +24,9 @@ struct PlayerSaveData : public BasicSaveData {
         lastGameAct = std::string(GameActIds::Intro);
         fileSystemIconVisible = false;
         tutorialDialogProgress = 0;
+        joeCarrotQuestProgress = 0;
+        joeOldHouseQuestProgress = 0;
+        joeEldersHouseQuestProgress = 0;
     }
 
     void ToJson(nlohmann::json& j) const override {
@@ -33,6 +39,9 @@ struct PlayerSaveData : public BasicSaveData {
         j["lastGameAct"] = lastGameAct;
         j["fileSystemIconVisible"] = fileSystemIconVisible;
         j["tutorialDialogProgress"] = tutorialDialogProgress;
+        j["joeCarrotQuestProgress"] = joeCarrotQuestProgress;
+        j["joeOldHouseQuestProgress"] = joeOldHouseQuestProgress;
+        j["joeEldersHouseQuestProgress"] = joeEldersHouseQuestProgress;
     }
 
     void FromJson(const nlohmann::json& j) override {
@@ -63,6 +72,15 @@ struct PlayerSaveData : public BasicSaveData {
         }
         if (j.contains("tutorialDialogProgress") && j["tutorialDialogProgress"].is_number_integer()) {
             tutorialDialogProgress = j["tutorialDialogProgress"].get<int>();
+        }
+        if (j.contains("joeCarrotQuestProgress") && j["joeCarrotQuestProgress"].is_number_integer()) {
+            joeCarrotQuestProgress = j["joeCarrotQuestProgress"].get<int>();
+        }
+        if (j.contains("joeOldHouseQuestProgress") && j["joeOldHouseQuestProgress"].is_number_integer()) {
+            joeOldHouseQuestProgress = j["joeOldHouseQuestProgress"].get<int>();
+        }
+        if (j.contains("joeEldersHouseQuestProgress") && j["joeEldersHouseQuestProgress"].is_number_integer()) {
+            joeEldersHouseQuestProgress = j["joeEldersHouseQuestProgress"].get<int>();
         }
 
         if (!Validate()) {

@@ -256,29 +256,61 @@ public:
         /* JOE DIALOGES */
         if (e.entityId == GameplayEntities::Joe) {
             if (mapName == GameplayMaps::Crossroads) {
-                auto joeQuestStatus = ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest);
+                auto joeQuestStatus = ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest); // Boxes
+                auto joeCarrotFinalQuestStatus = ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal); // Joe
 
                 if (joeQuestStatus == QuestStatus::NotStarted) {
-                    DialogSystemManager::StartDialog("Joe", "quest-start");
-                    return;
+                    if (joeCarrotFinalQuestStatus == QuestStatus::NotStarted) {
+                        ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::OnGoing);
+                        DialogSystemManager::StartDialog("Joe", "quest-start");
+                        return;
+                    }
+                    if (joeCarrotFinalQuestStatus == QuestStatus::OnGoing) {
+                        DialogSystemManager::StartDialog("Joe", "quest-repeat-task");
+                        return;
+                    }
 
                 } else if (joeQuestStatus == QuestStatus::OnGoing) {
-                    DialogSystemManager::StartDialog("Joe", "quest-progress");
+
+                    if (joeCarrotFinalQuestStatus == QuestStatus::NotStarted) {
+                        ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::OnGoing);
+                        DialogSystemManager::StartDialog("Joe", "quest-start-without-asking");
+                        return;
+                    }
+
+                    if (std::rand() % 2 == 0) {
+                        DialogSystemManager::StartDialog("Joe", "quest-progress-1");
+                    } else {
+                        DialogSystemManager::StartDialog("Joe", "quest-progress-2");
+                    }
                     return;
     
-                } else if (joeQuestStatus == QuestStatus::Completed && ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::NotStarted) {
-                    DialogSystemManager::StartDialog("Joe", "quest-complete");
-                    ProgressSystemManager::Inventory().AddItem(World::carrot);
-                    ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::Completed);
-                    ProgressSystemManager::SaveData();
-                    return;
-
-                } else if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::Completed) {
-                    if (std::rand() % 2 == 0) {
-                        DialogSystemManager::StartDialog("Joe", "neutral-dialog-1");
+                } else if (joeQuestStatus == QuestStatus::Completed) {
+                    /* Завершили квест даже не начав его!*/
+                    if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::NotStarted) {
+                        DialogSystemManager::StartDialog("Joe", "quest-complete-before-start");
+                        ProgressSystemManager::Inventory().AddItem(World::carrot);
+                        ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::Completed);
+                        ProgressSystemManager::SaveData();
+                        return;
+                    }
+                    /* Завершили квест нормально */
+                    if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::OnGoing) {
+                        DialogSystemManager::StartDialog("Joe", "quest-complete");
+                        ProgressSystemManager::Inventory().AddItem(World::carrot);
+                        ProgressSystemManager::Quests().SetStatus(World::JoeCarrotFinal, QuestStatus::Completed);
+                        ProgressSystemManager::SaveData();
+                        return;
+                    }
+                } 
+                if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::Completed) {
+                    int& joeCarrotQuestProgress = ProgressSystemManager::Player().joeCarrotQuestProgress;
+                    if (joeCarrotQuestProgress < 5) {
+                        joeCarrotQuestProgress++;
+                        DialogSystemManager::StartDialog("Joe", std::format("neutral-dialog-{}", joeCarrotQuestProgress));
                         return;
                     } else {
-                        DialogSystemManager::StartDialog("Joe", "neutral-dialog-2");
+                        DialogSystemManager::StartDialog("Joe", "neutral-dialog-5");
                         return;
                     }
                 }
