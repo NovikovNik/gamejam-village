@@ -26,6 +26,26 @@ namespace GameActs {
 
 class MainAct : public GameAct {
 public:
+    void ProcessEnteringVoid()
+    {
+        QuestId const currentActiveQuestId = ProgressSystemManager::Quests().GetCurrentActiveQuest();
+        if (currentActiveQuestId != World::ElderVoidMistExtraQuest) {
+            /* VOID FIRST ENTRANCE DIALOG */
+            if (ProgressSystemManager::Quests().GetStatus(World::VoidFirstEntranceQuest) == QuestStatus::NotStarted) {
+                ProgressSystemManager::Quests().SetStatus(World::VoidFirstEntranceQuest, QuestStatus::OnGoing);
+                DialogSystemManager::StartDialog("Utility", "void-crossroads-first");
+            }
+        }
+        else {
+            /* В КОНЦЕ ИГРЫ ДВИГАЕМ НЕБУЛУ В НУЖНУЮ ПОЗИЦИЮ */
+            World::ENpc* nebula = dynamic_cast<World::ENpc*>(MapManager::GetEntitiesContainer().FindEntity({ "nebula", "vil" }));
+            if (nebula) {
+                nebula->SetPosition(239, -23);
+                nebula->SetHorizontalFlip(true);
+                DialogSystemManager::StartDialog("Nebula", "entrance-dialog");
+            }
+        }
+    }
     void Initialize() override {
         onLocationChanged = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &MainAct::OnLocationChanged);
         onInteractWithEntity = EventBus::instance().SubscribeToEvent<InteractWithEntityEvent>(this, &MainAct::OnInteractWithEntity);
@@ -33,6 +53,11 @@ public:
         onEntityDestroyed = EventBus::instance().SubscribeToEvent<EntityDestroyedEvent>(this, &MainAct::OnEntityDestroyed);
         onDialogEnded = EventBus::instance().SubscribeToEvent<DialogEndedEvent>(this, &MainAct::OnDialogEnded);
         onLocationChangedEvent = EventBus::instance().SubscribeToEvent<LocationChangedEvent>(this, &MainAct::OnLocationChanged);
+
+        if (MapManager::GetCurrentMapName() == GameplayMaps::WorldVoid)
+        {
+            ProcessEnteringVoid();
+        }
     }
 
     void Update(float /*deltaTime*/) override {}
@@ -47,7 +72,7 @@ public:
         // Spawn effect when player enters world-void
         if (e.locationName == GameplayMaps::WorldVoid) {
             if (auto* player = MapManager::GetEntitiesContainer().FindEntity<World::EPlayer>()) {
-                Renderer::AnimationHandle animation = Renderer::AnimationHandle {
+                Renderer::AnimationHandle animation = Renderer::AnimationHandle{
                     .numOfFrames = 16,
                     .maxElementsPerRow = 4,
                     .frameSize = 64,
@@ -55,22 +80,7 @@ public:
                     .textureId = make_nnTex("matrics"),
                 };
                 MapManager::SpawnEffect(player->GetPosition().x, player->GetPosition().y, 64, 64, animation);
-
-                if (currentActiveQuestId != World::ElderVoidMistExtraQuest) {
-                    /* VOID FIRST ENTRANCE DIALOG */
-                    if (ProgressSystemManager::Quests().GetStatus(World::VoidFirstEntranceQuest) == QuestStatus::NotStarted) {
-                        ProgressSystemManager::Quests().SetStatus(World::VoidFirstEntranceQuest, QuestStatus::OnGoing);
-                        DialogSystemManager::StartDialog("Utility", "void-crossroads-first");
-                    }
-                } else {
-                    /* В КОНЦЕ ИГРЫ ДВИГАЕМ НЕБУЛУ В НУЖНУЮ ПОЗИЦИЮ */
-                    World::ENpc* nebula = dynamic_cast<World::ENpc*>(MapManager::GetEntitiesContainer().FindEntity({"nebula", "vil"}));
-                    if (nebula) {
-                        nebula->SetPosition(239, -23);
-                        nebula->SetHorizontalFlip(true);
-                        DialogSystemManager::StartDialog("Nebula", "entrance-dialog");
-                    }
-                }
+                ProcessEnteringVoid();
             }
         }
 

@@ -274,7 +274,7 @@ public:
     }
 
     bool RegisterInWorldState(const World::Entity::TagName& tagName) {
-        if (tagName.type == "object") {
+        if (tagName.type == "object" || tagName.name == "nebula") {
             return false;
         }
         const auto key = std::format("{}.{}", tagName.name, tagName.type);
