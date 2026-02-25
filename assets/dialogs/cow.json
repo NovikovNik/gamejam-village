@@ -65,6 +65,58 @@
             ],
             "textSize": 20
         },
+        "dialog-cow-quest-carrot-progress-1": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "Those eyes... they seem to be looking right at you. They’re so full of gratitude that you can almost feel it, like a warm, comforting embrace.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Big Cow",
+                    "text": "Moo! Moo! Moo-o-o-o-o!",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+
+            ],
+            "textSize": 20
+        },
+        "dialog-cow-quest-carrot-progress-2": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "She looking for something. Something you don't have. Yet.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Big Cow",
+                    "text": "Moo! Moo! Moo-o-o-o-o!",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cow-quest-carrot-progress-3": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "Hungry, hungry cow.",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Big Cow",
+                    "text": "Moo! Moo-o?",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
         "dialog-cow-quest-complete": {
             "lines": [
                 {

@@ -189,7 +189,6 @@ public:
 
                 if (joeQuestStatus == QuestStatus::NotStarted) {
                         DialogSystemManager::StartDialog("Joe", "quest-start");
-                        ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::OnGoing);
                 } else if (joeQuestStatus == QuestStatus::OnGoing) {
                     DialogSystemManager::StartDialog("Joe", "quest-progress");
     
@@ -212,9 +211,11 @@ public:
         /* COW DIALOGES */
         // Самые важные отношения с коровами в игре
         if (e.entityId == GameplayEntities::Cow) {
+            auto const cowFeededQuestStatus = ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest);
             if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest) == QuestStatus::Completed) {
                 if (mapName == "crossroads") {
-                    if (ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest) == QuestStatus::NotStarted) {
+                    auto const cowFeededQuestStatus = ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest);
+                    if (cowFeededQuestStatus == QuestStatus::NotStarted || cowFeededQuestStatus == QuestStatus::OnGoing) {
                         DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-carrot");
                         if (ProgressSystemManager::Inventory().HasItem(World::carrot)) {
                             ProgressSystemManager::Inventory().RemoveItem(World::carrot);
@@ -222,12 +223,19 @@ public:
                             ProgressSystemManager::SaveData();
                         }
                     }
-                    if (ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest) == QuestStatus::Completed) {
+                    if (cowFeededQuestStatus == QuestStatus::Completed) {
                         DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-complete");
                     }
                 }
             } else {
-                DialogSystemManager::StartDialog("Cow", "dialog-cow-idle");
+                if (cowFeededQuestStatus == QuestStatus::NotStarted) {
+                    DialogSystemManager::StartDialog("Cow", "dialog-cow-idle");
+                    ProgressSystemManager::Quests().SetStatus(World::CowFeededQuest, QuestStatus::OnGoing);
+                }
+                if (cowFeededQuestStatus == QuestStatus::OnGoing) {
+                    int const progress = (std::rand() % 3) + 1;
+                    DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-quest-carrot-progress-{}", progress));
+                }
             }
         }
 
@@ -294,11 +302,12 @@ public:
     void OnEntityDestroyed(EntityDestroyedEvent& e) {
         Logger::Log(std::format("[Gameplay][Main] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
         if (e.GetName() == "box-1" || e.GetName() == "box-2") {
-            if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest) == QuestStatus::OnGoing) {
-                ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::Completed);
+            auto const joeCarrotQuestStatus = ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest);
+            if (joeCarrotQuestStatus == QuestStatus::NotStarted) {
+                ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::OnGoing);
             }
-            if (ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest) == QuestStatus::NotStarted) {
-                ProgressSystemManager::Quests().SetStatus(World::CowFeededQuest, QuestStatus::OnGoing);
+            if (joeCarrotQuestStatus == QuestStatus::OnGoing) {
+                ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::Completed);
             }
         }
     }
