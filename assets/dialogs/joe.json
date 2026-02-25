@@ -153,6 +153,10 @@
             "lines": [
                 {
                     "name": "Farmer Joe",
+                    "text": "Wow! Look at that. It’s even more yellow than at my place."
+                },
+                {
+                    "name": "Farmer Joe",
                     "text": "I don't remember how I ended up here. Maybe I was looking for my cow? Could she be hiding somewhere in the tall grass?"
                 },
                 {
@@ -193,7 +197,207 @@
             "lines": [
                 {
                     "name": "Farmer Joe",
-                    "text": "I'm just resting here. I'm tired of looking for my cow. Who knows where I will be next time?"
+                    "text": "I want to stay here for a little longer. Then I’ll come right back to work."
+                }
+            ]
+        },
+        "dialog-old-house-1": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Look around — there should be something valuable."
+                }
+            ]
+        },
+        "dialog-old-house-2": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Oh my God, a spider!"
+                }
+            ]
+        },
+        "dialog-old-house-3": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Why is it here? Does it live here?"
+                }
+            ]
+        },
+        "dialog-old-house-4": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Have you found any weapons? We can use them to beat the web off this spider."
+                }
+            ]
+        },
+        "dialog-old-house-5": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "It is just staying here and doesn’t move. Is it planning something? Revenge? Yes... That must be it."
+                }
+            ]
+        },
+        "dialog-old-house-6": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "No, seriously! It just sits here, staring at me. I want it to disappear. Make it go."
+                }
+            ]
+        },
+        "dialog-old-house-7": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "I see — it is my problem to solve. And I will. It doesn’t move when I look at it. Then I will look at it until it dies."
+                }
+            ]
+        },
+        "dialog-old-house-8": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Don’t wait for me; it may take a while."
+                }
+            ]
+        },
+        "dialog-old-house-9": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "You must go! Now!"
+                }
+            ]
+        },
+        "dialog-elders-house-1": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "A house! A real house! Does somebody live here?"
+                }
+            ]
+        },
+        "dialog-elders-house-2": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Did I hear a mouse? Some people are afraid of mice."
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "They are so scared of them that they are even afraid to go inside."
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "But sometimes they still go inside for no reason. They are weirdos."
+                }
+            ]
+        },
+        "dialog-elders-house-3": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Anyway... I’m hungry. Is there any food?"
+                }
+            ]
+        },
+        "dialog-elders-house-4": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "I would love some spaghetti with cheese."
+                }
+            ]
+        },
+        "dialog-elders-house-5": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "And chicken. Without bones, please."
+                }
+            ]
+        },
+        "dialog-elders-house-6": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Carrot juice would be nice."
+                }
+            ]
+        },
+        "dialog-elders-house-7": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "With kebab on top."
+                }
+            ]
+        },
+        "dialog-elders-house-8": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "And maple syrup."
+                }
+            ]
+        },
+        "dialog-elders-house-9": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Some corn."
+                }
+            ]
+        },
+        "dialog-elders-house-10": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Eggs — make it four."
+                }
+            ]
+        },
+        "dialog-elders-house-11": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Any bread? With caviar, please."
+                }
+            ]
+        },
+        "dialog-elders-house-12": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Oh, and soup! Soup would be nice."
+                }
+            ]
+        },
+        "dialog-elders-house-13": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "What about dessert? Hmm..."
+                }
+            ]
+        },
+        "dialog-elders-house-14": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Hmhmhm..."
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "Hmhmhm... Carrots."
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "Oh... oh..."
                 }
             ]
         }

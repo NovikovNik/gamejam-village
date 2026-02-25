@@ -351,6 +351,30 @@ public:
                     return;
                 }
             }
+
+            if (mapName == GameplayMaps::OldHouse) {
+                int& joeOldHouseQuestProgress = ProgressSystemManager::Player().joeOldHouseQuestProgress;
+                if (joeOldHouseQuestProgress < 9) {
+                    joeOldHouseQuestProgress++;
+                    DialogSystemManager::StartDialog("Joe", std::format("dialog-old-house-{}", joeOldHouseQuestProgress));
+                    return;
+                } else {
+                    DialogSystemManager::StartDialog("Joe", "dialog-old-house-9");
+                    return;
+                }
+            }
+
+            if (mapName == GameplayMaps::EldersHouse) {
+                int& joeEldersHouseQuestProgress = ProgressSystemManager::Player().joeEldersHouseQuestProgress;
+                if (joeEldersHouseQuestProgress < 14) {
+                    joeEldersHouseQuestProgress++;
+                    DialogSystemManager::StartDialog("Joe", std::format("dialog-elders-house-{}", joeEldersHouseQuestProgress));
+                    return;
+                } else {
+                    DialogSystemManager::StartDialog("Joe", "dialog-elders-house-14");
+                    return;
+                }
+            }
         }
 
         /* COW DIALOGES */
