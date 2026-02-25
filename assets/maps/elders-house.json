@@ -78,7 +78,7 @@
             "x": -27.442787170410156,
             "y": -30.971282958984375,
             "name": "Cat",
-            "spawnOnStart": false
+            "spawnOnStart": true
         },
         {
             "x": -132.78857421875,

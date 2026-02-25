@@ -13,7 +13,8 @@ namespace World {
 
         void Interact() override;
         void SetHorizontalFlip(bool flip) { horizontalFlip = flip; }
-
+        
+        void SetPosition(float x, float y) override;
         void OnSpawn(float x, float y, float w, float h) override;
 
         void CreatePhysicsObjects() override;

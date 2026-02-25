@@ -37,7 +37,7 @@
             ],
             "textSize": 20
         },
-        "dialog-cat-quest": {
+        "dialog-cat-quest-street": {
             "lines": [
                 {
                     "name": "Village Elder",
@@ -45,11 +45,20 @@
                 },
                 {
                     "name": "Village Elder",
-                    "text": "I know there is knowledge in the books in my house that could help us find an answer to our problem. But mice have infested my home, and I cannot enter it."
+                    "text": "Listen closely... A stray cat slipped into my chambers. I fear for my belongings... the creature looks mischievous, and my curios are far too fragile for its claws. Help me catch it, won't you?"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-quest-house": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "Hmm. It seems you, too, have fallen into this time loop. No one can leave our village. All roads lead back to it."
                 },
                 {
                     "name": "Village Elder",
-                    "text": "Ah, if only someone like cat.vil lived in my house… Can you think of something?"
+                    "text": "Ah, since you’ve made yourself at my home... you see our uninvited guest? A cat. I don't trust the look in its eyes—my research, my precious records, they are all at risk. Please, corner the beast before it shreds my life's work."
                 }
             ],
             "textSize": 20
@@ -58,11 +67,16 @@
             "lines": [
                 {
                     "name": "Village Elder",
-                    "text": "As I already said, my house has been overrun by rats or mice. I cannot enter it until this problem is dealt with."
-                },
+                    "text": "That feline is the bane of my sanity! Please, lend a hand!"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-quest-progress": {
+            "lines": [
                 {
                     "name": "Village Elder",
-                    "text": "If only you could somehow create cat.vil out of thin air inside my house…"
+                    "text": "She’s a blur! Don't just stand there—do something!"
                 }
             ],
             "textSize": 20
@@ -71,7 +85,24 @@
             "lines": [
                 {
                     "name": "Village Elder",
-                    "text": "Now we can attend to more serious matters. Have you noticed the void mist hanging over the house to the east?"
+                    "text": "Ou know... when she sleeps, she almost looks innocent. Charming, even. I believe I shall keep her. But enough of this sentimentality! We must return to the gravity of our situation. Have you noticed the void mist hanging over the house to the east?."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "The books speak of an order of guardians who possess knowledge of how to fight this affliction."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-spawn-guard-quest-after-cat-destroyed": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "A... radical solution, to be sure. I haven't the faintest inkling of what you just did, but the cat is gone. Vanished into thin air. I can only hope she didn't suffer... wherever 'there' is."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "But we must return to the our situation. Have you noticed the void mist hanging over the house to the east?"
                 },
                 {
                     "name": "Village Elder",

@@ -1,0 +1,52 @@
+{
+    "id": "Cat",
+    "name": "Cat",
+    "description": "",
+    "dialogs": {
+        "dialog-cat-run-away-1": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "Meoow! Mew!"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "You lean in, hands outstretched to scoop up the feline. But in a blur of fur and sheer defiance, the cat vanishes and reappearing in the far corner of the room before you can even blink. A masterful escape. He’s not half bad, this one.",
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-run-away-2": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "Meoo-oow!"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "A second attempt. You feel the sweet surge of success victory practically tingling in your fingertips—but the cat... well, the cat has other plans. With a flick of its tail, it simply vanishes, only to manifest in the opposite corner once more. Teleportation? Or just a very, very skilled feline?",
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-run-away-final": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "Meooo... Z-z-z... Z-z-z..."
+                },
+                {
+                    "name": "Narrator",
+                    "text": "After a brief, spirited chase, the cat loses all semblance of interest in you. She curls up and drifts into a slumber. A victory for you, then? Or simply... performance? Perhaps she merely let you win to quiet your persistence. Who truly knows what lies behind those yellow eyes?",
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                }
+            ],
+            "textSize": 20
+        }
+    }
+}

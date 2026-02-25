@@ -19,6 +19,7 @@ namespace World {
     inline const QuestId JoeCarrotFinal = "joe_carrot_extra_quest"; // Отдельный квест для других строчек после вручения морковки
     inline const QuestId CowFeededQuest = "cow_feed_quest";
     inline const QuestId ElderFirstMeetingQuest = "elder_first_meeting";
+    inline const QuestId ElderCatQuestInfo = "elder_cat_quest_house_info"; // Дополнительный системный квест, для отслеживания реплик для Again диалогов
     inline const QuestId ElderCatQuest = "elder_cat_quest";
     inline const QuestId ElderSpawnGuardQuest = "spawn_guard";
     inline const QuestId ElderGuardInteractQuest = "guard_quest";
@@ -64,6 +65,7 @@ inline void QuestsSaveData::ResetToDefaults() {
     quests[World::JoeCarrotQuest]          = QuestStatus::NotStarted;
     quests[World::CowFeededQuest]          = QuestStatus::NotStarted;
     quests[World::ElderFirstMeetingQuest]  = QuestStatus::NotStarted;
+    quests[World::ElderCatQuestInfo]       = QuestStatus::NotStarted;
     quests[World::ElderCatQuest]           = QuestStatus::NotStarted;
     quests[World::ElderSpawnGuardQuest]    = QuestStatus::NotStarted;
     quests[World::ElderGuardInteractQuest] = QuestStatus::NotStarted;
@@ -126,6 +128,7 @@ inline void QuestsSaveData::FromJson(const nlohmann::json& j) {
     ensureQuest(World::JoeCarrotQuest);
     ensureQuest(World::CowFeededQuest);
     ensureQuest(World::ElderFirstMeetingQuest);
+    ensureQuest(World::ElderCatQuestInfo);
     ensureQuest(World::ElderCatQuest);
     ensureQuest(World::ElderSpawnGuardQuest);
     ensureQuest(World::ElderGuardInteractQuest);

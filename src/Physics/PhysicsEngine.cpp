@@ -441,6 +441,7 @@ public:
             obj.velocityX = 0.f;
             obj.velocityY = 0.f;
         };
+
         {
             auto it = std::find(dynamicObjectsIds.begin(), dynamicObjectsIds.end(), objectId);
             if (it != dynamicObjectsIds.end()) {
@@ -449,11 +450,30 @@ public:
                 return;
             }
         }
+
         {
             auto it = std::find(kinematicObjectsIds.begin(), kinematicObjectsIds.end(), objectId);
             if (it != kinematicObjectsIds.end()) {
                 const auto index = std::distance(kinematicObjectsIds.begin(), it);
                 std::visit(setPos, kinematicObjects[index]);
+                return;
+            }
+        }
+
+        {
+            auto it = std::find(staticObjectsIds.begin(), staticObjectsIds.end(), objectId);
+            if (it != staticObjectsIds.end()) {
+                const auto index = std::distance(staticObjectsIds.begin(), it);
+                std::visit(setPos, staticObjects[index]);
+                return;
+            }
+        }
+
+        {
+            auto it = std::find(triggerObjectsIds.begin(), triggerObjectsIds.end(), objectId);
+            if (it != triggerObjectsIds.end()) {
+                const auto index = std::distance(triggerObjectsIds.begin(), it);
+                std::visit(setPos, triggerObjects[index]);
             }
         }
     }

@@ -61,6 +61,16 @@ void World::ENpc::CreatePhysicsObjects() {
     physicsTriggerId = Physics::CreateStaticRectangle(GetPosition().x, GetPosition().y, GetWidth(), GetHeight(), true, 1 << 7);
 }
 
+void World::ENpc::SetPosition(float x, float y) {
+    EInteractable::SetPosition(x, y);
+    if (physicsColliderId) {
+        Physics::SetObjectPosition(physicsColliderId, x, y);
+    }
+    if (physicsTriggerId) {
+        Physics::SetObjectPosition(physicsTriggerId, x, y);
+    }
+}
+
 void World::ENpc::RemovePhysicsObjects() {
     Physics::RemoveObject(physicsColliderId);
     Physics::RemoveObject(physicsTriggerId);

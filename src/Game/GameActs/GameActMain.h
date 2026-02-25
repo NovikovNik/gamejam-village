@@ -39,6 +39,8 @@ public:
 
     void OnLocationChanged(LocationChangedEvent& e) {
         Logger::Log(std::format("[Gameplay][Main] LocationChanged: {}", e.locationName));
+        QuestId const currentActiveQuestId = ProgressSystemManager::Quests().GetCurrentActiveQuest();
+
         if (e.locationName == "backroad") {
             locationChanged = true;
         }
@@ -57,6 +59,19 @@ public:
                 if (ProgressSystemManager::Quests().GetStatus(World::VoidFirstEntranceQuest) == QuestStatus::NotStarted) {
                     ProgressSystemManager::Quests().SetStatus(World::VoidFirstEntranceQuest, QuestStatus::OnGoing);
                     DialogSystemManager::StartDialog("Utility", "void-crossroads-first");
+                }
+            }
+        }
+
+        /* CAT LOCATION during Cat Quest! */
+        if (e.locationName == "elders-house") {
+            if (currentActiveQuestId == World::ElderCatQuest) {
+                auto* cat = MapManager::GetEntitiesContainer().FindEntity({"cat", "vil"});
+                if (cat && ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::OnGoing) {
+                    cat->SetPosition(-143, 88);
+                }
+                if (cat && ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::Completed) {
+                    cat->SetPosition(149, 88);
                 }
             }
         }
@@ -85,19 +100,33 @@ public:
                     } else {
                         ProgressSystemManager::Quests().SetStatus(World::ElderFirstMeetingQuest, QuestStatus::Completed);
                         ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderCatQuest);
-                        DialogSystemManager::StartDialog("Elder", "dialog-cat-quest");
+
+                        if (mapName == "elders-house") {
+                            ProgressSystemManager::Quests().SetStatus(World::ElderCatQuestInfo, QuestStatus::Completed);
+                            DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-house");
+                            return;
+                        }
+                        if (mapName == "crossroads") {
+                            ProgressSystemManager::Quests().SetStatus(World::ElderCatQuestInfo, QuestStatus::Completed);
+                            DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-street");
+                            return;
+                        }
                     }
                 }
             }
 
             if (currentActiveQuestId == World::ElderCatQuest) {
-                const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
-                auto it = registeredEntities.find("cat.vil");
-                const bool catNotInEldersHouse = (it == registeredEntities.end() || !it->second.contains("elders-house"));
-                if (catNotInEldersHouse) {
-                    DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-again");
-                } else {
-                    ProgressSystemManager::Quests().SetStatus(World::ElderCatQuest, QuestStatus::Completed);
+                if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::NotStarted) {
+                    if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuestInfo) == QuestStatus::Completed) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-again");
+                    }
+                }
+
+                if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::OnGoing) {
+                    DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-progress");
+                }
+
+                if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::Completed) {
                     ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderSpawnGuardQuest);
                     DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
                 }
@@ -239,6 +268,33 @@ public:
             }
         }
 
+        /* CAT DIALOGES */
+        if (e.entityId == GameplayEntities::Cat) {
+            if (mapName == "elders-house") {
+                auto* cat = MapManager::GetEntitiesContainer().FindEntity({"cat", "vil"});
+                if (cat) {
+                    if (currentActiveQuestId == World::ElderCatQuest) {
+                        if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::NotStarted) {
+                            DialogSystemManager::StartDialog("Cat", "dialog-cat-run-away-1");
+                            cat->SetPosition(-143, 88);
+                            ProgressSystemManager::Quests().SetStatus(World::ElderCatQuest, QuestStatus::OnGoing);
+                            return;
+                        }
+                        if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::OnGoing) {
+                            DialogSystemManager::StartDialog("Cat", "dialog-cat-run-away-2");
+                            cat->SetPosition(149, 88);
+                            ProgressSystemManager::Quests().SetStatus(World::ElderCatQuest, QuestStatus::Completed);
+                            return;
+                        }
+                        if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::Completed) {
+                            DialogSystemManager::StartDialog("Cat", "dialog-cat-run-away-final");
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         if (e.entityId == GameplayEntities::ChestBox) {
             if (mapName == "elders-house") {
                 if (ProgressSystemManager::Inventory().ChestBoxWasOpened(World::chestBoxElderHouse)) {
@@ -283,20 +339,6 @@ public:
         Logger::Log(std::format("[Gameplay][Main] EntityCreated: {} {}", e.GetName(), e.GetType()));
         QuestId const currentActiveQuestId = ProgressSystemManager::Quests().GetCurrentActiveQuest();
         std::string const currentMapName = MapManager::GetCurrentMapName();
-
-        if (currentMapName == "elders-house") {
-            if (e.GetName() == "cat") {
-                // Кот в доме старейшины если старейшина есть внутри
-                if (currentActiveQuestId == World::ElderCatQuest) {
-                    auto* elderNpc = MapManager::GetEntitiesContainer().FindEntity({"Elder", "vil"});
-                    if (elderNpc) {
-                        ProgressSystemManager::Quests().SetStatus(World::ElderCatQuest, QuestStatus::Completed);
-                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderSpawnGuardQuest);
-                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
-                    }
-                }
-            }
-        }
     }
 
     void OnEntityDestroyed(EntityDestroyedEvent& e) {
@@ -308,6 +350,17 @@ public:
             }
             if (joeCarrotQuestStatus == QuestStatus::OnGoing) {
                 ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::Completed);
+            }
+        }
+
+        if (e.GetName() == "cat") {
+            /* IF PLAYER DELETE CAT IN ELDER'S HOUSE AND CAT QUEST IS ACTIVE */
+            if (MapManager::GetCurrentMapName() == "elders-house" || MapManager::GetCurrentMapName() == "crossroads") {
+                if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::ElderCatQuest) {
+                    ProgressSystemManager::Quests().SetStatus(World::ElderCatQuest, QuestStatus::Completed);
+                    ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderSpawnGuardQuest);
+                    DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-after-cat-destroyed");
+                }
             }
         }
     }
