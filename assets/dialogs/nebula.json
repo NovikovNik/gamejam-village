@@ -1,0 +1,23 @@
+{
+    "id": "Nebula",
+    "name": "Nebula",
+    "description": "",
+    "dialogs": {
+        "entrance-dialog": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "A strange place. Emptiness all around, and the absence of any sensation. You realize that something is watching you through the fabric of space, yet you cannot describe it. Words are not enough to give it form.",
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                },
+                {
+                    "name": "???",
+                    "text": "Come to me, traveler!",
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        }
+    }
+}
