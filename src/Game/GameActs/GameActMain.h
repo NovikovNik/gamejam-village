@@ -56,9 +56,20 @@ public:
                 };
                 MapManager::SpawnEffect(player->GetPosition().x, player->GetPosition().y, 64, 64, animation);
 
-                if (ProgressSystemManager::Quests().GetStatus(World::VoidFirstEntranceQuest) == QuestStatus::NotStarted) {
-                    ProgressSystemManager::Quests().SetStatus(World::VoidFirstEntranceQuest, QuestStatus::OnGoing);
-                    DialogSystemManager::StartDialog("Utility", "void-crossroads-first");
+                if (currentActiveQuestId != World::ElderVoidMistExtraQuest && currentActiveQuestId != World::ElderVoidMistQuest) {
+                    /* VOID FIRST ENTRANCE DIALOG */
+                    if (ProgressSystemManager::Quests().GetStatus(World::VoidFirstEntranceQuest) == QuestStatus::NotStarted) {
+                        ProgressSystemManager::Quests().SetStatus(World::VoidFirstEntranceQuest, QuestStatus::OnGoing);
+                        DialogSystemManager::StartDialog("Utility", "void-crossroads-first");
+                    }
+                }
+                else {
+                    /* В КОНЦЕ ИГРЫ ДВИГАЕМ НЕБУЛУ В НУЖНУЮ ПОЗИЦИЮ */
+                    World::ENpc* nebula = dynamic_cast<World::ENpc*>(MapManager::GetEntitiesContainer().FindEntity({"nebula", "vil"}));
+                    if (nebula) {
+                        nebula->SetPosition(239, -23);
+                        nebula->SetHorizontalFlip(true);
+                    }
                 }
             }
         }
