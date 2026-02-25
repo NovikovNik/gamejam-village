@@ -105,97 +105,119 @@ public:
 
         /* ELDER DIALOGES */
         if (e.entityId == GameplayEntities::Elder) {
-            // Первый диалог со старейшиной в деревне. Он заберет письмо и попросит пройтись через деревню
-            if (currentActiveQuestId == World::ElderFirstMeetingQuest) {
-                if (ProgressSystemManager::Quests().GetStatus(World::ElderFirstMeetingQuest) == QuestStatus::NotStarted) {
-                    DialogSystemManager::StartDialog("Elder", "dialog-welcome");
-                    if (ProgressSystemManager::Inventory().HasItem(World::message)) {
-                        ProgressSystemManager::Inventory().RemoveItem(World::message);
+            if (mapName != GameplayMaps::AssemblyHall) {
+                // Первый диалог со старейшиной в деревне. Он заберет письмо и попросит пройтись через деревню
+                if (currentActiveQuestId == World::ElderFirstMeetingQuest) {
+                    if (ProgressSystemManager::Quests().GetStatus(World::ElderFirstMeetingQuest) == QuestStatus::NotStarted) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-welcome");
+                        if (ProgressSystemManager::Inventory().HasItem(World::message)) {
+                            ProgressSystemManager::Inventory().RemoveItem(World::message);
+                        }
+                        ProgressSystemManager::Quests().SetStatus(World::ElderFirstMeetingQuest, QuestStatus::OnGoing);
+                        locationChanged = false;
+                        return;
                     }
-                    ProgressSystemManager::Quests().SetStatus(World::ElderFirstMeetingQuest, QuestStatus::OnGoing);
-                    locationChanged = false;
-                    return;
+
+                    if (ProgressSystemManager::Quests().GetStatus(World::ElderFirstMeetingQuest) == QuestStatus::OnGoing) {
+                        // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
+                        if (!locationChanged) {
+                            DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
+                            return;
+                        } else {
+                            ProgressSystemManager::Quests().SetStatus(World::ElderFirstMeetingQuest, QuestStatus::Completed);
+                            ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderCatQuest);
+
+                            if (mapName == GameplayMaps::EldersHouse) {
+                                ProgressSystemManager::Quests().SetStatus(World::ElderCatQuestInfo, QuestStatus::Completed);
+                                DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-house");
+                                return;
+                            }
+                            if (mapName == GameplayMaps::Crossroads) {
+                                ProgressSystemManager::Quests().SetStatus(World::ElderCatQuestInfo, QuestStatus::Completed);
+                                DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-street");
+                                return;
+                            }
+                        }
+                    }
                 }
 
-                if (ProgressSystemManager::Quests().GetStatus(World::ElderFirstMeetingQuest) == QuestStatus::OnGoing) {
-                    // Если игрок так и остался в деревне, не выходил из неё, то мы ему говорим продолжить путь
-                    if (!locationChanged) {
-                        DialogSystemManager::StartDialog("Elder", "dialog-go-through-location");
+                if (currentActiveQuestId == World::ElderCatQuest) {
+                    if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::NotStarted) {
+                        if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuestInfo) == QuestStatus::Completed) {
+                            DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-again");
+                            return;
+                        }
+                    }
+
+                    if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::OnGoing) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-progress");
+                        return;
+                    }
+
+                    if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::Completed) {
+                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderSpawnGuardQuest);
+                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
+                        return;
+                    }
+                }
+
+                if (currentActiveQuestId == World::ElderSpawnGuardQuest) {
+                    const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
+                    auto it = registeredEntities.find("guard.vil");
+                    const bool guardNotInVillage = (it == registeredEntities.end() || !it->second.contains("crossroads"));
+                    if (guardNotInVillage) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-again");
                         return;
                     } else {
-                        ProgressSystemManager::Quests().SetStatus(World::ElderFirstMeetingQuest, QuestStatus::Completed);
-                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderCatQuest);
-
-                        if (mapName == GameplayMaps::EldersHouse) {
-                            ProgressSystemManager::Quests().SetStatus(World::ElderCatQuestInfo, QuestStatus::Completed);
-                            DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-house");
-                            return;
-                        }
-                        if (mapName == GameplayMaps::Crossroads) {
-                            ProgressSystemManager::Quests().SetStatus(World::ElderCatQuestInfo, QuestStatus::Completed);
-                            DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-street");
-                            return;
-                        }
-                    }
-                }
-            }
-
-            if (currentActiveQuestId == World::ElderCatQuest) {
-                if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::NotStarted) {
-                    if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuestInfo) == QuestStatus::Completed) {
-                        DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-again");
+                        DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
+                        ProgressSystemManager::Quests().SetStatus(World::ElderSpawnGuardQuest, QuestStatus::Completed);
+                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderGuardInteractQuest);
                         return;
                     }
                 }
 
-                if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::OnGoing) {
-                    DialogSystemManager::StartDialog("Elder", "dialog-cat-quest-progress");
-                    return;
-                }
-
-                if (ProgressSystemManager::Quests().GetStatus(World::ElderCatQuest) == QuestStatus::Completed) {
-                    ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderSpawnGuardQuest);
-                    DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest");
-                    return;
-                }
-            }
-
-            if (currentActiveQuestId == World::ElderSpawnGuardQuest) {
-                const auto& registeredEntities = WorldState::GetCurrentState().registeredEntities;
-                auto it = registeredEntities.find("guard.vil");
-                const bool guardNotInVillage = (it == registeredEntities.end() || !it->second.contains("crossroads"));
-                if (guardNotInVillage) {
-                    DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-again");
-                    return;
-                } else {
+                if (currentActiveQuestId == World::ElderGuardInteractQuest) {
                     DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
-                    ProgressSystemManager::Quests().SetStatus(World::ElderSpawnGuardQuest, QuestStatus::Completed);
-                    ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderGuardInteractQuest);
+                    return;
+                }
+
+                if (currentActiveQuestId == World::ElderVoidMistQuest) {
+                    if (ProgressSystemManager::Inventory().HasItem(World::book)) {
+                        ProgressSystemManager::Inventory().RemoveItem(World::book);
+                        DialogSystemManager::StartDialog("Elder", "dialog-void-mist-info");
+                        ProgressSystemManager::Quests().SetStatus(World::ElderVoidMistQuest, QuestStatus::Completed);
+                        ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistExtraQuest);
+                        return;
+                    } else {
+                        DialogSystemManager::StartDialog("Elder", "dialog-book-quest");
+                        return;
+                    }
+                }
+
+                if (currentActiveQuestId == World::ElderVoidMistExtraQuest) {
+                    DialogSystemManager::StartDialog("Elder", "dialog-assembly-hall-rebuild");
                     return;
                 }
             }
-
-            if (currentActiveQuestId == World::ElderGuardInteractQuest) {
-                DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-completed");
-                return;
-            }
-
-            if (currentActiveQuestId == World::ElderVoidMistQuest) {
-                if (ProgressSystemManager::Inventory().HasItem(World::book)) {
-                    ProgressSystemManager::Inventory().RemoveItem(World::book);
-                    DialogSystemManager::StartDialog("Elder", "dialog-void-mist-info");
-                    ProgressSystemManager::Quests().SetStatus(World::ElderVoidMistQuest, QuestStatus::Completed);
-                    ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistExtraQuest);
-                    return;
-                } else {
-                    DialogSystemManager::StartDialog("Elder", "dialog-book-quest");
+            if (mapName == GameplayMaps::AssemblyHall) {
+                int& elderAssemblyHallQuestProgress = ProgressSystemManager::Player().elderAssemblyHallQuestProgress;
+                elderAssemblyHallQuestProgress++;
+                if (elderAssemblyHallQuestProgress == 1) {
+                    DialogSystemManager::StartDialog("Elder", "dialog-assembly-hall-quest-1");
                     return;
                 }
-            }
-
-            if (currentActiveQuestId == World::ElderVoidMistExtraQuest) {
-                DialogSystemManager::StartDialog("Elder", "dialog-assembly-hall-rebuild");
-                return;
+                if (elderAssemblyHallQuestProgress == 2) {
+                    if (ProgressSystemManager::Player().catWasDestroyed) {
+                        DialogSystemManager::StartDialog("Elder", "dialog-assembly-hall-quest-2-cat-does-not-exist");
+                    } else {
+                        DialogSystemManager::StartDialog("Elder", "dialog-assembly-hall-quest-2-cat-exists");
+                    }
+                    return;
+                }
+                if (elderAssemblyHallQuestProgress >= 3) {
+                    DialogSystemManager::StartDialog("Elder", "dialog-assembly-hall-quest-3");
+                    return;
+                }
             }
         }
 
@@ -556,7 +578,9 @@ public:
                 if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::ElderCatQuest) {
                     ProgressSystemManager::Quests().SetStatus(World::ElderCatQuest, QuestStatus::Completed);
                     ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderSpawnGuardQuest);
+                    ProgressSystemManager::Player().catWasDestroyed = true; // Повлияет на концовку
                     DialogSystemManager::StartDialog("Elder", "dialog-spawn-guard-quest-after-cat-destroyed");
+                    ProgressSystemManager::SaveData();
                     return;
                 }
             }

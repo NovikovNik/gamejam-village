@@ -213,7 +213,11 @@ bool World::EPlayer::Update(float deltaTime) {
      EInteractable* interactable = TryInteract();
      if (interactable != currentInteractable) {
         currentInteractable = interactable;
-        if (currentInteractable && ProgressSystemManager::Quests().GetCurrentActiveQuest() != World::ElderVoidMistExtraQuest && MapManager::GetCurrentMapName() != GameplayMaps::WorldVoid) {
+        if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::ElderVoidMistExtraQuest && MapManager::GetCurrentMapName() == GameplayMaps::WorldVoid) {
+            bShowTooltip = false;
+            return true;
+        }
+        if (currentInteractable) {
             bShowTooltip = true;
             const bool isRegistered = WorldState::RegisterInWorldState(currentInteractable->GetTagName());
             if (isRegistered) {

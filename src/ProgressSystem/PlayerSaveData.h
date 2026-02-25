@@ -14,9 +14,11 @@ struct PlayerSaveData : public BasicSaveData {
     int joeEldersHouseQuestProgress = 0;
     int joeAssemblyHallQuestProgress = 0;
     int guardAssemblyHallQuestProgress = 0;
+    int elderAssemblyHallQuestProgress = 0;
     int nebulaQuestProgress = 0;
     bool fileSystemIconVisible = false;
     bool gameEnded = false;
+    bool catWasDestroyed = false;
 
     int GetVersion() const override {
         return 1;
@@ -26,15 +28,17 @@ struct PlayerSaveData : public BasicSaveData {
         position = {0.f, 0.f};
         lastLevel = "assets/maps/intro.json";
         lastGameAct = std::string(GameActIds::Intro);
-        fileSystemIconVisible = false;
         tutorialDialogProgress = 0;
         joeCarrotQuestProgress = 0;
         joeOldHouseQuestProgress = 0;
         joeEldersHouseQuestProgress = 0;
         guardAssemblyHallQuestProgress = 0;
         joeAssemblyHallQuestProgress = 0;
+        elderAssemblyHallQuestProgress = 0;
         nebulaQuestProgress = 0;
         gameEnded = false;
+        fileSystemIconVisible = false;
+        catWasDestroyed = false;
     }
 
     void ToJson(nlohmann::json& j) const override {
@@ -53,6 +57,8 @@ struct PlayerSaveData : public BasicSaveData {
         j["guardAssemblyHallQuestProgress"] = guardAssemblyHallQuestProgress;
         j["joeAssemblyHallQuestProgress"] = joeAssemblyHallQuestProgress;
         j["nebulaQuestProgress"] = nebulaQuestProgress;
+        j["elderAssemblyHallQuestProgress"] = elderAssemblyHallQuestProgress;
+        j["catWasDestroyed"] = catWasDestroyed;
         j["gameEnded"] = gameEnded;
     }
 
@@ -105,6 +111,12 @@ struct PlayerSaveData : public BasicSaveData {
         }
         if (j.contains("gameEnded") && j["gameEnded"].is_boolean()) {
             gameEnded = j["gameEnded"].get<bool>();
+        }
+        if (j.contains("elderAssemblyHallQuestProgress") && j["elderAssemblyHallQuestProgress"].is_number_integer()) {
+            elderAssemblyHallQuestProgress = j["elderAssemblyHallQuestProgress"].get<int>();
+        }
+        if (j.contains("catWasDestroyed") && j["catWasDestroyed"].is_boolean()) {
+            catWasDestroyed = j["catWasDestroyed"].get<bool>();
         }
 
         if (!Validate()) {

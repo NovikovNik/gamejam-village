@@ -167,6 +167,66 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-assembly-hall-quest-1": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "Assembly hall! At last!"
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "Corruption took so much from us. The most important - memories!"
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "How many living beings have been forgotten? How many lives have been destroyed?"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-quest-2-cat-exists": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "But we have each other now. Thank you for doing this for us. You have brought us together."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "This was never a time loop. It was our chance to get a brighter future."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-quest-2-cat-does-not-exist": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "They created this time loop to keep us apart!"
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "To keep us blind and weak! No more! With this knowledge, we can and we will fight back!"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-quest-3": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "We will find this creature, or whatever messed with, us and bring hell upon it!"
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "It will be us or it."
+                },
+                {
+                    "name": "Village Elder",
+                    "text": "Time to go to the other side!"
+                }
+            ],
+            "textSize": 20
         }
     }
 }
