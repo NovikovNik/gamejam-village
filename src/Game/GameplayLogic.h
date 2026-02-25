@@ -25,6 +25,16 @@ namespace GameActIds {
     inline std::vector<GameActId> GetAllGameActIds() { return {Intro, Tutorial, Main}; };
 }
 
+namespace GameplayMaps {
+    constexpr std::string_view Intro        = "intro";
+    constexpr std::string_view Backroad     = "backroad";
+    constexpr std::string_view Crossroads   = "crossroads";
+    constexpr std::string_view OldHouse     = "old-house";
+    constexpr std::string_view EldersHouse  = "elders-house";
+    constexpr std::string_view AssemblyHall = "assembly-hall";
+    constexpr std::string_view WorldVoid    = "world-void";
+}
+
 namespace GameplayLogic {
     void Initialize();
     void LoadGameAct(GameActId id);

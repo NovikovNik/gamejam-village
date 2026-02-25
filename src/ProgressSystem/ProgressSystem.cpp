@@ -62,6 +62,7 @@ class ProgressSystem: public Singleton<ProgressSystem> {
                 playerSaveData.ResetToDefaults();
                 audioSaveData.ResetToDefaults();
                 worldSaveData.ResetToDefaults();
+                questsSaveData.ResetToDefaults();
                 inventorySaveData.ResetToDefaults();
                 return;
             }

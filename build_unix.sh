@@ -22,7 +22,7 @@ else
 fi
 
 ########### Defining exec filepath #############
-EXEC_FILE="${SCRIPT_DIR}"/build/${BUILD_TYPE}/game_engine
+EXEC_FILE="${SCRIPT_DIR}"/build/${BUILD_TYPE}/AAAB
 
 ########### Configure ##########################
 echo "Configuration: ${BUILD_TYPE}"

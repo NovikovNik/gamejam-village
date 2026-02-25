@@ -283,6 +283,15 @@
                     "text": "The assembly-hall is already rebuilt. We can enter and lift the curse from this village!"
                 }
             ]
+        },
+        "dialog-backroad-main-act": {
+            "name": "Guard",
+            "lines": [
+                {
+                    "name": "Guard",
+                    "text": "Something feels off. Like I’m in the wrong place, but I’m still here anyway."
+                }
+            ]
         }
     }
 }

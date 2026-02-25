@@ -95,6 +95,54 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-backroad-main-act": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "I don't remember how I ended up here. Maybe I was looking for my cow? Could she be hiding somewhere in the tall grass?"
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "I'll have to check the tall grass. Maybe I'll find her there."
+                }
+            ]
+        },
+        "dialog-backroad-main-act-progress": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "I feel... hollow. My cow is gone."
+                },
+                {
+                    "name": "Farmer Joe",
+                    "text": "This grass, it’s too much—it’s a wall of green, a damn jungle. I’m standing here like a fool, and I can't find her. Not even a low or a rustle."
+                }
+            ]
+        },
+        "dialog-backroad-main-act-after-quest-complete": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Ah, there she is. I see her now, and my soul is at peace... though something still feels off."
+                }
+            ]
+        },
+        "dialog-backroad-main-act-completed-before-start": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "Don't rightly know how I ended up here. Might've just wandered in on autopilot, bone weary as I am. But my cow... she's here. That's all that matters. My soul can rest easy now."
+                }
+            ]
+        },
+        "dialog-backroad-main-act-resting": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "I'm just resting here. I'm tired of looking for my cow. Who knows where I will be next time?"
+                }
+            ]
         }
     }
 }

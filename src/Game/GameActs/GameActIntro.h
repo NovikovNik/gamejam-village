@@ -20,7 +20,7 @@ namespace GameActs {
 class ActIntro : public GameAct {
 public:
     void Initialize() {
-        if (MapManager::GetCurrentMapName() != "intro") {
+        if (MapManager::GetCurrentMapName() != GameplayMaps::Intro) {
             Logger::Err("Intro act can only be loaded on intro map");
             return;
         }
@@ -66,7 +66,7 @@ public:
 
     void OnLocationChanged(LocationChangedEvent& e) {
         penchamentEntity = nullptr;
-        if (e.locationName == "backroad") {
+        if (e.locationName == GameplayMaps::Backroad) {
             ::GameplayLogic::LoadGameAct(GameActIds::Tutorial);
         }
     }

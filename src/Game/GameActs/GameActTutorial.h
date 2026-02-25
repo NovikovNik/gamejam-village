@@ -27,7 +27,7 @@ namespace GameActs {
 class ActTutorial : public GameAct {
 public:
     void Initialize() {
-        if (MapManager::GetCurrentMapName() != "backroad") {
+        if (MapManager::GetCurrentMapName() != GameplayMaps::Backroad) {
             Logger::Err("Tutorial act can only be loaded on backroad map");
             return;
         }
@@ -116,11 +116,11 @@ public:
 
     void OnLocationChanged(LocationChangedEvent& e) {
         Logger::Log(std::format("[Gameplay][Tutorial] LocationChanged: {}", e.locationName));
-        if (e.locationName == "crossroads") {
+        if (e.locationName == GameplayMaps::Crossroads) {
             ::GameplayLogic::LoadGameAct(GameActIds::Main);
         }
 
-        if (e.locationName == "world-void") {
+        if (e.locationName == GameplayMaps::WorldVoid) {
             if (auto* player = MapManager::GetEntitiesContainer().FindEntity<World::EPlayer>()) {
                 Renderer::AnimationHandle animation = Renderer::AnimationHandle {
                     .numOfFrames = 16,

@@ -25,6 +25,9 @@ namespace World {
     inline const QuestId ElderGuardInteractQuest = "guard_quest";
     inline const QuestId ElderVoidMistQuest = "void_mist";
     inline const QuestId ElderVoidMistExtraQuest = "void_mist_extra";
+
+    // Побочные задания связанные с другими локациями или NPC заспавненными на них
+    inline const QuestId JoeBackroadSideQuest = "joe_backroad_side_quest";
 }
 
 class QuestsSaveData {
@@ -71,6 +74,8 @@ inline void QuestsSaveData::ResetToDefaults() {
     quests[World::ElderGuardInteractQuest] = QuestStatus::NotStarted;
     quests[World::ElderVoidMistQuest]      = QuestStatus::NotStarted;
     quests[World::ElderVoidMistExtraQuest] = QuestStatus::NotStarted;
+    quests[World::JoeBackroadSideQuest]    = QuestStatus::NotStarted;
+    quests[World::JoeCarrotFinal]          = QuestStatus::NotStarted;
 
     currentActiveQuest = World::ElderFirstMeetingQuest;
 }
@@ -126,6 +131,7 @@ inline void QuestsSaveData::FromJson(const nlohmann::json& j) {
 
     ensureQuest(World::VoidFirstEntranceQuest);
     ensureQuest(World::JoeCarrotQuest);
+    ensureQuest(World::JoeCarrotFinal);
     ensureQuest(World::CowFeededQuest);
     ensureQuest(World::ElderFirstMeetingQuest);
     ensureQuest(World::ElderCatQuestInfo);
@@ -134,4 +140,5 @@ inline void QuestsSaveData::FromJson(const nlohmann::json& j) {
     ensureQuest(World::ElderGuardInteractQuest);
     ensureQuest(World::ElderVoidMistQuest);
     ensureQuest(World::ElderVoidMistExtraQuest);
+    ensureQuest(World::JoeBackroadSideQuest);
 }

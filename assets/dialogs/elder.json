@@ -158,6 +158,15 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-assembly-hall-rebuild": {
+            "lines": [
+                {
+                    "name": "Village Elder",
+                    "text": "Behind that Void lies the assembly-hall. How did I not remember that! Quick, we need to find a way to bring this place back."
+                }
+            ],
+            "textSize": 20
         }
     }
 }
