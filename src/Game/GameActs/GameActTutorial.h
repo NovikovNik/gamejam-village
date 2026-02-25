@@ -98,6 +98,7 @@ public:
         }
         Logger::Log(std::format("[Gameplay][Tutorial] InteractWithEntity: {}", e.entityId));
         if (e.entityId == GameplayEntities::Guard) {
+            int& guardInteractionsCount = ProgressSystemManager::Player().tutorialDialogProgress;
             if (guardInteractionsCount < 11) {
                 guardInteractionsCount++;
             }
@@ -147,7 +148,6 @@ private:
 
     bool guardWasDeleted = false;
     bool guardWasRecreated = false;
-    int guardInteractionsCount = 0;
 };
 
 } // namespace GameActs
