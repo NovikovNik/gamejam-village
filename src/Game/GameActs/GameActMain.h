@@ -569,7 +569,7 @@ public:
 
     void OnEntityDestroyed(EntityDestroyedEvent& e) {
         Logger::Log(std::format("[Gameplay][Main] EntityDestroyed: {} {}", e.GetName(), e.GetType()));
-        if (e.GetName() == "box-1" || e.GetName() == "box-2") {
+        if (e.GetName() == "haystack-1" || e.GetName() == "haystack-2") {
             auto const joeCarrotQuestStatus = ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest);
             if (joeCarrotQuestStatus == QuestStatus::NotStarted) {
                 ProgressSystemManager::Quests().SetStatus(World::JoeCarrotQuest, QuestStatus::OnGoing);

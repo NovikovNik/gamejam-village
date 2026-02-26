@@ -5,10 +5,19 @@
 #include <Entities/EPit.h>
 #include <Gameplay/WorldState.h>
 #include <EventBus/EventBus.h>
+#include <string>
+#include <string_view>
 
 void World::EBox::OnSpawn(float x, float y, float w, float h) {
     EMovable::OnSpawn(x, y, w, h);
-    const auto textureId = Renderer::TextureId("box"_nnTex);
+
+    const std::string_view nameSv(get_nnBoxName(boxName));
+    const auto dashPos = nameSv.find('-');
+    const std::string textureName = (dashPos != std::string_view::npos)
+        ? std::string(nameSv.substr(0, dashPos))
+        : std::string(nameSv);
+    const auto textureId = Renderer::TextureId(make_nnTex(textureName));
+
     LoadData(textureId, 64, 64);
     physicsObjectId = Physics::CreateDynamicRectangle(x, y, GetWidth(), GetHeight(), mass, (1 << 0) | (1 << 4));
 
