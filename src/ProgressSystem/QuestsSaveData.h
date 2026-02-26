@@ -25,6 +25,7 @@ namespace World {
     inline const QuestId ElderGuardInteractQuest = "guard_quest";
     inline const QuestId ElderVoidMistQuest = "void_mist";
     inline const QuestId ElderVoidMistExtraQuest = "void_mist_extra";
+    inline const QuestId FinalActQuest = "final_act_quest";
 
     // Побочные задания связанные с другими локациями или NPC заспавненными на них
     inline const QuestId JoeBackroadSideQuest = "joe_backroad_side_quest";

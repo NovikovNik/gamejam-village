@@ -29,7 +29,7 @@ public:
     void ProcessEnteringVoid()
     {
         QuestId const currentActiveQuestId = ProgressSystemManager::Quests().GetCurrentActiveQuest();
-        if (currentActiveQuestId != World::ElderVoidMistExtraQuest) {
+        if (currentActiveQuestId != World::FinalActQuest) {
             /* VOID FIRST ENTRANCE DIALOG */
             if (ProgressSystemManager::Quests().GetStatus(World::VoidFirstEntranceQuest) == QuestStatus::NotStarted) {
                 ProgressSystemManager::Quests().SetStatus(World::VoidFirstEntranceQuest, QuestStatus::OnGoing);
@@ -60,7 +60,7 @@ public:
         }
 
         if (MapManager::GetCurrentMapName() == GameplayMaps::AssemblyHall) {
-            ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistExtraQuest); // Делаем последний квест активным при переходе в ассембли
+            ProgressSystemManager::Quests().SetCurrentActiveQuest(World::FinalActQuest); // Делаем последний квест активным при переходе в ассембли
         }
     }
 
@@ -89,7 +89,7 @@ public:
         }
 
         if (MapManager::GetCurrentMapName() == GameplayMaps::AssemblyHall) {
-            ProgressSystemManager::Quests().SetCurrentActiveQuest(World::ElderVoidMistExtraQuest); // Делаем последний квест активным при переходе в ассембли
+            ProgressSystemManager::Quests().SetCurrentActiveQuest(World::FinalActQuest); // Делаем последний квест активным при переходе в ассембли
         }
 
         /* CAT LOCATION during Cat Quest! */

@@ -213,7 +213,7 @@ bool World::EPlayer::Update(float deltaTime) {
      EInteractable* interactable = TryInteract();
      if (interactable != currentInteractable) {
         currentInteractable = interactable;
-        if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::ElderVoidMistExtraQuest && MapManager::GetCurrentMapName() == GameplayMaps::WorldVoid) {
+        if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::FinalActQuest && MapManager::GetCurrentMapName() == GameplayMaps::WorldVoid) {
             bShowTooltip = false;
             return true;
         }
