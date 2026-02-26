@@ -414,43 +414,44 @@ public:
         // Самые важные отношения с коровами в игре
         if (e.entityId == GameplayEntities::Cow) {
             auto const cowFeededQuestStatus = ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest);
-            if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotQuest) == QuestStatus::Completed) {
-                if (mapName == GameplayMaps::Crossroads) {
-                    auto const cowFeededQuestStatus = ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest);
-                    if (cowFeededQuestStatus == QuestStatus::NotStarted || cowFeededQuestStatus == QuestStatus::OnGoing) {
+            if (mapName == GameplayMaps::Crossroads) {
+                auto const cowFeededQuestStatus = ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest);
+                /* Засчитывание квеста на кормление если есть морковь */
+                if (cowFeededQuestStatus == QuestStatus::NotStarted || cowFeededQuestStatus == QuestStatus::OnGoing) {
+                    if (ProgressSystemManager::Inventory().HasItem(World::carrot)) {
                         DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-carrot");
-                        if (ProgressSystemManager::Inventory().HasItem(World::carrot)) {
-                            ProgressSystemManager::Inventory().RemoveItem(World::carrot);
-                            ProgressSystemManager::Quests().SetStatus(World::CowFeededQuest, QuestStatus::Completed);
-                            ProgressSystemManager::SaveData();
-                            return;
-                        }
-                    }
-                    if (cowFeededQuestStatus == QuestStatus::Completed) {
-                        DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-complete");
+                        ProgressSystemManager::Inventory().RemoveItem(World::carrot);
+                        ProgressSystemManager::Quests().SetStatus(World::CowFeededQuest, QuestStatus::Completed);
+                        ProgressSystemManager::SaveData();
                         return;
                     }
                 }
-                if (mapName == GameplayMaps::AssemblyHall) {
-                    const int& cowAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CowAssemblyHall, 2);
-                    DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-assembly-hall-{}-with-carrot", cowAssemblyHallQuestProgress));
-                    return;
-                }
-            } else {
-                if (mapName == GameplayMaps::AssemblyHall) {
-                    const int& cowAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CowAssemblyHall, 2);
-                    DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-assembly-hall-{}-no-carrot", cowAssemblyHallQuestProgress));
-                    return;
-                }
-
+                /* Первая встреча с коровой — она дает квест */
                 if (cowFeededQuestStatus == QuestStatus::NotStarted) {
                     DialogSystemManager::StartDialog("Cow", "dialog-cow-idle");
                     ProgressSystemManager::Quests().SetStatus(World::CowFeededQuest, QuestStatus::OnGoing);
                     return;
                 }
+
+                /* Вторая встреча с коровой — она дает прогресс квеста */
                 if (cowFeededQuestStatus == QuestStatus::OnGoing) {
                     int const progress = (std::rand() % 3) + 1;
                     DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-quest-carrot-progress-{}", progress));
+                    return;
+                }
+                /* Третья встреча с коровой — она дает завершение квеста (счастливая корова) */
+                if (cowFeededQuestStatus == QuestStatus::Completed) {
+                    DialogSystemManager::StartDialog("Cow", "dialog-cow-quest-complete");
+                    return;
+                }
+            }
+            if (mapName == GameplayMaps::AssemblyHall) {
+                const int& cowAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CowAssemblyHall, 2);
+                if (ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest) == QuestStatus::Completed) {
+                    DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-assembly-hall-{}-with-carrot", cowAssemblyHallQuestProgress));
+                    return;
+                } else {
+                    DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-assembly-hall-{}-no-carrot", cowAssemblyHallQuestProgress));
                     return;
                 }
             }
