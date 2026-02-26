@@ -130,7 +130,7 @@
             "lines": [
                 {
                     "name": "Big Cow",
-                    "text": "Dialog if player does not give carrot to cow",
+                    "text": "Mo Mo Mo Moo Moo Moo Mo Mo Mo",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
@@ -142,7 +142,21 @@
             "lines": [
                 {
                     "name": "Big Cow",
-                    "text": "Dialog if player gives carrot to cow",
+                    "text": "Mo Mo  Moo Mo Mo Mo  Mo Mo Mo  Moo Moo Moo  Moo Mo  Mo Moo Moo Moo  Moo Mo  Mo Mo Moo Moo Mo Mo",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Big Cow",
+                    "text": "Moo Moo Moo  Mo Moo Mo Mo  Moo Mo Mo Mo  Mo Moo Moo Moo  Moo Moo Moo Moo  Mo Moo Moo Moo Mo Mo",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                },
+                {
+                    "name": "Big Cow",
+                    "text": "Mo Mo  Mo Moo Moo Mo Mo  Moo Mo Mo Mo  Mo Mo Mo  Moo Mo Moo Moo  Mo Mo Mo Mo  Mo Moo Mo Mo  Moo Mo Moo Moo Mo Mo Moo Mo Mo  Mo Mo Mo Mo  Moo Mo Moo Mo Mo Mo Moo Mo Mo Moo",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
