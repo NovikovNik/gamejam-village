@@ -446,11 +446,12 @@ public:
                 }
             }
             if (mapName == GameplayMaps::AssemblyHall) {
-                const int& cowAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CowAssemblyHall, 2);
                 if (ProgressSystemManager::Quests().GetStatus(World::CowFeededQuest) == QuestStatus::Completed) {
+                    const int& cowAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CowAssemblyHall, 2);
                     DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-assembly-hall-{}-with-carrot", cowAssemblyHallQuestProgress));
                     return;
                 } else {
+                    const int& cowAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CowAssemblyHall, 1);
                     DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-assembly-hall-{}-no-carrot", cowAssemblyHallQuestProgress));
                     return;
                 }
