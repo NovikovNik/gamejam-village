@@ -48,14 +48,14 @@
         {
             "x": 145.6348876953125,
             "y": -71.37187194824219,
-            "name": "box-1",
+            "name": "haystack-1",
             "spawnOnStart": false,
             "mass": 0.0
         },
         {
             "x": -150.32708740234375,
             "y": 94.66572570800781,
-            "name": "box-2",
+            "name": "haystack-2",
             "spawnOnStart": false,
             "mass": 0.0
         },

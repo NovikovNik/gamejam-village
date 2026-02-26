@@ -26,14 +26,14 @@
             "lines": [
                 {
                     "name": "Guard",
-                    "text": "Well, you got it: i'm standing here, conviniently blocking your path to the next location and there is no way you can make me disappear.",
+                    "text": "Well, you got it. I'm standing here, conviniently blocking your path to the next location and there is no way you can make me disappear.",
                     "size": 20,
                     "color": [255, 255, 255, 255],
                     "align": "left"
                 },
                 {
                     "name": "Guard",
-                    "text": "Like poofff... Can you imagine? Bizarre!",
+                    "text": "Like poofff.. Can you imagine? Bizarre!",
                     "size": 25,
                     "color": [255, 255, 255, 255],
                     "align": "left"
