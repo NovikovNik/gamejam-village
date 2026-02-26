@@ -483,11 +483,12 @@ public:
                 }
             }
             if (mapName == GameplayMaps::AssemblyHall) {
-                const int& catAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CatAssemblyHall, 2);
                 if (ProgressSystemManager::Player().catWasDestroyed) {
+                    const int& catAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CatAssemblyHall, 8);
                     DialogSystemManager::StartDialog("Cat", std::format("dialog-cat-assembly-hall-{}-no-cat", catAssemblyHallQuestProgress));
                     return;
                 } else {
+                    const int& catAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CatAssemblyHall, 2);
                     DialogSystemManager::StartDialog("Cat", std::format("dialog-cat-assembly-hall-{}-with-cat", catAssemblyHallQuestProgress));
                     return;
                 }

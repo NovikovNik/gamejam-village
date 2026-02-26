@@ -52,7 +52,82 @@
             "lines": [
                 {
                     "name": "Little Meow",
-                    "text": "Meoow! Mew! (cat destroyed)"
+                    "text": "..."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-2-no-cat": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "..."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-3-no-cat": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "..."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-4-no-cat": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "..."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-5-no-cat": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "..."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-6-no-cat": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "..."
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-7-no-cat": {
+            "lines": [
+                {
+                    "name": "Angry Meow",
+                    "text": "Mrrrrrroooooooooowwwwwwww!!!!"
+                },
+                {
+                    "name": "Consciousness",
+                    "text": "Aaaah!",
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "Aaaah!",
+                    "color": [255, 255, 210, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-8-no-cat": {
+            "lines": [
+                {
+                    "name": "Angry Meow",
+                    "text": "..."
                 }
             ],
             "textSize": 20
@@ -61,7 +136,52 @@
             "lines": [
                 {
                     "name": "Little Meow",
-                    "text": "Meoow! Mew! (cat saved)"
+                    "text": "Mrrrow"
+                },
+                {
+                    "name": "Little Meow",
+                    "text": "Mmmrrr"
+                },
+                {
+                    "name": "Little Meow",
+                    "text": "Meow"
+                },
+                {
+                    "name": "Little Meow",
+                    "text": "Mmmrrp"
+                },
+                {
+                    "name": "Little Meow",
+                    "text": "Meww"
+                },
+                {
+                    "name": "Little Meow",
+                    "text": "Meww"
+                },
+                {
+                    "name": "Consciousness",
+                    "text": "Gorgous creature.",
+                    "color": [255, 255, 210, 255],
+                    "align": "right"
+                },
+                {
+                    "name": "Narrator",
+                    "text": "It truly is.",
+                    "color": [255, 255, 210, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-2-with-cat": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "Brrrp"
+                },
+                {
+                    "name": "Little Meow",
+                    "text": "Mrrp"
                 }
             ],
             "textSize": 20
