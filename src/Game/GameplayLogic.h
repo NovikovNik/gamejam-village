@@ -17,6 +17,7 @@ namespace GameplayEntities {
     constexpr std::string_view ChestBox = "Chestbox";
     constexpr std::string_view Sword = "Sword";
     constexpr std::string_view Nebula = "nebula";
+    constexpr std::string_view ExitTip = "exit_tip";
 }
 namespace GameActIds {
     constexpr GameActId Intro    = "intro";

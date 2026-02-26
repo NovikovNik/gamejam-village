@@ -132,6 +132,64 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-exit-tip-void-1": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "You stand and stare at the doorway you just passed through. A moment of shock washes over you — the door is gone.",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Narrator",
+                    "text": "Strange streaks. Distortions. Emptiness. The door — or perhaps the space around it — has transformed into something unnatural.",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Narrator",
+                    "text": "If there is a way out of here, it is certainly not one people are used to.",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Narrator",
+                    "text": "Perhaps the answers lie beyond the boundaries of the spaces we know.",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-exit-tip-void-2": {
+            "lines": [
+                {
+                    "name": "Narrator",
+                    "text": "With a sense of unease, you notice that the voices that once echoed through the street have vanished. You can’t help but wonder: has the entire street disappeared as well?",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Narrator",
+                    "text": "What kind of space are we in now?",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Narrator",
+                    "text": "Deep within your soul, you feel that you must try something unconventional.",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                },
+                {
+                    "name": "Narrator",
+                    "text": "To reach out and touch the darkness with your own very being.",
+                    "align": "right",
+                    "color": [255, 255, 210, 255]
+                }
+            ],
+            "textSize": 20
         }
     }
 }

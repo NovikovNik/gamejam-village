@@ -108,7 +108,16 @@
             "spawnOnStart": false
         }
     ],
-    "interactible_objects": [],
+    "interactible_objects": [
+        {
+            "x": -107.448974609375,
+            "y": 162.58255004882812,
+            "width": 95.11740112304688,
+            "height": 25.253847122192383,
+            "name": "exit_tip",
+            "spawnOnStart": true
+        }
+    ],
     "interactables": [],
     "players": [
         {

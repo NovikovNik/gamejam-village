@@ -549,6 +549,14 @@ public:
                 }
             }
         }
+
+        if (e.entityId == GameplayEntities::ExitTip) {
+            if (mapName == GameplayMaps::AssemblyHall) {
+                const int& exitTipVoidProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::ExitTipVoid, 2);
+                DialogSystemManager::StartDialog("Utility", std::format("dialog-exit-tip-void-{}", exitTipVoidProgress));
+                return;
+            }
+        }
     }
 
     void OnEntityCreated(EntityCreatedEvent& e) {

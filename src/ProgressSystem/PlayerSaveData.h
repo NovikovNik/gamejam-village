@@ -16,6 +16,7 @@ namespace DialogTrackIds {
     inline const std::string CowAssemblyHall = "cow_assembly_hall";
     inline const std::string CatAssemblyHall = "cat_assembly_hall";
     inline const std::string Nebula         = "nebula";
+    inline const std::string ExitTipVoid    = "exit_tip_void";
 }
 
 struct PlayerSaveData : public BasicSaveData {
