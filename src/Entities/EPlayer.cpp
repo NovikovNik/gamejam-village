@@ -303,6 +303,9 @@ void World::EPlayer::OnMoved(float deltaTime) {
 
 void World::EPlayer::Render(float deltaTime) {
     // Система определения движения: direction обновляется в Update(); при вводе — длина > 0, иначе 0.
+    if (ProgressSystemManager::Player().gameEnded) {
+        return;
+    }
     const bool isMoving = glm::length(direction) > 0.0f;
     if (isMoving && !DialogSystemManager::IsDialogActive()) {
         Renderer::RenderAnimation(animationMoving, deltaTime, positionX, positionY, width, height, horizontalFlip);
