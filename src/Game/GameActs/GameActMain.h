@@ -404,7 +404,7 @@ public:
             }
 
             if (mapName == GameplayMaps::AssemblyHall) {
-                const int& joeAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::JoeAssembly, 6);
+                const int& joeAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::JoeAssembly, 2);
                 DialogSystemManager::StartDialog("Joe", std::format("dialog-assembly-hall-{}", joeAssemblyHallQuestProgress));
                 return;
             }

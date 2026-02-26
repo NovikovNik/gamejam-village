@@ -207,12 +207,7 @@
                 {
                     "name": "Village Elder",
                     "text": "To keep us blind and weak! No more! With this knowledge, we can and we will fight back!"
-                }
-            ],
-            "textSize": 20
-        },
-        "dialog-assembly-hall-quest-3": {
-            "lines": [
+                },
                 {
                     "name": "Village Elder",
                     "text": "We will find this creature, or whatever messed with, us and bring hell upon it!"
@@ -220,7 +215,12 @@
                 {
                     "name": "Village Elder",
                     "text": "It will be us or it."
-                },
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-assembly-hall-quest-3": {
+            "lines": [
                 {
                     "name": "Village Elder",
                     "text": "Time to go to the other side!"
