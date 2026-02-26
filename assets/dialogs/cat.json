@@ -47,6 +47,24 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-cat-assembly-hall-1-no-cat": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "Meoow! Mew! (cat destroyed)"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cat-assembly-hall-1-with-cat": {
+            "lines": [
+                {
+                    "name": "Little Meow",
+                    "text": "Meoow! Mew! (cat saved)"
+                }
+            ],
+            "textSize": 20
         }
     }
 }

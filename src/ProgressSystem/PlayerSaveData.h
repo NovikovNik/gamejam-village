@@ -13,6 +13,8 @@ namespace DialogTrackIds {
     inline const std::string JoeAssembly    = "joe_assembly";
     inline const std::string GuardAssembly  = "guard_assembly";
     inline const std::string ElderAssembly  = "elder_assembly";
+    inline const std::string CowAssemblyHall = "cow_assembly_hall";
+    inline const std::string CatAssemblyHall = "cat_assembly_hall";
     inline const std::string Nebula         = "nebula";
 }
 

@@ -431,7 +431,18 @@ public:
                         return;
                     }
                 }
+                if (mapName == GameplayMaps::AssemblyHall) {
+                    const int& cowAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CowAssemblyHall, 2);
+                    DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-assembly-hall-{}-with-carrot", cowAssemblyHallQuestProgress));
+                    return;
+                }
             } else {
+                if (mapName == GameplayMaps::AssemblyHall) {
+                    const int& cowAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CowAssemblyHall, 2);
+                    DialogSystemManager::StartDialog("Cow", std::format("dialog-cow-assembly-hall-{}-no-carrot", cowAssemblyHallQuestProgress));
+                    return;
+                }
+
                 if (cowFeededQuestStatus == QuestStatus::NotStarted) {
                     DialogSystemManager::StartDialog("Cow", "dialog-cow-idle");
                     ProgressSystemManager::Quests().SetStatus(World::CowFeededQuest, QuestStatus::OnGoing);
@@ -469,6 +480,17 @@ public:
                         }
                     }
                 }
+            }
+            if (mapName == GameplayMaps::AssemblyHall) {
+                const int& catAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::CatAssemblyHall, 2);
+                if (ProgressSystemManager::Player().catWasDestroyed) {
+                    DialogSystemManager::StartDialog("Cat", std::format("dialog-cat-assembly-hall-{}-no-cat", catAssemblyHallQuestProgress));
+                    return;
+                } else {
+                    DialogSystemManager::StartDialog("Cat", std::format("dialog-cat-assembly-hall-{}-with-cat", catAssemblyHallQuestProgress));
+                    return;
+                }
+                return;
             }
         }
 

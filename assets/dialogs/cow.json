@@ -125,6 +125,29 @@
                 }
             ],
             "textSize": 20
+        },
+        "dialog-cow-assembly-hall-1-no-carrot": {
+            "lines": [
+                {
+                    "name": "Big Cow",
+                    "text": "Dialog if player does not give carrot to cow",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ],
+            "textSize": 20
+        },
+        "dialog-cow-assembly-hall-1-with-carrot": {
+            "lines": [
+                {
+                    "name": "Big Cow",
+                    "text": "Dialog if player gives carrot to cow",
+                    "size": 20,
+                    "color": [255, 255, 255, 255],
+                    "align": "left"
+                }
+            ]
         }
     }
 }
