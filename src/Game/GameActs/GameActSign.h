@@ -40,7 +40,7 @@ public:
         }
 
         if (e.entityId == "Locations_Sign") {
-            if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::ElderVoidMistExtraQuest) {
+            if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::FinalActQuest) {
                 return; // В конце игры запрещаем всё это делать
             }
             const auto& registeredLocations = WorldState::GetCurrentState().registeredLocations;

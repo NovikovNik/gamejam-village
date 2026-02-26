@@ -193,11 +193,19 @@
                 }
             ]
         },
-        "dialog-backroad-main-act-resting": {
+        "dialog-backroad-main-act-resting-1": {
             "lines": [
                 {
                     "name": "Farmer Joe",
                     "text": "I want to stay here for a little longer. Then I’ll come right back to work."
+                }
+            ]
+        },
+        "dialog-backroad-main-act-resting-2": {
+            "lines": [
+                {
+                    "name": "Farmer Joe",
+                    "text": "I refuse to go another step!"
                 }
             ]
         },

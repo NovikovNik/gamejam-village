@@ -386,7 +386,8 @@ public:
                     }
                 }
                 if (ProgressSystemManager::Quests().GetStatus(World::JoeBackroadSideQuest) == QuestStatus::Completed) {
-                    DialogSystemManager::StartDialog("Joe", "dialog-backroad-main-act-resting");
+                    const int& joeBackroadQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::JoeBackroadSideQuest, 2);
+                    DialogSystemManager::StartDialog("Joe", std::format("dialog-backroad-main-act-resting-{}", joeBackroadQuestProgress));
                     return;
                 }
             }

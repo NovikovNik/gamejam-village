@@ -6,17 +6,18 @@
 #include "../Game/GameplayLogic.h"
 
 namespace DialogTrackIds {
-    inline const std::string Tutorial       = "tutorial";
-    inline const std::string JoeCarrot      = "joe_carrot";
-    inline const std::string JoeOldHouse    = "joe_old_house";
-    inline const std::string JoeEldersHouse = "joe_elders_house";
-    inline const std::string JoeAssembly    = "joe_assembly";
-    inline const std::string GuardAssembly  = "guard_assembly";
-    inline const std::string ElderAssembly  = "elder_assembly";
-    inline const std::string CowAssemblyHall = "cow_assembly_hall";
-    inline const std::string CatAssemblyHall = "cat_assembly_hall";
-    inline const std::string Nebula         = "nebula";
-    inline const std::string ExitTipVoid    = "exit_tip_void";
+    inline const std::string Tutorial               = "tutorial";
+    inline const std::string JoeBackroadSideQuest   = "joe_backroad_side_quest";
+    inline const std::string JoeCarrot              = "joe_carrot";
+    inline const std::string JoeOldHouse            = "joe_old_house";
+    inline const std::string JoeEldersHouse         = "joe_elders_house";
+    inline const std::string JoeAssembly            = "joe_assembly";
+    inline const std::string GuardAssembly          = "guard_assembly";
+    inline const std::string ElderAssembly          = "elder_assembly";
+    inline const std::string CowAssemblyHall        = "cow_assembly_hall";
+    inline const std::string CatAssemblyHall        = "cat_assembly_hall";
+    inline const std::string Nebula                 = "nebula";
+    inline const std::string ExitTipVoid            = "exit_tip_void";
 }
 
 struct PlayerSaveData : public BasicSaveData {

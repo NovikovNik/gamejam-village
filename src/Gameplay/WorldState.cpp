@@ -112,7 +112,7 @@ public:
 
         const auto currentLocation = MapManager::GetCurrentMapName();
         if (currentLocation == "world-void" && currentState.registeredLocations.contains(backupLocationPath) && currentState.registeredLocations.at(backupLocationPath)) {
-            if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::ElderVoidMistExtraQuest) {
+            if (ProgressSystemManager::Quests().GetCurrentActiveQuest() == World::FinalActQuest) {
                 return;
             }
             nextLocation = NextLocation{
