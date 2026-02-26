@@ -2,43 +2,59 @@
 #include "BasicSaveData.h"
 #include <glm/glm.hpp>
 #include <string>
+#include <map>
 #include "../Game/GameplayLogic.h"
+
+namespace DialogTrackIds {
+    inline const std::string Tutorial       = "tutorial";
+    inline const std::string JoeCarrot      = "joe_carrot";
+    inline const std::string JoeOldHouse    = "joe_old_house";
+    inline const std::string JoeEldersHouse = "joe_elders_house";
+    inline const std::string JoeAssembly    = "joe_assembly";
+    inline const std::string GuardAssembly  = "guard_assembly";
+    inline const std::string ElderAssembly  = "elder_assembly";
+    inline const std::string Nebula         = "nebula";
+}
 
 struct PlayerSaveData : public BasicSaveData {
     glm::vec2 position{0.f, 0.f};
     std::string lastLevel = "assets/maps/intro.json";
     std::string lastGameAct = std::string(GameActIds::Intro);
-    int tutorialDialogProgress = 0;
-    int joeCarrotQuestProgress = 0;
-    int joeOldHouseQuestProgress = 0;
-    int joeEldersHouseQuestProgress = 0;
-    int joeAssemblyHallQuestProgress = 0;
-    int guardAssemblyHallQuestProgress = 0;
-    int elderAssemblyHallQuestProgress = 0;
-    int nebulaQuestProgress = 0;
+
     bool fileSystemIconVisible = false;
     bool gameEnded = false;
     bool catWasDestroyed = false;
 
+    std::map<std::string, int> dialogProgress;
+
     int GetVersion() const override {
         return 1;
+    }
+
+    int GetDialogProgress(const std::string& id) const {
+        if (auto it = dialogProgress.find(id); it != dialogProgress.end()) {
+            return it->second;
+        }
+        return 0;
+    }
+
+    int AdvanceDialogProgress(const std::string& id, int maxValue) {
+        int& value = dialogProgress[id];
+        if (value < maxValue) {
+            ++value;
+            return value;
+        }
+        return maxValue;
     }
 
     void ResetToDefaults() override {
         position = {0.f, 0.f};
         lastLevel = "assets/maps/intro.json";
         lastGameAct = std::string(GameActIds::Intro);
-        tutorialDialogProgress = 0;
-        joeCarrotQuestProgress = 0;
-        joeOldHouseQuestProgress = 0;
-        joeEldersHouseQuestProgress = 0;
-        guardAssemblyHallQuestProgress = 0;
-        joeAssemblyHallQuestProgress = 0;
-        elderAssemblyHallQuestProgress = 0;
-        nebulaQuestProgress = 0;
-        gameEnded = false;
         fileSystemIconVisible = false;
+        gameEnded = false;
         catWasDestroyed = false;
+        dialogProgress.clear();
     }
 
     void ToJson(nlohmann::json& j) const override {
@@ -50,16 +66,14 @@ struct PlayerSaveData : public BasicSaveData {
         j["lastLevel"] = lastLevel;
         j["lastGameAct"] = lastGameAct;
         j["fileSystemIconVisible"] = fileSystemIconVisible;
-        j["tutorialDialogProgress"] = tutorialDialogProgress;
-        j["joeCarrotQuestProgress"] = joeCarrotQuestProgress;
-        j["joeOldHouseQuestProgress"] = joeOldHouseQuestProgress;
-        j["joeEldersHouseQuestProgress"] = joeEldersHouseQuestProgress;
-        j["guardAssemblyHallQuestProgress"] = guardAssemblyHallQuestProgress;
-        j["joeAssemblyHallQuestProgress"] = joeAssemblyHallQuestProgress;
-        j["nebulaQuestProgress"] = nebulaQuestProgress;
-        j["elderAssemblyHallQuestProgress"] = elderAssemblyHallQuestProgress;
-        j["catWasDestroyed"] = catWasDestroyed;
         j["gameEnded"] = gameEnded;
+        j["catWasDestroyed"] = catWasDestroyed;
+
+        nlohmann::json dialogObj = nlohmann::json::object();
+        for (const auto& [id, value] : dialogProgress) {
+            dialogObj[id] = value;
+        }
+        j["dialogProgress"] = std::move(dialogObj);
     }
 
     void FromJson(const nlohmann::json& j) override {
@@ -88,35 +102,20 @@ struct PlayerSaveData : public BasicSaveData {
         if (j.contains("fileSystemIconVisible") && j["fileSystemIconVisible"].is_boolean()) {
             fileSystemIconVisible = j["fileSystemIconVisible"].get<bool>();
         }
-        if (j.contains("tutorialDialogProgress") && j["tutorialDialogProgress"].is_number_integer()) {
-            tutorialDialogProgress = j["tutorialDialogProgress"].get<int>();
-        }
-        if (j.contains("joeCarrotQuestProgress") && j["joeCarrotQuestProgress"].is_number_integer()) {
-            joeCarrotQuestProgress = j["joeCarrotQuestProgress"].get<int>();
-        }
-        if (j.contains("joeOldHouseQuestProgress") && j["joeOldHouseQuestProgress"].is_number_integer()) {
-            joeOldHouseQuestProgress = j["joeOldHouseQuestProgress"].get<int>();
-        }
-        if (j.contains("joeEldersHouseQuestProgress") && j["joeEldersHouseQuestProgress"].is_number_integer()) {
-            joeEldersHouseQuestProgress = j["joeEldersHouseQuestProgress"].get<int>();
-        }
-        if (j.contains("guardAssemblyHallQuestProgress") && j["guardAssemblyHallQuestProgress"].is_number_integer()) {
-            guardAssemblyHallQuestProgress = j["guardAssemblyHallQuestProgress"].get<int>();
-        }
-        if (j.contains("joeAssemblyHallQuestProgress") && j["joeAssemblyHallQuestProgress"].is_number_integer()) {
-            joeAssemblyHallQuestProgress = j["joeAssemblyHallQuestProgress"].get<int>();
-        }
-        if (j.contains("nebulaQuestProgress") && j["nebulaQuestProgress"].is_number_integer()) {
-            nebulaQuestProgress = j["nebulaQuestProgress"].get<int>();
-        }
         if (j.contains("gameEnded") && j["gameEnded"].is_boolean()) {
             gameEnded = j["gameEnded"].get<bool>();
         }
-        if (j.contains("elderAssemblyHallQuestProgress") && j["elderAssemblyHallQuestProgress"].is_number_integer()) {
-            elderAssemblyHallQuestProgress = j["elderAssemblyHallQuestProgress"].get<int>();
-        }
         if (j.contains("catWasDestroyed") && j["catWasDestroyed"].is_boolean()) {
             catWasDestroyed = j["catWasDestroyed"].get<bool>();
+        }
+
+        dialogProgress.clear();
+        if (j.contains("dialogProgress") && j["dialogProgress"].is_object()) {
+            for (const auto& [id, value] : j["dialogProgress"].items()) {
+                if (value.is_number_integer()) {
+                    dialogProgress[id] = value.get<int>();
+                }
+            }
         }
 
         if (!Validate()) {

@@ -98,11 +98,8 @@ public:
         }
         Logger::Log(std::format("[Gameplay][Tutorial] InteractWithEntity: {}", e.entityId));
         if (e.entityId == GameplayEntities::Guard) {
-            int& guardInteractionsCount = ProgressSystemManager::Player().tutorialDialogProgress;
-            if (guardInteractionsCount < 11) {
-                guardInteractionsCount++;
-            }
-            std::string dialogId = std::format("tutorial-dialog-{}", std::to_string(guardInteractionsCount));
+            const int& dialogProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::Tutorial, 11);
+            std::string dialogId = std::format("tutorial-dialog-{}", std::to_string(dialogProgress));
             DialogSystemManager::StartDialog("Guard", dialogId);
             return;
         }

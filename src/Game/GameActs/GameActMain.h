@@ -208,8 +208,7 @@ public:
                 }
             }
             if (mapName == GameplayMaps::AssemblyHall) {
-                int& elderAssemblyHallQuestProgress = ProgressSystemManager::Player().elderAssemblyHallQuestProgress;
-                elderAssemblyHallQuestProgress++;
+                const int& elderAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::ElderAssembly, 3);
                 if (elderAssemblyHallQuestProgress == 1) {
                     DialogSystemManager::StartDialog("Elder", "dialog-assembly-hall-quest-1");
                     return;
@@ -293,15 +292,9 @@ public:
             }
 
             if (mapName == GameplayMaps::AssemblyHall) {
-                int& guardAssemblyHallQuestProgress = ProgressSystemManager::Player().guardAssemblyHallQuestProgress;
-                if (guardAssemblyHallQuestProgress < 1) {
-                    guardAssemblyHallQuestProgress++;
-                    DialogSystemManager::StartDialog("Guard", std::format("dialog-assembly-hall-{}", guardAssemblyHallQuestProgress));
-                    return;
-                } else {
-                    DialogSystemManager::StartDialog("Guard", "dialog-assembly-hall-2");
-                    return;
-                }
+                const int& guardAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::GuardAssembly, 2);
+                DialogSystemManager::StartDialog("Guard", std::format("dialog-assembly-hall-{}", guardAssemblyHallQuestProgress));
+                return;
             }
         }
 
@@ -356,15 +349,9 @@ public:
                     }
                 } 
                 if (ProgressSystemManager::Quests().GetStatus(World::JoeCarrotFinal) == QuestStatus::Completed) {
-                    int& joeCarrotQuestProgress = ProgressSystemManager::Player().joeCarrotQuestProgress;
-                    if (joeCarrotQuestProgress < 5) {
-                        joeCarrotQuestProgress++;
-                        DialogSystemManager::StartDialog("Joe", std::format("neutral-dialog-{}", joeCarrotQuestProgress));
-                        return;
-                    } else {
-                        DialogSystemManager::StartDialog("Joe", "neutral-dialog-5");
-                        return;
-                    }
+                    const int& joeCarrotQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::JoeCarrot, 5);
+                    DialogSystemManager::StartDialog("Joe", std::format("neutral-dialog-{}", joeCarrotQuestProgress));
+                    return;
                 }
             }
             /* JOE BACKROAD SIDE QUEST */
@@ -405,39 +392,21 @@ public:
             }
 
             if (mapName == GameplayMaps::OldHouse) {
-                int& joeOldHouseQuestProgress = ProgressSystemManager::Player().joeOldHouseQuestProgress;
-                if (joeOldHouseQuestProgress < 9) {
-                    joeOldHouseQuestProgress++;
-                    DialogSystemManager::StartDialog("Joe", std::format("dialog-old-house-{}", joeOldHouseQuestProgress));
-                    return;
-                } else {
-                    DialogSystemManager::StartDialog("Joe", "dialog-old-house-9");
-                    return;
-                }
+                const int& joeOldHouseQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::JoeOldHouse, 9);
+                DialogSystemManager::StartDialog("Joe", std::format("dialog-old-house-{}", joeOldHouseQuestProgress));
+                return;
             }
 
             if (mapName == GameplayMaps::EldersHouse) {
-                int& joeEldersHouseQuestProgress = ProgressSystemManager::Player().joeEldersHouseQuestProgress;
-                if (joeEldersHouseQuestProgress < 14) {
-                    joeEldersHouseQuestProgress++;
-                    DialogSystemManager::StartDialog("Joe", std::format("dialog-elders-house-{}", joeEldersHouseQuestProgress));
-                    return;
-                } else {
-                    DialogSystemManager::StartDialog("Joe", "dialog-elders-house-14");
-                    return;
-                }
+                const int& joeEldersHouseQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::JoeEldersHouse, 14);
+                DialogSystemManager::StartDialog("Joe", std::format("dialog-elders-house-{}", joeEldersHouseQuestProgress));
+                return;
             }
 
             if (mapName == GameplayMaps::AssemblyHall) {
-                int& joeAssemblyHallQuestProgress = ProgressSystemManager::Player().joeAssemblyHallQuestProgress;
-                if (joeAssemblyHallQuestProgress < 6) {
-                    joeAssemblyHallQuestProgress++;
-                    DialogSystemManager::StartDialog("Joe", std::format("dialog-assembly-hall-{}", joeAssemblyHallQuestProgress));
-                    return;
-                } else {
-                    DialogSystemManager::StartDialog("Joe", "dialog-assembly-hall-6");
-                    return;
-                }
+                const int& joeAssemblyHallQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::JoeAssembly, 6);
+                DialogSystemManager::StartDialog("Joe", std::format("dialog-assembly-hall-{}", joeAssemblyHallQuestProgress));
+                return;
             }
         }
 
@@ -506,12 +475,9 @@ public:
         /* NEBULA DIALOGES */
         if (e.entityId == GameplayEntities::Nebula) {
             if (mapName == GameplayMaps::WorldVoid) {
-                int& nebulaQuestProgress = ProgressSystemManager::Player().nebulaQuestProgress;
-                if (nebulaQuestProgress <= 7) {
-                    nebulaQuestProgress++;
-                    DialogSystemManager::StartDialog("Nebula", std::format("nebula-dialog-{}", nebulaQuestProgress));
-                    return;
-                }
+                const int& nebulaQuestProgress = ProgressSystemManager::Player().AdvanceDialogProgress(DialogTrackIds::Nebula, 7);
+                DialogSystemManager::StartDialog("Nebula", std::format("nebula-dialog-{}", nebulaQuestProgress));
+                return;
             }
         }
 
