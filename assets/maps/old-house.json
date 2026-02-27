@@ -163,7 +163,7 @@
             "width": 60.93803405761719,
             "height": 62.997047424316406,
             "texture": "levelchange",
-            "location": "assets/maps/crossroads.json",
+            "location": "maps/crossroads.json",
             "spawnPointMatch": "old-house"
         }
     ],

@@ -63,7 +63,7 @@ public:
                 ImGui::EndCombo();
             }
             if (ImGui::Button("Load Map") && selectedMapIndex >= 0 && selectedMapIndex < static_cast<int>(mapNames.size())) {
-                const auto fullPath = std::format("assets/maps/{}.json", mapNames[selectedMapIndex]);
+                const auto fullPath = std::format("maps/{}.json", mapNames[selectedMapIndex]);
                 MapManager::LoadMap(fullPath);
             }
         } else {

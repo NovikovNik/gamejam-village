@@ -60,7 +60,7 @@ public:
     void OnDialogEnded(DialogEndedEvent& e) {
         Logger::Log(std::format("[Gameplay][Intro] DialogEnded: {}", e.dialogId));
         if (e.characterId == "Intro" && e.dialogId == "intro-1") {
-            EventBus::instance().EmitEvent<ChangeLocationEvent>("assets/maps/backroad.json");
+            EventBus::instance().EmitEvent<ChangeLocationEvent>("maps/backroad.json");
         }
     }
 

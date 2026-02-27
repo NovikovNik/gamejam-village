@@ -53,7 +53,7 @@ void Game::Initialize() {
     Renderer::Initialize(windowWidth, windowHeight);
     UISystem::Initialize();
     AudioSystem::Initialize();
-    AudioSystem::LoadAllSounds("assets/audio/");
+    AudioSystem::LoadAllSounds("audio");
     ProgressSystemManager::Initialize();
 
     // Apply saved audio settings before starting playback.
@@ -68,9 +68,9 @@ void Game::Initialize() {
     AudioSystem::PlayMusic("village_theme");
     GameplayLogic::Initialize();
     DialogSystemManager::Initialize();
-    DialogSystemManager::LoadAllDialogs("assets/dialogs/");
-    Renderer::LoadAllTextures("assets/textures/");
-    Renderer::LoadAllFonts("assets/fonts/");
+    DialogSystemManager::LoadAllDialogs("dialogs");
+    Renderer::LoadAllTextures("textures");
+    Renderer::LoadAllFonts("fonts");
     LocationNameOverlay::Initialize();
     WorldState::Initiate();
     // Restore world state from save file (overrides the filesystem scan on first frame).

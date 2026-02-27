@@ -22,7 +22,7 @@ namespace DialogTrackIds {
 
 struct PlayerSaveData : public BasicSaveData {
     glm::vec2 position{0.f, 0.f};
-    std::string lastLevel = "assets/maps/intro.json";
+    std::string lastLevel = "maps/intro.json";
     std::string lastGameAct = std::string(GameActIds::Intro);
 
     bool fileSystemIconVisible = false;
@@ -53,7 +53,7 @@ struct PlayerSaveData : public BasicSaveData {
 
     void ResetToDefaults() override {
         position = {0.f, 0.f};
-        lastLevel = "assets/maps/intro.json";
+        lastLevel = "maps/intro.json";
         lastGameAct = std::string(GameActIds::Intro);
         fileSystemIconVisible = false;
         gameEnded = false;

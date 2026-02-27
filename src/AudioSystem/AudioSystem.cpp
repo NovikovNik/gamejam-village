@@ -144,11 +144,7 @@ void Update() {
 void LoadAllSounds(const std::string& directory) {
     namespace fs = std::filesystem;
 
-#if !ENABLE_CHEATS
-    std::string soundsDirectory = (FileSystemManager::GetExecutableDir() / "assets/audio").string();
-#else
-    std::string soundsDirectory = directory;
-#endif
+    std::string soundsDirectory = FileSystemManager::GetAssetsSubDir(directory).lexically_normal().string();
 
     if (!fs::exists(soundsDirectory)) {
         Logger::Err("[AudioSystem] Sound directory not found: " + directory);

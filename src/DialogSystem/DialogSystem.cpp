@@ -43,13 +43,10 @@ public:
 
     void LoadAllDialogs(const std::string& directory) {
 
-#if !ENABLE_CHEATS
-        std::string dialogsDirectory = (FileSystemManager::GetExecutableDir() / "assets/dialogs").string();
-#else
-        std::string dialogsDirectory = directory;
-#endif
+        std::string dialogsDirectory = FileSystemManager::GetAssetsSubDir(directory).lexically_normal().string();
+
         if (!std::filesystem::exists(dialogsDirectory)) {
-            Logger::Err("Dialogs path does not exist: " + directory);
+            Logger::Err("Dialogs path does not exist: " + dialogsDirectory);
             return;
         }
         for (const auto& entry : std::filesystem::directory_iterator(dialogsDirectory)) {

@@ -421,7 +421,7 @@
             "width": 110.53819274902344,
             "height": 1598.5162353515625,
             "texture": "levelchange",
-            "location": "assets/maps/backroad.json",
+            "location": "maps/backroad.json",
             "spawnPointMatch": "start"
         },
         {
@@ -431,7 +431,7 @@
             "width": 110.53819274902344,
             "height": 1587.1053466796875,
             "texture": "levelchange",
-            "location": "assets/maps/backroad.json",
+            "location": "maps/backroad.json",
             "spawnPointMatch": "main"
         },
         {
@@ -441,7 +441,7 @@
             "width": 409.1802062988281,
             "height": 232.46267700195312,
             "texture": "levelchange",
-            "location": "assets/maps/assembly-hall.json",
+            "location": "maps/assembly-hall.json",
             "spawnPointMatch": "",
             "tease": true
         },
@@ -452,7 +452,7 @@
             "width": 381.51690673828125,
             "height": 216.74667358398438,
             "texture": "levelchange",
-            "location": "assets/maps/elders-house.json",
+            "location": "maps/elders-house.json",
             "spawnPointMatch": ""
         },
         {
@@ -462,7 +462,7 @@
             "width": 51.05690383911133,
             "height": 69.78518676757812,
             "texture": "levelchange",
-            "location": "assets/maps/old-house.json",
+            "location": "maps/old-house.json",
             "spawnPointMatch": ""
         }
     ],

@@ -87,11 +87,8 @@ public:
     void LoadAllTextures(const std::string& directory) {
         UnloadTextures();
 
-#if !ENABLE_CHEATS
-        std::string texturesDirectory = (FileSystemManager::GetExecutableDir() / "assets/textures").string();
-#else
-        std::string texturesDirectory = directory;
-#endif
+        std::string texturesDirectory = FileSystemManager::GetAssetsSubDir(directory).lexically_normal().string();
+
         for (const auto& entry : std::filesystem::directory_iterator(texturesDirectory)) {
             if (entry.is_regular_file() && entry.path().extension() == ".png") {
                LoadTexture(entry.path());
@@ -121,11 +118,8 @@ public:
     void LoadAllFonts(const std::string& directory) {
         UnloadFonts();
 
-#if !ENABLE_CHEATS
-        std::string fontsDirectory = (FileSystemManager::GetExecutableDir() / "assets/fonts").string();
-#else
-        std::string fontsDirectory = directory;
-#endif
+        std::string fontsDirectory = FileSystemManager::GetAssetsSubDir(directory).lexically_normal().string();
+
         for (const auto& entry : std::filesystem::directory_iterator(fontsDirectory)) {
             if (entry.is_regular_file() && entry.path().extension() == ".ttf") {
                 LoadFont(entry.path());

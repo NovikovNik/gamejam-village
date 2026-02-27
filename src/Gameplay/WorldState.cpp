@@ -116,7 +116,7 @@ public:
                 return;
             }
             nextLocation = NextLocation{
-                .locationPath = std::format("assets/maps/{}.json", backupLocationPath),
+                .locationPath = std::format("maps/{}.json", backupLocationPath),
                 .spawnPoint = "",
             };
             backupLocationPath.clear();
@@ -124,7 +124,7 @@ public:
         }
         if ((currentLocation != "world-void" && currentLocation != "intro") && currentState.registeredLocations.contains(currentLocation) && !currentState.registeredLocations.at(currentLocation)) {
             nextLocation = NextLocation{
-                .locationPath = "assets/maps/world-void.json",
+                .locationPath = "maps/world-void.json",
                 .spawnPoint = "",
             };
             backupLocationPath = currentLocation;
@@ -160,7 +160,7 @@ public:
         namespace fs = std::filesystem;
         
         // Find the village folder
-        fs::path villagePath = FileSystemManager::GetExecutableDir() / "village";
+        fs::path villagePath = FileSystemManager::GetVillageDir();
         
         if (!fs::exists(villagePath) || !fs::is_directory(villagePath)) {
             Logger::Log("Village folder not found!");
@@ -286,7 +286,7 @@ public:
         }
         entity.insert(locationName);
 
-        const auto villageDir = std::filesystem::path("village") / locationName;
+        const auto villageDir = FileSystemManager::GetVillageDir() / locationName;
         const auto filename = std::format("{}.{}", tagName.name, tagName.type);
         
         // Delete old .txt file if it exists (migration from old format)
@@ -303,7 +303,7 @@ public:
     void RemoveFromWorldState(const World::Entity::TagName& tagName) {
         const auto locationName = MapManager::GetCurrentMapName();
 
-        const auto villageDir = std::filesystem::path("village") / locationName;
+        const auto villageDir = FileSystemManager::GetVillageDir() / locationName;
         const auto filename = std::format("{}.{}", tagName.name, tagName.type);
         
         // Delete both old .txt format and new format (whichever exists)

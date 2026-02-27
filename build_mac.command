@@ -4,4 +4,4 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT_NAME="build_unix.sh"
 
-source "${SCRIPT_DIR}/${SCRIPT_NAME}" "$1"
+source "${SCRIPT_DIR}/${SCRIPT_NAME}" "$1" AAAB.app

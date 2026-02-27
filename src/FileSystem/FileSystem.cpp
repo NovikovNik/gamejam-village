@@ -15,10 +15,18 @@ class FileSystem : public Singleton<FileSystem>
 {
 public:
     void OpenSystemExplorer(const std::filesystem::path& relativePath) {
-        auto fullPath = executableDirPath / relativePath;
+#if defined(__APPLE__)
+        // На macOS открываем папки рядом с .app (на уровне build/Debug),
+        // а не внутри Contents/MacOS.
+        std::filesystem::path root = executableDirPath / "../../..";
+#else
+        // На Windows/Linux используем директорию исполняемого файла.
+        std::filesystem::path root = executableDirPath;
+#endif
+        auto fullPath = root / relativePath;
 
         if (!std::filesystem::exists(fullPath)) {
-            CreateDirectory(fullPath.string());
+            std::filesystem::create_directories(fullPath);
         }
 
 #ifdef _WIN32
@@ -56,7 +64,15 @@ public:
     }
 
     void CreateKeyFile(const std::string& dirPath, const std::string& filename) {
-        auto fullDir = executableDirPath / dirPath;
+#if defined(__APPLE__)
+        // Для относительных путей создаём файлы рядом с .app;
+        // для абсолютных (dirPath как полный путь) поведение std::filesystem::operator/
+        // оставит только абсолютный путь и проигнорирует root.
+        std::filesystem::path root = executableDirPath / "../../..";
+#else
+        std::filesystem::path root = executableDirPath;
+#endif
+        auto fullDir = root / dirPath;
         if (!std::filesystem::exists(fullDir)) {
             std::filesystem::create_directories(fullDir);
         }
@@ -74,7 +90,13 @@ public:
     }
 
     void DeleteKeyFile(const std::string& dirPath, const std::string& filename) {
-        auto fullDir = executableDirPath / dirPath;
+#if defined(__APPLE__)
+        // Аналогично CreateKeyFile: относительные пути трактуем как внешние к .app.
+        std::filesystem::path root = executableDirPath / "../../..";
+#else
+        std::filesystem::path root = executableDirPath;
+#endif
+        auto fullDir = root / dirPath;
         if (!std::filesystem::exists(fullDir)) {
             return;
         }
@@ -93,6 +115,33 @@ public:
 
     std::filesystem::path GetExecutableDir() const {
         return executableDirPath;
+    }
+
+    std::filesystem::path GetAssetsBaseDir() const {
+#if defined(__APPLE__)
+        // В бандле AAAB.app исполняемый файл лежит в Contents/MacOS,
+        // ассеты — в Contents/Resources/Assets.
+        return executableDirPath / "../Resources/Assets";
+#else
+        // Для Windows/Linux ассеты лежат рядом с exe в папке assets.
+        return executableDirPath / "assets";
+#endif
+    }
+
+    std::filesystem::path GetAssetsSubDir(const std::string& subDir) const {
+        return GetAssetsBaseDir() / subDir;
+    }
+
+    std::filesystem::path GetVillageDir() const {
+#if defined(__APPLE__)
+        // exe: <path>/AAAB.app/Contents/MacOS
+        // village: рядом с AAAB.app → <path>/village
+        std::filesystem::path root = executableDirPath / "../../..";
+#else
+        // На Windows/Linux village лежит рядом с exe
+        std::filesystem::path root = executableDirPath;
+#endif
+        return (root / "village").lexically_normal();
     }
 
 private:
@@ -126,4 +175,16 @@ void FileSystemManager::DeleteKeyFile(const std::string& dirPath, const std::str
 
 std::filesystem::path FileSystemManager::GetExecutableDir() {
     return FileSystem::instance().GetExecutableDir();
+}
+
+std::filesystem::path FileSystemManager::GetAssetsBaseDir() {
+    return FileSystem::instance().GetAssetsBaseDir();
+}
+
+std::filesystem::path FileSystemManager::GetAssetsSubDir(const std::string& subDir) {
+    return FileSystem::instance().GetAssetsSubDir(subDir);
+}
+
+std::filesystem::path FileSystemManager::GetVillageDir() {
+    return FileSystem::instance().GetVillageDir();
 }

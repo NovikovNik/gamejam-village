@@ -12,4 +12,13 @@ namespace FileSystemManager {
     void DeleteKeyFile(const std::string& dirPath, const std::string& filename);
 
     [[nodiscard]] std::filesystem::path GetExecutableDir();
+
+    // Возвращает базовый путь до Assets с учётом платформы и .app bundle на macOS.
+    [[nodiscard]] std::filesystem::path GetAssetsBaseDir();
+
+    // Удобный хелпер: Assets/<subDir> (например "dialogs", "audio", "textures", "fonts").
+    [[nodiscard]] std::filesystem::path GetAssetsSubDir(const std::string& subDir);
+
+    // Путь до папки village (на macOS — рядом с .app, на остальных платформах — рядом с exe).
+    [[nodiscard]] std::filesystem::path GetVillageDir();
 };

@@ -148,7 +148,7 @@
             "width": 61.15630340576172,
             "height": 63.22269058227539,
             "texture": "levelchange",
-            "location": "assets/maps/crossroads.json",
+            "location": "maps/crossroads.json",
             "spawnPointMatch": "elders-house"
         }
     ],

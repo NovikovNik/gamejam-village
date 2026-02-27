@@ -118,11 +118,9 @@ public:
 
     [[nodiscard]] bool LoadMap(const std::string& filename) {
         // Load JSON map data
-#if !ENABLE_CHEATS
-        std::string filepath = (FileSystemManager::GetExecutableDir() / filename).string();
-#else
-        std::string filepath = filename;
-#endif
+
+        std::string filepath = FileSystemManager::GetAssetsSubDir(filename).lexically_normal().string();
+
         std::ifstream file(filepath);
         if (!file.is_open()) {
             Logger::Err(std::format("Failed to load map: {}", filepath));
@@ -490,7 +488,7 @@ public:
         if (locationName == "intro") {
             return;
         }
-        const auto fullPath = std::filesystem::path("village") / locationName;
+        const auto fullPath = FileSystemManager::GetVillageDir() / locationName;
         FileSystemManager::OpenSystemExplorer(fullPath.string());
     }
 

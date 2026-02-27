@@ -40,8 +40,19 @@ else()
     set(IMGUI_SOURCES)
 endif()
 
+if(APPLE)
+    set(APP_ICON "AAAB.icns")
+    set(APP_ICON_PATH "${CMAKE_SOURCE_DIR}/MacOs/${APP_ICON}")
+    
+    # Mark the file as a resource so it's copied to Contents/Resources
+    set_source_files_properties("${APP_ICON_PATH}" PROPERTIES 
+        MACOSX_PACKAGE_LOCATION "Resources"
+    )
+endif()
+
 file(GLOB_RECURSE SOURCES src/*.cpp)
-add_executable(AAAB ${SOURCES} ${IMGUI_SOURCES} libs/stb_vorbis/stb_vorbis.c)
+
+add_executable(AAAB ${SOURCES} ${IMGUI_SOURCES} ${APP_ICON_PATH} libs/stb_vorbis/stb_vorbis.c)
 
 target_include_directories(AAAB PRIVATE
     "${CMAKE_SOURCE_DIR}"
@@ -63,6 +74,24 @@ target_link_libraries(AAAB PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3 SDL3_image::SDL
 if(WIN32)
     set_target_properties(AAAB PROPERTIES
         WIN32_EXECUTABLE $<CONFIG:Release>
+    )
+endif()
+
+if(APPLE)
+    set_target_properties(AAAB PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/MacOs/Info.plist.in"
+        # IMPORTANT: This must be just the filename, e.g., "AAAB.icns"
+        MACOSX_BUNDLE_ICON_FILE "${APP_ICON}"
+        XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AAAB"
+    )
+
+    # Assets logic...
+    set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/Assets")
+    add_custom_command(TARGET AAAB POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${ASSETS_DIR}"
+            "$<TARGET_BUNDLE_CONTENT_DIR:AAAB>/Resources/Assets"
     )
 endif()
 
