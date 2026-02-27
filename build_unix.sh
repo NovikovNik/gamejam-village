@@ -8,15 +8,23 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ########### Build type ##########################
 BUILD_TYPE="Debug"
 ENABLE_CHEATS=OFF
+XCODE_BUILD=OFF
 # Имя исполняемого файла можно передать вторым аргументом, по умолчанию AAAB
 EXEC_FILE_NAME="AAAB"
 
 if [[ "$1" == "release" || "$1" == "Release" ]]; then
     BUILD_TYPE="Release"
+elif [[ "$1" == "xcoderelease" || "$1" == "XcodeRelease" ]]; then
+    BUILD_TYPE="Release"
+    ENABLE_CHEATS=OFF
+    XCODE_BUILD=ON
 elif [[ "$1" == "debug" || "$1" == "Debug" || -z "$1" ]]; then
     BUILD_TYPE="Debug"
     ENABLE_CHEATS=ON
-
+elif [[ "$1" == "xcodedebug" || "$1" == "XcodeDebug" ]]; then
+    BUILD_TYPE="Debug"
+    ENABLE_CHEATS=ON
+    XCODE_BUILD=ON
 
 else
     echo "Unknown build type: $1"
@@ -34,17 +42,29 @@ EXEC_FILE="${SCRIPT_DIR}"/build/${BUILD_TYPE}/${EXEC_FILE_NAME}
 
 ########### Configure ##########################
 echo "Configuration: ${BUILD_TYPE}"
-cmake -S "${SCRIPT_DIR}" \
-      -B "${SCRIPT_DIR}"/build \
-      -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-      -DENABLE_CHEATS="${ENABLE_CHEATS}"
+if [[ "$XCODE_BUILD" == "ON" ]]; then
+    cmake -S "${SCRIPT_DIR}" \
+          -B "${SCRIPT_DIR}"/build/xcode \
+          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+          -DENABLE_CHEATS="${ENABLE_CHEATS}" \
+          -G Xcode
+else
+    cmake -S "${SCRIPT_DIR}" \
+          -B "${SCRIPT_DIR}"/build \
+          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+          -DENABLE_CHEATS="${ENABLE_CHEATS}"
 
 ########### Build ##############################
-cmake --build "${SCRIPT_DIR}"/build -j 8
+    cmake --build "${SCRIPT_DIR}"/build -j 8
+fi
 
 echo "Build finished"
 
 ########### Run #################################
+if [[ "$XCODE_BUILD" == "ON" ]]; then
+    open "${SCRIPT_DIR}"/build/xcode/GameProject.xcodeproj
+    exit 0
+fi
 if [[ "$(uname)" == "Darwin" ]]; then
     # На macOS открываем через open -a (например, если это .app bundle)
     open -a "${EXEC_FILE}"
