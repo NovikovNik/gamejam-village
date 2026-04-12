@@ -68,7 +68,7 @@ void Game::Initialize() {
     AudioSystem::PlayMusic("village_theme");
     GameplayLogic::Initialize();
     DialogSystemManager::Initialize();
-    DialogSystemManager::LoadAllDialogs("dialogs");
+    DialogSystemManager::LoadAllDialogs("dialogs", ProgressSystemManager::Player().language);
     Renderer::LoadAllTextures("textures");
     Renderer::LoadAllFonts("fonts");
     LocationNameOverlay::Initialize();

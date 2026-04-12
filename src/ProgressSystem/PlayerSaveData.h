@@ -20,10 +20,16 @@ namespace DialogTrackIds {
     inline const std::string ExitTipVoid            = "exit_tip_void";
 }
 
+namespace GameLanguage {
+    inline const std::string English                = "en";
+    inline const std::string Russian                = "ru";
+}
+
 struct PlayerSaveData : public BasicSaveData {
     glm::vec2 position{0.f, 0.f};
     std::string lastLevel = "maps/intro.json";
     std::string lastGameAct = std::string(GameActIds::Intro);
+    std::string language = GameLanguage::English;
 
     bool fileSystemIconVisible = false;
     bool gameEnded = false;
@@ -55,6 +61,7 @@ struct PlayerSaveData : public BasicSaveData {
         position = {0.f, 0.f};
         lastLevel = "maps/intro.json";
         lastGameAct = std::string(GameActIds::Intro);
+        language = GameLanguage::English;
         fileSystemIconVisible = false;
         gameEnded = false;
         catWasDestroyed = false;
@@ -69,6 +76,7 @@ struct PlayerSaveData : public BasicSaveData {
         };
         j["lastLevel"] = lastLevel;
         j["lastGameAct"] = lastGameAct;
+        j["language"] = language;
         j["fileSystemIconVisible"] = fileSystemIconVisible;
         j["gameEnded"] = gameEnded;
         j["catWasDestroyed"] = catWasDestroyed;
@@ -102,6 +110,12 @@ struct PlayerSaveData : public BasicSaveData {
 
         if (j.contains("lastGameAct") && j["lastGameAct"].is_string()) {
             lastGameAct = j["lastGameAct"].get<std::string>();
+        }
+        if (j.contains("language") && j["language"].is_string()) {
+            language = j["language"].get<std::string>();
+        }
+        if (language != GameLanguage::English && language != GameLanguage::Russian) {
+            language = GameLanguage::English;
         }
         if (j.contains("fileSystemIconVisible") && j["fileSystemIconVisible"].is_boolean()) {
             fileSystemIconVisible = j["fileSystemIconVisible"].get<bool>();

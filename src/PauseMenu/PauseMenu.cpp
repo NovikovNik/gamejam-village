@@ -6,6 +6,9 @@
 #include <EventBus/EventBus.h>
 #include <Events/GameShutdownEvent.h>
 #include <ProgressSystem/AppDataSaveHelper.h>
+#include <ProgressSystem/ProgressSystem.h>
+#include <ProgressSystem/PlayerSaveData.h>
+#include <DialogSystem/DialogSystem.h>
 #include <FileSystem/FileSystem.h>
 #include <SDL3/SDL.h>
 #include <string>
@@ -19,7 +22,7 @@
 namespace {
 
 constexpr float BOX_W       = 340.f;
-constexpr float BOX_H       = 420.f;
+constexpr float BOX_H       = 468.f;
 constexpr float ROW_H       = 44.f;
 constexpr float ROWS_TOP    = 56.f;   // y-offset of first row inside box
 constexpr float SLIDER_W    = 160.f;
@@ -49,7 +52,7 @@ constexpr SDL_Color COL_MUTE_OFF   { 90,200, 90, 255 };
 constexpr SDL_Color COL_EXIT       {220, 80, 80, 255 };
 constexpr SDL_Color COL_RESTART    {220,140, 40, 255 };
 
-enum Row { ROW_MUTE = 0, ROW_MASTER, ROW_MUSIC, ROW_SFX, ROW_EXIT, ROW_RESTART, ROW_COUNT };
+enum Row { ROW_MUTE = 0, ROW_MASTER, ROW_MUSIC, ROW_SFX, ROW_LANGUAGE, ROW_EXIT, ROW_RESTART, ROW_COUNT };
 
 // ---- state ----------------------------------------------------------------
 bool  g_isOpen    = false;
@@ -71,7 +74,7 @@ int HitTestRow(float mx, float my) {
 
     // Volume rows
     const float volTop = by + ROWS_TOP;
-    const float volBot = volTop + (ROW_SFX + 1) * ROW_H;
+    const float volBot = volTop + (ROW_LANGUAGE + 1) * ROW_H;
     if (my >= volTop && my < volBot)
         return static_cast<int>((my - volTop) / ROW_H);
 
@@ -137,6 +140,28 @@ float GetRowVolume(int row) {
     }
 }
 
+const char* LanguageDisplayLabel(const std::string& code) {
+    return (code == GameLanguage::Russian) ? "Russian" : "English";
+}
+
+void SetGameLanguage(const std::string& lang) {
+    if (lang != GameLanguage::English && lang != GameLanguage::Russian) {
+        return;
+    }
+    if (ProgressSystemManager::GetPlayerLanguage() == lang) {
+        return;
+    }
+    ProgressSystemManager::Player().language = lang;
+    DialogSystemManager::LoadAllDialogs("dialogs", lang);
+    ProgressSystemManager::SaveData();
+}
+
+void CycleGameLanguage() {
+    const std::string cur = ProgressSystemManager::GetPlayerLanguage();
+    const std::string next = (cur == GameLanguage::Russian) ? GameLanguage::English : GameLanguage::Russian;
+    SetGameLanguage(next);
+}
+
 // ---------------------------------------------------------------------------
 // Rendering helpers
 // ---------------------------------------------------------------------------
@@ -199,7 +224,17 @@ void RenderRow(int row, float rowY) {
             Renderer::DrawTextScreen(fid, "Restart  (clears save)", lx, ty, fs, &col);
             break;
         }
+        case ROW_LANGUAGE: {
+            Renderer::DrawTextScreen(fid, "Language", lx, ty, fs, &textCol);
+            Renderer::DrawTextScreen(fid,
+                                     LanguageDisplayLabel(ProgressSystemManager::GetPlayerLanguage()),
+                                     bx + VALUE_X, ty, fs, &textCol);
+            break;
+        }
         default: {
+            if (row != ROW_MASTER && row != ROW_MUSIC && row != ROW_SFX) {
+                break;
+            }
             static const char* labels[] = { "", "Master", "Music", "SFX" };
             const float v    = GetRowVolume(row);
             const float slY  = rowY + ROW_H * 0.5f - SLIDER_H * 0.5f;
@@ -254,13 +289,13 @@ void UpdateAndRender() {
     // Divider
     Renderer::DrawFilledRectScreen(bx + 8.f, by + 52.f, BOX_W - 16.f, 1.f, COL_BORDER);
 
-    // Volume rows
-    for (int i = 0; i < ROW_SFX + 1; ++i) {
+    // Volume + language rows
+    for (int i = 0; i < ROW_LANGUAGE + 1; ++i) {
         RenderRow(i, by + ROWS_TOP + i * ROW_H);
     }
 
     // Divider before action buttons
-    const float divY = by + ROWS_TOP + (ROW_SFX + 1) * ROW_H + 4.f;
+    const float divY = by + ROWS_TOP + (ROW_LANGUAGE + 1) * ROW_H + 4.f;
     Renderer::DrawFilledRectScreen(bx + 8.f, divY, BOX_W - 16.f, 1.f, COL_BORDER);
 
     // Action button rows (Restart has extra gap to separate it visually)
@@ -295,6 +330,7 @@ bool HandleKeyDown(SDL_Keycode key) {
         case SDLK_RETURN2:
         case SDLK_SPACE:
             if (ksel == ROW_MUTE) AudioSystem::SetMuted(!AudioSystem::IsMuted());
+            else if (ksel == ROW_LANGUAGE) CycleGameLanguage();
             else if (ksel == ROW_EXIT || ksel == ROW_RESTART) ActivateRow(ksel);
             g_selection = ksel;
             return true;
@@ -303,6 +339,7 @@ bool HandleKeyDown(SDL_Keycode key) {
             g_selection = ksel;
             switch (ksel) {
                 case ROW_MUTE:   AudioSystem::SetMuted(true); break;
+                case ROW_LANGUAGE: SetGameLanguage(GameLanguage::English); break;
                 default: SetRowVolume(ksel, GetRowVolume(ksel) - VOLUME_STEP); break;
             }
             return true;
@@ -311,6 +348,7 @@ bool HandleKeyDown(SDL_Keycode key) {
             g_selection = ksel;
             switch (ksel) {
                 case ROW_MUTE:   AudioSystem::SetMuted(false); break;
+                case ROW_LANGUAGE: SetGameLanguage(GameLanguage::Russian); break;
                 default: SetRowVolume(ksel, GetRowVolume(ksel) + VOLUME_STEP); break;
             }
             return true;
@@ -357,9 +395,11 @@ bool HandleEvent(SDL_Event* event) {
 
             if (row == ROW_MUTE) {
                 AudioSystem::SetMuted(!AudioSystem::IsMuted());
+            } else if (row == ROW_LANGUAGE) {
+                CycleGameLanguage();
             } else if (row == ROW_EXIT || row == ROW_RESTART) {
                 ActivateRow(row);
-            } else {
+            } else if (row == ROW_MASTER || row == ROW_MUSIC || row == ROW_SFX) {
                 // Click anywhere on a volume row snaps the slider + starts drag
                 SetRowVolume(row, SliderValueFromX(mx));
                 g_dragRow = row;

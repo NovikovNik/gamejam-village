@@ -24,7 +24,7 @@ using DialogsMap = std::map<std::string, std::map<std::string, DialogData>>;
 namespace DialogSystemManager {
     void Initialize();
     void Destroy();
-    void LoadAllDialogs(const std::string& directory);
+    void LoadAllDialogs(const std::string& directory, const std::string& locale);
     // characterId — ключ персонажа (например "spaghetti"), dialogId — ключ диалога (например "dialog-1")
     void StartDialog(const std::string& characterId, const std::string& dialogId);
     void EndDialog();

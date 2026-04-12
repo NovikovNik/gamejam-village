@@ -12,6 +12,8 @@ namespace ProgressSystemManager {
     void LoadData();
 
     PlayerSaveData& Player();
+    /// Текущий язык из сохранения (без пометки dirty).
+    [[nodiscard]] std::string GetPlayerLanguage();
     AudioSaveData&  Audio();
     WorldSaveData&  World();
     InventarySaveData& Inventory();

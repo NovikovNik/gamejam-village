@@ -99,6 +99,10 @@ class ProgressSystem: public Singleton<ProgressSystem> {
             return questsSaveData;
         }
 
+        [[nodiscard]] std::string GetPlayerLanguageSnapshot() const {
+            return playerSaveData.language;
+        }
+
     private:
         bool dirty = false;
         PlayerSaveData playerSaveData;
@@ -122,6 +126,10 @@ void ProgressSystemManager::LoadData() {
 
 PlayerSaveData& ProgressSystemManager::Player() {
     return ProgressSystem::instance().Player();
+}
+
+std::string ProgressSystemManager::GetPlayerLanguage() {
+    return ProgressSystem::instance().GetPlayerLanguageSnapshot();
 }
 
 AudioSaveData& ProgressSystemManager::Audio() {

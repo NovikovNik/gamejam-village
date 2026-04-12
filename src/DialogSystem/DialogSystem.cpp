@@ -9,6 +9,7 @@
 #include <Events/ForceDialogStartEvent.h>
 #include <Events/DialogEndedEvent.h>
 #include <Events/PlaySoundEvent.h>
+#include <ProgressSystem/PlayerSaveData.h>
 #include <SDL3/SDL.h>
 #include <map>
 #include <fstream>
@@ -17,6 +18,7 @@
 #include <filesystem>
 #include <format>
 #include <vector>
+#include <algorithm>
 
 struct CharacterMeta {
     std::string name;
@@ -41,53 +43,69 @@ public:
         onForceDialogStartEvent.Destroy();
     }
 
-    void LoadAllDialogs(const std::string& directory) {
-
-        std::string dialogsDirectory = FileSystemManager::GetAssetsSubDir(directory).lexically_normal().string();
+    void LoadAllDialogs(const std::string& directory, const std::string& locale) {
+        const std::filesystem::path path = std::filesystem::relative(directory) / locale;
+        std::string dialogsDirectory = FileSystemManager::GetAssetsSubDir(path).lexically_normal().string();
 
         if (!std::filesystem::exists(dialogsDirectory)) {
             Logger::Err("Dialogs path does not exist: " + dialogsDirectory);
             return;
         }
+
+        const bool preserveConversation = dialogActive;
+        const std::string preserveChar = currentCharacterId;
+        const std::string preserveDlg = currentDialogId;
+        const int preserveIdx = currentDialogIndex;
+
+        dialogs.clear();
+        characterMeta.clear();
+        signRows.clear();
+        signActive = false;
         for (const auto& entry : std::filesystem::directory_iterator(dialogsDirectory)) {
-            if (entry.is_regular_file() && entry.path().extension() == ".json") {
-                nlohmann::json json = LoadDialogData(entry.path().string());
-                if (json.is_null()) continue;
+            if (!entry.is_regular_file() || entry.path().extension() != ".json") {
+                continue;
+            }
+            // macOS / exFAT may create AppleDouble files like "._foo.json" that still end in .json.
+            const std::string filename = entry.path().filename().string();
+            if (filename.starts_with("._")) {
+                continue;
+            }
+            nlohmann::json json = LoadDialogData(entry.path().string());
+            if (json.is_null()) continue;
 
-                const std::string characterId = json["id"].get<std::string>();
-                characterMeta[characterId] = {
-                    json.value("name", characterId),
-                    json.value("description", std::string())
-                };
+            const std::string characterId = json["id"].get<std::string>();
+            characterMeta[characterId] = {
+                json.value("name", characterId),
+                json.value("description", std::string())
+            };
 
-                for (auto& [dialogId, dialogJson] : json["dialogs"].items()) {
-                    if (dialogId == "textSize") continue; // пропускаем глобальный textSize если ошибочно в dialogs
-                    DialogData data;
-                    if (dialogJson.is_array()) {
-                        for (const auto& item : dialogJson) {
-                            if (item.is_string()) {
-                                data.lines.push_back({"", item.get<std::string>(), data.textSize, {255,255,255,255}, "left"});
-                            } else if (item.is_object()) {
-                                data.lines.push_back(ParseDialogLine(item, data.textSize));
-                            }
-                        }
-                    } else if (dialogJson.is_object() && dialogJson.contains("lines")) {
-                        if (dialogJson.contains("textSize")) {
-                            data.textSize = dialogJson["textSize"].get<int>();
-                        }
-                        for (const auto& item : dialogJson["lines"]) {
-                            if (item.is_string()) {
-                                data.lines.push_back({"", item.get<std::string>(), data.textSize, {255,255,255,255}, "left"});
-                            } else if (item.is_object()) {
-                                data.lines.push_back(ParseDialogLine(item, data.textSize));
-                            }
+            for (auto& [dialogId, dialogJson] : json["dialogs"].items()) {
+                if (dialogId == "textSize") continue; // пропускаем глобальный textSize если ошибочно в dialogs
+                DialogData data;
+                if (dialogJson.is_array()) {
+                    for (const auto& item : dialogJson) {
+                        if (item.is_string()) {
+                            data.lines.push_back({"", item.get<std::string>(), data.textSize, {255,255,255,255}, "left"});
+                        } else if (item.is_object()) {
+                            data.lines.push_back(ParseDialogLine(item, data.textSize));
                         }
                     }
-                    dialogs[characterId][dialogId] = std::move(data);
+                } else if (dialogJson.is_object() && dialogJson.contains("lines")) {
+                    if (dialogJson.contains("textSize")) {
+                        data.textSize = dialogJson["textSize"].get<int>();
+                    }
+                    for (const auto& item : dialogJson["lines"]) {
+                        if (item.is_string()) {
+                            data.lines.push_back({"", item.get<std::string>(), data.textSize, {255,255,255,255}, "left"});
+                        } else if (item.is_object()) {
+                            data.lines.push_back(ParseDialogLine(item, data.textSize));
+                        }
+                    }
                 }
-
-                Logger::Log(std::format("[DialogSystem] Dialog: {} loaded ({} dialogs)", entry.path().stem().string(), json["dialogs"].size()));
+                dialogs[characterId][dialogId] = std::move(data);
             }
+
+            Logger::Log(std::format("[DialogSystem] Dialog: {} loaded ({} dialogs)", entry.path().stem().string(), json["dialogs"].size()));
         }
 
         dialogActive = false;
@@ -95,6 +113,30 @@ public:
         currentDialogId = "";
         currentDialogIndex = 0;
         currentLines.clear();
+        // Мне было очень лень переписывать систему и бороться с мертвыми ссылками, 
+        // поэтому тут cursor быстро сделал алгоритм для сохранения диалога
+        currentDialogTextSize = 20;
+
+        if (preserveConversation) {
+            auto itChar = dialogs.find(preserveChar);
+            if (itChar != dialogs.end()) {
+                auto itDlg = itChar->second.find(preserveDlg);
+                if (itDlg != itChar->second.end() && !itDlg->second.lines.empty()) {
+                    const DialogData& data = itDlg->second;
+                    dialogActive = true;
+                    currentCharacterId = preserveChar;
+                    currentDialogId = preserveDlg;
+                    currentLines = data.lines;
+                    currentDialogTextSize = data.textSize;
+                    currentDialogIndex = std::clamp(
+                        preserveIdx,
+                        0,
+                        static_cast<int>(data.lines.size()) - 1
+                    );
+                }
+            }
+        }
+
         Logger::Log("[DialogSystem] Initialized");
     }
 
@@ -162,7 +204,7 @@ public:
             for (int32_t rowId = 0; const auto& row : signRows) {
                 Renderer::DrawSpriteScreen(signPlateTexture, 55 + 348 - 185, 80 + rowId * 55.5f, 206*1.8f, 29*1.8f);
                 static constexpr SDL_Color black{ 0, 0, 0, 255 };
-                Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), row, 110 + 348 - 185, 80 + rowId * 55.5f + 10, 32, &black, 206*1.8f);
+                Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("interphases")), row, 110 + 348 - 185, 80 + rowId * 55.5f + 10, 32, &black, 206*1.8f);
                 rowId++;
             }
             return;
@@ -176,17 +218,17 @@ public:
         SDL_Color textColor = {line.color[0], line.color[1], line.color[2], line.color[3]};
 
         Renderer::DrawSpriteScreen(dialogBackgroundTexture, 3, 448, 793, 147);
-        Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), line.text, 12, 465, line.size, &textColor, 790);
+        Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("interphases")), line.text, 12, 465, line.size, &textColor, 790);
 
         // Имя говорящего: из текущей строки или из меты персонажа
         std::string speakerName = line.name.empty() ? characterMeta[currentCharacterId].name : line.name;
         // Рендер имени говорящего и бокса под него в нужном месте (слева или справа)
         if (line.align == "left") {
             Renderer::DrawSpriteScreen(dialogBackgroundNameTexture, 3, 385, 308, 59);
-            Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), speakerName, 12, 404, 22, nullptr, 300);
+            Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("interphases")), speakerName, 12, 404, 22, nullptr, 300);
         } else if (line.align == "right") {
             Renderer::DrawSpriteScreen(dialogBackgroundNameTexture, 489, 385, 308, 59);
-            Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("charriot")), speakerName, 540, 404, 22, nullptr, 300);
+            Renderer::DrawTextScreen(Renderer::TextId(make_nnTex("interphases")), speakerName, 540, 404, 22, nullptr, 300);
         }
     }
 
@@ -260,7 +302,7 @@ private:
         }
         std::stringstream buffer;
         buffer << file.rdbuf();
-        return nlohmann::json::parse(buffer.str());
+        return nlohmann::json::parse(buffer.str()); // Лучше осознанно упасть чем не упасть
     }
 
     bool dialogActive = false;
@@ -292,8 +334,8 @@ void DialogSystemManager::Initialize() {
     DialogSystem::instance().Initialize();
 }
 
-void DialogSystemManager::LoadAllDialogs(const std::string& directory) {
-    DialogSystem::instance().LoadAllDialogs(directory);
+void DialogSystemManager::LoadAllDialogs(const std::string& directory, const std::string& locale = GameLanguage::English) {
+    DialogSystem::instance().LoadAllDialogs(directory, locale);
 }
 
 void DialogSystemManager::StartDialog(const std::string& characterId, const std::string& dialogId) {

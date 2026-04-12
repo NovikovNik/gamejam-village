@@ -1,5 +1,5 @@
 # AAAB (Gamejam game)
-You can play download Win build on itch: [**AAB Win**](https://norskanikolai.itch.io/aaab)
+You can play download Win build on itch: [**AAAB Win**](https://norskanikolai.itch.io/aaab)
 
 ### Сборка и компиляция
 
