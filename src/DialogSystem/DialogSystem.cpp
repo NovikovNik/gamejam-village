@@ -44,8 +44,12 @@ public:
     }
 
     void LoadAllDialogs(const std::string& directory, const std::string& locale) {
-        const std::filesystem::path path = std::filesystem::relative(directory) / locale;
-        std::string dialogsDirectory = FileSystemManager::GetAssetsSubDir(path).lexically_normal().string();
+        const std::filesystem::path path = std::filesystem::path(directory) / locale;
+#ifdef MACOS
+        std::string dialogsDirectory = FileSystemManager::GetAssetsSubDir(path.string()).lexically_normal().string();
+#else
+        std::string dialogsDirectory = FileSystemManager::GetAssetsSubDir(path.string()).string();
+#endif
 
         if (!std::filesystem::exists(dialogsDirectory)) {
             Logger::Err("Dialogs path does not exist: " + dialogsDirectory);
